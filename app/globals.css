@@ -1,26 +1,220 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050505;
+  --foreground: #ffffff;
+  --gold: #d6ad4a;
+  --gold-soft: #f3d27a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+a {
+  cursor: pointer;
+}
+
+.hero-texture {
+  background:
+    linear-gradient(90deg, rgba(5, 5, 5, 0.92), rgba(5, 5, 5, 0.62)),
+    repeating-linear-gradient(135deg, rgba(214, 173, 74, 0.12) 0 1px, transparent 1px 18px),
+    radial-gradient(circle at 72% 35%, rgba(214, 173, 74, 0.18), transparent 34%),
+    #050505;
+}
+
+.brand-medallion {
+  width: min(76vw, 470px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  padding: clamp(1.25rem, 4vw, 3rem);
+  border: 1px solid rgba(214, 173, 74, 0.36);
+  background:
+    linear-gradient(145deg, rgba(214, 173, 74, 0.1), rgba(255, 255, 255, 0.02)),
+    #080808;
+  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.55);
+}
+
+.btn-gold,
+.btn-outline {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid var(--gold);
+  padding: 0.85rem 1.05rem;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: #080808;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--gold);
+}
+
+.btn-gold:hover,
+.btn-outline:hover {
+  transform: translateY(-1px);
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #080808;
+}
+
+.section-kicker {
+  color: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.section-title {
+  margin-top: 0.6rem;
+  color: #ffffff;
+  font-size: clamp(2.7rem, 8vw, 5.9rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.discreet {
+  display: inline-block;
+  border-left: 2px solid rgba(214, 173, 74, 0.7);
+  padding-left: 1rem;
+  color: rgba(214, 173, 74, 0.86);
+  font-size: 0.95rem;
+}
+
+.service-section {
+  border-bottom: 1px solid rgba(214, 173, 74, 0.2);
+  padding: 5rem 1rem;
+}
+
+@media (min-width: 640px) {
+  .service-section {
+    padding: 6.5rem 1.5rem;
+  }
+}
+
+.price-item,
+.panel {
+  border: 1px solid rgba(214, 173, 74, 0.16);
+  background: rgba(255, 255, 255, 0.026);
+}
+
+.price-item {
+  min-height: 146px;
+  padding: 1.25rem;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.price-item:hover {
+  transform: translateY(-2px);
+  border-color: rgba(214, 173, 74, 0.55);
+  background: rgba(214, 173, 74, 0.075);
+}
+
+.price-item h3 {
+  min-height: 3rem;
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.price-item p {
+  margin-top: 1rem;
+  color: var(--gold);
+  font-size: 1.22rem;
+  font-weight: 950;
+}
+
+.price-item span {
+  display: block;
+  margin-top: 0.2rem;
+  color: #a1a1aa;
+  font-size: 0.9rem;
+}
+
+.panel {
+  padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+.field {
+  min-height: 50px;
+  width: 100%;
+  border: 1px solid rgba(214, 173, 74, 0.22);
+  background: #050505;
+  padding: 0 1rem;
+  color: #ffffff;
+  outline: none;
+}
+
+.field:focus {
+  border-color: var(--gold);
+}
+
+::placeholder {
+  color: #71717a;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6f5a25;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
 }
