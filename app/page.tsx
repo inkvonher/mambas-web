@@ -21,8 +21,7 @@ const copy = {
     tattooTitle: "Tattoo & Piercing",
     tattooSlogan: "FREEWILL",
     included: "Incluido",
-    barberNote:
-      "Bebida + facial relajante de cortesía para nuestros clientes.",
+    barberNote: "Bebida + facial relajante de cortesía para nuestros clientes.",
     tattooNote:
       "El precio por pieza depende del nivel de detalle, centímetros, estilo y zona a tatuar.",
     piercingNote:
@@ -133,14 +132,14 @@ const contacts = {
   barber: {
     phone: "+529843675261",
     display: "+52 984 367 5261",
-    instagram: "@MAMBAS_BARBERIA.PDC",
-    url: "https://instagram.com/MAMBAS_BARBERIA.PDC",
+    instagram: "Instagram",
+    url: "https://www.instagram.com/mambas_barberia.pdc/",
   },
   tattoo: {
     phone: "+529841820414",
     display: "+52 984 182 0414",
-    instagram: "@MAMBAS.TATTOOCUTS",
-    url: "https://instagram.com/MAMBAS.TATTOOCUTS",
+    instagram: "Instagram",
+    url: "https://www.instagram.com/mambas.tattoocuts/",
   },
 };
 
@@ -182,8 +181,15 @@ export default function Home() {
     <main className="min-h-screen bg-[#050505] text-white">
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#d6ad4a]/20 bg-black/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-          <button onClick={() => scrollTo("inicio")} className="flex items-center gap-3">
-            <img src="/logo.png" alt="Mambas Tattoo & Cuts" className="h-10 w-10 object-contain" />
+          <button
+            onClick={() => scrollTo("inicio")}
+            className="flex items-center gap-3"
+          >
+            <img
+              src="/logo.png"
+              alt="Mambas Tattoo & Cuts"
+              className="h-10 w-10 object-contain"
+            />
             <span className="hidden text-xs font-bold tracking-[0.28em] text-[#d6ad4a] sm:block">
               MAMBAS
             </span>
@@ -210,7 +216,10 @@ export default function Home() {
         </div>
       </header>
 
-      <section id="inicio" className="relative flex min-h-[92vh] items-center overflow-hidden border-b border-[#d6ad4a]/20 px-4 pt-24 sm:px-6">
+      <section
+        id="inicio"
+        className="relative flex min-h-[92vh] items-center overflow-hidden border-b border-[#d6ad4a]/20 px-4 pt-24 sm:px-6"
+      >
         <div className="hero-texture absolute inset-0" />
         <div className="mx-auto grid w-full max-w-7xl items-center gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="relative z-10">
@@ -224,18 +233,26 @@ export default function Home() {
               {t.heroText}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a href={`https://wa.me/${contacts.barber.phone}`} className="btn-gold">
+              <a
+                href={`https://wa.me/${contacts.barber.phone}`}
+                className="btn-gold"
+              >
                 {t.barberCta}
               </a>
-              <button onClick={() => scrollTo("tattoo")} className="btn-outline">
+              <button
+                onClick={() => scrollTo("tattoo")}
+                className="btn-outline"
+              >
                 {t.tattooCta}
               </button>
             </div>
           </div>
           <div className="relative z-10 mx-auto flex w-full max-w-md justify-center lg:max-w-none">
-            <div className="brand-medallion">
-              <img src="/logo.png" alt="Mambas Tattoo & Cuts logo" className="w-full object-contain" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="Mambas Tattoo & Cuts logo"
+              className="w-full max-w-xs object-contain"
+            />
           </div>
         </div>
       </section>
@@ -267,22 +284,49 @@ export default function Home() {
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
           <div>
             <PriceGrid rows={tattooPrices} language={language} compact />
-            <p className="mt-6 text-sm italic leading-6 text-zinc-400">{t.tattooNote}</p>
-            <p className="mt-2 text-sm italic leading-6 text-zinc-400">{t.piercingNote}</p>
+            <p className="mt-6 text-sm italic leading-6 text-zinc-400">
+              {t.tattooNote}
+            </p>
+            <p className="mt-2 text-sm italic leading-6 text-zinc-400">
+              {t.piercingNote}
+            </p>
           </div>
           <div className="panel">
             <h3 className="mb-6 text-2xl font-black uppercase tracking-normal text-white">
               {t.quoteTitle}
             </h3>
-            <Range label={t.centimeters} value={centimeters} min={3} max={28} onChange={setCentimeters} suffix="cm" />
-            <Range label={t.detail} value={detail} min={1} max={5} onChange={setDetail} />
-            <Range label={t.zone} value={zone} min={1} max={4} onChange={setZone} />
+            <Range
+              label={t.centimeters}
+              value={centimeters}
+              min={3}
+              max={28}
+              onChange={setCentimeters}
+              suffix="cm"
+            />
+            <Range
+              label={t.detail}
+              value={detail}
+              min={1}
+              max={5}
+              onChange={setDetail}
+            />
+            <Range
+              label={t.zone}
+              value={zone}
+              min={1}
+              max={4}
+              onChange={setZone}
+            />
             <div className="mt-7 border-t border-[#d6ad4a]/20 pt-6">
-              <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">{t.estimated}</p>
+              <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
+                {t.estimated}
+              </p>
               <p className="mt-1 text-4xl font-black text-[#d6ad4a]">
                 {tattooEstimate.toLocaleString("es-MX")} MXN
               </p>
-              <p className="mt-3 text-sm leading-6 text-zinc-400">{t.quoteHelp}</p>
+              <p className="mt-3 text-sm leading-6 text-zinc-400">
+                {t.quoteHelp}
+              </p>
               <a
                 href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(`Hola Mambas, quiero cotizar un tattoo de ${centimeters}cm.`)}`}
                 className="btn-gold mt-6 w-full justify-center"
@@ -295,23 +339,50 @@ export default function Home() {
         <ContactStrip kind="tattoo" language={language} />
       </section>
 
-      <section id="lealtad" className="border-b border-[#d6ad4a]/20 px-4 py-20 sm:px-6">
+      <section
+        id="lealtad"
+        className="border-b border-[#d6ad4a]/20 px-4 py-20 sm:px-6"
+      >
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="section-kicker">MAMBAS CLUB</p>
             <h2 className="section-title">{t.loyaltyTitle}</h2>
-            <p className="mt-5 max-w-xl leading-7 text-zinc-300">{t.loyaltyText}</p>
+            <p className="mt-5 max-w-xl leading-7 text-zinc-300">
+              {t.loyaltyText}
+            </p>
           </div>
-          <form onSubmit={handleRegister} className="panel grid gap-4 sm:grid-cols-2">
-            <input name="name" required placeholder={t.fullName} className="field sm:col-span-2" />
-            <input name="phone" required placeholder={t.phone} className="field" />
+          <form
+            onSubmit={handleRegister}
+            className="panel grid gap-4 sm:grid-cols-2"
+          >
+            <input
+              name="name"
+              required
+              placeholder={t.fullName}
+              className="field sm:col-span-2"
+            />
+            <input
+              name="phone"
+              required
+              placeholder={t.phone}
+              className="field"
+            />
             <input name="birthday" type="date" className="field" />
-            <select name="interest" className="field sm:col-span-2" defaultValue={mode} onChange={(event) => setMode(event.target.value as ServiceMode)}>
+            <select
+              name="interest"
+              className="field sm:col-span-2"
+              defaultValue={mode}
+              onChange={(event) => setMode(event.target.value as ServiceMode)}
+            >
               <option value="barber">{t.barberTitle}</option>
               <option value="tattoo">{t.tattooTitle}</option>
             </select>
-            <button className="btn-gold justify-center sm:col-span-2">{t.register}</button>
-            {saved && <p className="text-sm text-[#d6ad4a] sm:col-span-2">{t.saved}</p>}
+            <button className="btn-gold justify-center sm:col-span-2">
+              {t.register}
+            </button>
+            {saved && (
+              <p className="text-sm text-[#d6ad4a] sm:col-span-2">{t.saved}</p>
+            )}
           </form>
         </div>
       </section>
@@ -321,13 +392,25 @@ export default function Home() {
           <div>
             <p className="section-kicker">PLAYA DEL CARMEN</p>
             <h2 className="section-title">{t.locationTitle}</h2>
-            <p className="mt-5 text-lg leading-8 text-zinc-300">{t.locationText}</p>
+            <p className="mt-5 text-lg leading-8 text-zinc-300">
+              {t.locationText}
+            </p>
             <p className="mt-5 text-xl font-bold text-white">{t.address}</p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="btn-gold">
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-gold"
+              >
                 {t.map}
               </a>
-              <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="btn-outline">
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-outline"
+              >
                 {t.viewReviews}
               </a>
             </div>
@@ -351,7 +434,12 @@ export default function Home() {
             <div className="panel">
               <div className="mb-3 text-2xl text-[#d6ad4a]">★★★★★</div>
               <p className="text-zinc-300">{t.reviewsText}</p>
-              <a href={googleMapsUrl} target="_blank" rel="noreferrer" className="mt-6 inline-block text-sm font-bold uppercase tracking-[0.22em] text-[#d6ad4a]">
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-block text-sm font-bold uppercase tracking-[0.22em] text-[#d6ad4a]"
+              >
                 {t.viewReviews}
               </a>
             </div>
@@ -359,7 +447,8 @@ export default function Home() {
               <div className="mb-3 text-2xl text-[#d6ad4a]">★★★★★</div>
               <p className="text-zinc-300">{t.sourceRating}</p>
               <p className="mt-5 text-xs uppercase tracking-[0.2em] text-zinc-500">
-                Fuente pública verificada: Apple Maps / ficha Mambas Tattoo & Cuts
+                Fuente pública verificada: Apple Maps / ficha Mambas Tattoo &
+                Cuts
               </p>
             </div>
           </div>
@@ -367,7 +456,11 @@ export default function Home() {
       </section>
 
       <footer className="border-t border-[#d6ad4a]/20 px-4 py-10 text-center sm:px-6">
-        <img src="/logo.png" alt="" className="mx-auto mb-5 h-14 w-14 object-contain" />
+        <img
+          src="/logo.png"
+          alt=""
+          className="mx-auto mb-5 h-14 w-14 object-contain"
+        />
         <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
           Mambas Tattoo & Cuts · COFEPRIS · {t.contact}
         </p>
@@ -395,7 +488,9 @@ function PriceGrid({
   compact?: boolean;
 }) {
   return (
-    <div className={`grid gap-3 ${compact ? "grid-cols-1" : "mx-auto max-w-7xl sm:grid-cols-2 lg:grid-cols-4"}`}>
+    <div
+      className={`grid gap-3 ${compact ? "grid-cols-1" : "mx-auto max-w-7xl sm:grid-cols-2 lg:grid-cols-4"}`}
+    >
       {rows.map(([es, en, mxn, usd]) => (
         <div key={es} className="price-item">
           <h3>{language === "es" ? es : en}</h3>
@@ -426,7 +521,10 @@ function Range({
     <label className="mb-5 block">
       <span className="mb-2 flex justify-between text-sm font-bold uppercase tracking-[0.18em] text-zinc-400">
         {label}
-        <b className="text-[#d6ad4a]">{value}{suffix}</b>
+        <b className="text-[#d6ad4a]">
+          {value}
+          {suffix}
+        </b>
       </span>
       <input
         type="range"
@@ -440,14 +538,25 @@ function Range({
   );
 }
 
-function ContactStrip({ kind, language }: { kind: ServiceMode; language: Language }) {
+function ContactStrip({
+  kind,
+  language,
+}: {
+  kind: ServiceMode;
+  language: Language;
+}) {
   const contact = contacts[kind];
   return (
     <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row">
       <a href={`https://wa.me/${contact.phone}`} className="btn-gold">
         WhatsApp {contact.display}
       </a>
-      <a href={contact.url} target="_blank" rel="noreferrer" className="btn-outline">
+      <a
+        href={contact.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="btn-outline"
+      >
         Instagram {contact.instagram}
       </a>
       <span className="sr-only">{language}</span>

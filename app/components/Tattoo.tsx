@@ -135,12 +135,12 @@ export default function Tattoo() {
             WhatsApp
           </a>
           <a
-            href={`https://instagram.com/${t.tattoo.instagram.replace("@", "")}`}
+            href={t.tattoo.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-3 sm:py-4 border border-gold text-gold font-semibold tracking-widest uppercase text-sm hover:bg-gold hover:text-black transition-colors"
           >
-            {t.tattoo.instagram}
+            Instagram
           </a>
         </motion.div>
       </div>

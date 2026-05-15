@@ -34,7 +34,7 @@ export const content = {
       ],
       note: "Complimentary drink and relaxing facial for our clients.",
       whatsapp: "+529843675261",
-      instagram: "@MAMBAS_BARBERIA.PDC",
+      instagram: "https://www.instagram.com/mambas_barberia.pdc/",
     },
     tattoo: {
       title: "Mambas Tattoo Studio",
@@ -53,7 +53,7 @@ export const content = {
       pierceNote:
         "Services include topical anesthesia if required. Complimentary drink for clients.",
       whatsapp: "+529841820414",
-      instagram: "@MAMBAS.TATTOOCUTS",
+      instagram: "https://www.instagram.com/mambas.tattoocuts/",
     },
     loyalty: {
       title: "Loyalty & Membership",
@@ -128,7 +128,7 @@ export const content = {
       ],
       note: "Bebida + facial relajante de cortesía para nuestros clientes.",
       whatsapp: "+529843675261",
-      instagram: "@MAMBAS_BARBERIA.PDC",
+      instagram: "https://www.instagram.com/mambas_barberia.pdc/",
     },
     tattoo: {
       title: "Mambas Tattoo Studio",
@@ -148,7 +148,7 @@ export const content = {
       pierceNote:
         "Servicios incluyen anestesia tópica en caso de requerirla. Bebida de cortesía para clientes.",
       whatsapp: "+529841820414",
-      instagram: "@MAMBAS.TATTOOCUTS",
+      instagram: "https://www.instagram.com/mambas.tattoocuts/",
     },
     loyalty: {
       title: "Lealtad y Membresía",

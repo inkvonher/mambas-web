@@ -47,22 +47,18 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <motion.div
+          <motion.button
             className="flex-shrink-0"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            onClick={() => scrollToSection("hero")}
           >
-            <button
-              onClick={() => scrollToSection("hero")}
-              className="relative group"
-            >
-              <img
-                src="/logo.png"
-                alt="Mambas Tattoo & Cuts"
-                className="h-14 w-auto opacity-90 hover:opacity-100 transition-opacity"
-              />
-            </button>
-          </motion.div>
+            <img
+              src="/logo.png"
+              alt="Mambas Tattoo & Cuts"
+              className="h-14 w-auto opacity-90 hover:opacity-100 transition-opacity"
+            />
+          </motion.button>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">

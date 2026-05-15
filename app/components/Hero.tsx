@@ -60,16 +60,12 @@ export default function Hero() {
         animate="visible"
       >
         {/* Logo */}
-        <motion.div
+        <motion.img
+          src="/logo.png"
+          alt="Mambas Tattoo & Cuts"
+          className="h-32 sm:h-40 lg:h-48 w-auto opacity-95 mb-8 sm:mb-12 mx-auto"
           variants={itemVariants}
-          className="mb-8 sm:mb-12 flex justify-center"
-        >
-          <img
-            src="/logo.png"
-            alt="Mambas Tattoo & Cuts"
-            className="h-32 sm:h-40 lg:h-48 w-auto opacity-95"
-          />
-        </motion.div>
+        />
 
         {/* Tagline */}
         <motion.p

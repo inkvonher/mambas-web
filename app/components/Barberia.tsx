@@ -105,12 +105,12 @@ export default function Barberia() {
             WhatsApp
           </a>
           <a
-            href={`https://instagram.com/${t.barberia.instagram.replace("@", "")}`}
+            href={t.barberia.instagram}
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-3 sm:py-4 border border-gold text-gold font-semibold tracking-widest uppercase text-sm hover:bg-gold hover:text-black transition-colors"
           >
-            {t.barberia.instagram}
+            Instagram
           </a>
         </motion.div>
       </div>
