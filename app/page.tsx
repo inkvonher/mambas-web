@@ -56,6 +56,13 @@ const copy = {
       "Espacio inclusivo que no discrimina a nadie. LGBTQ+ friendly. Pet friendly.",
     contact: "Contacto directo",
     map: "Abrir mapa",
+    depositTitle: "Anticipo",
+    depositKicker: "RESERVA TU CITA",
+    depositText:
+      "Para reservar una cita de tatuaje se requiere anticipo. El anticipo asegura tu espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
+    depositButton: "Pagar anticipo",
+    paymentMethods:
+      "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
   },
   en: {
     nav: ["Home", "Barbershop", "Tattoo", "Loyalty", "Location"],
@@ -107,6 +114,12 @@ const copy = {
       "Inclusive space. We do not discriminate. LGBTQ+ friendly. Pet friendly.",
     contact: "Direct contact",
     map: "Open map",
+    depositTitle: "Deposit",
+    depositKicker: "BOOK YOUR APPOINTMENT",
+    depositText:
+      "A deposit is required to reserve a tattoo appointment. Your deposit secures your appointment slot, time, and design preparation. The deposit amount can be deducted from your final tattoo total.",
+    depositButton: "Pay deposit",
+    paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
   },
 };
 
@@ -421,6 +434,33 @@ export default function Home() {
             loading="lazy"
             src="https://www.google.com/maps?q=Calle%201%20Sur%20%26%2025%20Av.%20Sur%2C%20Centro%2C%20Playa%20del%20Carmen%2C%20Q.R.&output=embed"
           />
+        </div>
+      </section>
+
+      {/* TODO: connect this button to Stripe, Mercado Pago, or crypto payment link. */}
+      <section
+        id="anticipo"
+        className="border-t border-[#d6ad4a]/20 px-4 py-20 sm:px-6 bg-black"
+      >
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_1fr]">
+          <div>
+            <p className="section-kicker">{t.depositKicker}</p>
+            <h2 className="section-title">{t.depositTitle}</h2>
+            <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
+              {t.depositText}
+            </p>
+            <div className="mt-8">
+              <a href="#" className="btn-gold">
+                {t.depositButton}
+              </a>
+            </div>
+            <p className="mt-8 text-sm italic text-zinc-400">
+              {t.paymentMethods}
+            </p>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="text-8xl text-[#d6ad4a] drop-shadow-lg">₿</div>
+          </div>
         </div>
       </section>
 
