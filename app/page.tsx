@@ -564,7 +564,8 @@ export default function Home() {
           className="mx-auto mb-5 h-14 w-14 object-contain"
         />
         <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-          Mambas Tattoo & Cuts · COFEPRIS · {t.contact}
+          Mambas Tattoo & Cuts · MARCA REGISTRADA DESDE 2021 · COFEPRIS ·{" "}
+          {t.contact}
         </p>
       </footer>
     </main>
