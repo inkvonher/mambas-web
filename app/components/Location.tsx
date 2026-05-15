@@ -23,7 +23,7 @@ export default function Location() {
           transition={{ duration: 0.8 }}
         >
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tighter text-white mb-4 sm:mb-6">
-            {t.location.title}
+            UBICACIÓN / LOCATION
           </h2>
           <p className="text-gold text-sm sm:text-base tracking-widest uppercase">
             {language === "es" ? "Encuéntranos" : "Visit Us"}
@@ -45,7 +45,7 @@ export default function Location() {
             {/* Map Container */}
             <div className="relative bg-black rounded-2xl overflow-hidden border border-gold/30 group-hover:border-gold transition-all duration-300 shadow-2xl">
               {/* Responsive iframe wrapper */}
-              <div className="relative w-full aspect-video bg-gray-800">
+              <div className="relative w-full aspect-[16/10] bg-gray-800">
                 <iframe
                   title="Mambas Location"
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3732.3456123456!2d-87.07894!3d20.62951!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f4e5a8c8c8c8c8d%3A0x8c8c8c8c8c8c8c8c!2sCalle%201%20Sur%20%26%20Av.%2025%20Sur%2C%20Centro%2C%20Playa%20del%20Carmen%2C%20Quintana%20Roo!5e0!3m2!1sen!2smx!4v1234567890"
