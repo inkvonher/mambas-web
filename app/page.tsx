@@ -286,6 +286,37 @@ export default function Home() {
       <section id="barberia" className="service-section">
         <SectionHeader title={t.barberTitle} slogan={t.barberSlogan} />
         <PriceGrid rows={barberServices} language={language} />
+        <div className="mx-auto mt-12 max-w-7xl">
+          <div className="overflow-hidden rounded-[2rem] border border-[#d6ad4a]/20 bg-[#070707] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
+                  Galería
+                </p>
+                <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
+                  Fotos de barbería
+                </h3>
+              </div>
+              <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
+                Próximamente
+              </p>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
+              {[1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className="snap-center min-w-[260px] shrink-0 rounded-[2rem] border border-[#d6ad4a]/20 bg-[#101010] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                >
+                  <div className="h-56 rounded-[1.75rem] bg-gradient-to-br from-[#111111] via-[#121212] to-[#090909]" />
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-sm leading-6 text-zinc-400">
+              TODO: Replace these placeholders with your barber shop photos when
+              ready.
+            </p>
+          </div>
+        </div>
         <p className="mx-auto mt-8 max-w-2xl text-center text-sm italic text-zinc-400">
           {t.barberNote}
         </p>
@@ -349,7 +380,65 @@ export default function Home() {
             </div>
           </div>
         </div>
+        <div className="mx-auto mt-12 max-w-7xl">
+          <div className="overflow-hidden rounded-[2rem] border border-[#d6ad4a]/20 bg-[#070707] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+            <div className="mb-6 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
+                  Galería
+                </p>
+                <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
+                  Fotos de tattoo
+                </h3>
+              </div>
+              <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
+                Próximamente
+              </p>
+            </div>
+            <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
+              {[1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className="snap-center min-w-[260px] shrink-0 rounded-[2rem] border border-[#d6ad4a]/20 bg-[#101010] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                >
+                  <div className="h-56 rounded-[1.75rem] bg-gradient-to-br from-[#111111] via-[#121212] to-[#090909]" />
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-sm leading-6 text-zinc-400">
+              TODO: Replace these placeholders with your tattoo photos when
+              ready.
+            </p>
+          </div>
+        </div>
         <ContactStrip kind="tattoo" language={language} />
+      </section>
+
+      {/* TODO: connect this button to Stripe, Mercado Pago, or crypto payment link. */}
+      <section
+        id="anticipo"
+        className="border-t border-[#d6ad4a]/20 px-4 py-20 sm:px-6 bg-black"
+      >
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_1fr]">
+          <div>
+            <p className="section-kicker">{t.depositKicker}</p>
+            <h2 className="section-title">{t.depositTitle}</h2>
+            <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
+              {t.depositText}
+            </p>
+            <div className="mt-8">
+              <a href="#" className="btn-gold">
+                {t.depositButton}
+              </a>
+            </div>
+            <p className="mt-8 text-sm italic text-zinc-400">
+              {t.paymentMethods}
+            </p>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="text-8xl text-[#d6ad4a] drop-shadow-lg">₿</div>
+          </div>
+        </div>
       </section>
 
       <section
@@ -434,33 +523,6 @@ export default function Home() {
             loading="lazy"
             src="https://www.google.com/maps?q=Calle%201%20Sur%20%26%2025%20Av.%20Sur%2C%20Centro%2C%20Playa%20del%20Carmen%2C%20Q.R.&output=embed"
           />
-        </div>
-      </section>
-
-      {/* TODO: connect this button to Stripe, Mercado Pago, or crypto payment link. */}
-      <section
-        id="anticipo"
-        className="border-t border-[#d6ad4a]/20 px-4 py-20 sm:px-6 bg-black"
-      >
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_1fr]">
-          <div>
-            <p className="section-kicker">{t.depositKicker}</p>
-            <h2 className="section-title">{t.depositTitle}</h2>
-            <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
-              {t.depositText}
-            </p>
-            <div className="mt-8">
-              <a href="#" className="btn-gold">
-                {t.depositButton}
-              </a>
-            </div>
-            <p className="mt-8 text-sm italic text-zinc-400">
-              {t.paymentMethods}
-            </p>
-          </div>
-          <div className="flex items-center justify-center">
-            <div className="text-8xl text-[#d6ad4a] drop-shadow-lg">₿</div>
-          </div>
         </div>
       </section>
 
