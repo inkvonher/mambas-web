@@ -427,7 +427,12 @@ export default function Home() {
               {t.depositText}
             </p>
             <div className="mt-8">
-              <a href="#" className="btn-gold">
+              <a
+                href="https://mpago.la/2Nc6MvU"
+                target="_blank"
+                rel="noreferrer noopener"
+                className="btn-gold"
+              >
                 {t.depositButton}
               </a>
             </div>
