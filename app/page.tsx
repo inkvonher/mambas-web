@@ -209,7 +209,10 @@ export default function Home() {
               MAMBAS
             </span>
           </button>
-          <nav className="hidden items-center gap-6 lg:flex">
+          <nav
+            aria-label="Primary site navigation"
+            className="hidden items-center gap-6 lg:flex"
+          >
             {["inicio", "barberia", "tattoo", "lealtad", "ubicacion"].map(
               (id, index) => (
                 <button
@@ -233,6 +236,7 @@ export default function Home() {
 
       <section
         id="inicio"
+        aria-labelledby="hero-heading"
         className="relative flex min-h-[92vh] items-center overflow-hidden border-b border-[#d6ad4a]/20 px-4 pt-24 sm:px-6"
       >
         <div className="hero-texture absolute inset-0" />
@@ -241,7 +245,10 @@ export default function Home() {
             <p className="mb-5 text-xs font-bold uppercase tracking-[0.32em] text-[#d6ad4a]">
               {t.heroKicker}
             </p>
-            <h1 className="max-w-4xl text-5xl font-black uppercase leading-[0.92] tracking-normal sm:text-7xl lg:text-8xl">
+            <h1
+              id="hero-heading"
+              className="max-w-4xl text-5xl font-black uppercase leading-[0.92] tracking-normal sm:text-7xl lg:text-8xl"
+            >
               Mambas Tattoo & Cuts
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg">
@@ -438,7 +445,7 @@ export default function Home() {
                 {t.depositButton}
               </a>
 
-              <div className="w-full max-w-lg rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#050505] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+              <div className="w-full max-w-full sm:max-w-lg rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#050505] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-4">
@@ -473,7 +480,7 @@ export default function Home() {
                     <div className="mb-3 text-right">
                       <p className="text-sm text-zinc-400">Wallet</p>
                       <div className="mt-2 flex items-center gap-3">
-                        <code className="break-words bg-[#0b0b0b] px-3 py-2 rounded font-mono text-sm text-zinc-200 border border-[#d6ad4a]/10">
+                        <code className="break-words overflow-x-auto max-w-full bg-[#0b0b0b] px-3 py-2 rounded font-mono text-sm text-zinc-200 border border-[#d6ad4a]/10">
                           {walletAddress}
                         </code>
                         <button
@@ -482,7 +489,7 @@ export default function Home() {
                             setCopied(true);
                             setTimeout(() => setCopied(false), 2000);
                           }}
-                          className="btn-gold px-3 py-2 text-sm"
+                          className="btn-gold px-3 py-2 text-sm w-full sm:w-auto"
                         >
                           {copied ? "Copied" : "Copy"}
                         </button>
@@ -499,7 +506,7 @@ export default function Home() {
               {t.paymentMethods}
             </p>
           </div>
-          <div className="flex items-center justify-center">
+          <div className="hidden sm:flex items-center justify-center">
             <div className="text-8xl text-[#d6ad4a] drop-shadow-lg">₿</div>
           </div>
         </div>
@@ -664,10 +671,13 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="border-t border-[#d6ad4a]/20 px-4 py-10 text-center sm:px-6">
+      <footer
+        className="border-t border-[#d6ad4a]/20 px-4 py-10 text-center sm:px-6"
+        aria-label="Footer"
+      >
         <img
           src="/logo.png"
-          alt=""
+          alt="Mambas Tattoo & Cuts logo"
           className="mx-auto mb-5 h-14 w-14 object-contain"
         />
         <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">

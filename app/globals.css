@@ -45,8 +45,16 @@ a {
 .hero-texture {
   background:
     linear-gradient(90deg, rgba(5, 5, 5, 0.92), rgba(5, 5, 5, 0.62)),
-    repeating-linear-gradient(135deg, rgba(214, 173, 74, 0.12) 0 1px, transparent 1px 18px),
-    radial-gradient(circle at 72% 35%, rgba(214, 173, 74, 0.18), transparent 34%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(214, 173, 74, 0.12) 0 1px,
+      transparent 1px 18px
+    ),
+    radial-gradient(
+      circle at 72% 35%,
+      rgba(214, 173, 74, 0.18),
+      transparent 34%
+    ),
     #050505;
 }
 
@@ -183,6 +191,79 @@ a {
 
 .panel {
   padding: clamp(1.2rem, 3vw, 2rem);
+}
+
+/* Premium input and panel refinements */
+.panel {
+  border-radius: 1rem;
+  transition:
+    box-shadow 200ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.field {
+  min-height: 50px;
+  width: 100%;
+  border: 1px solid rgba(214, 173, 74, 0.22);
+  background: #050505;
+  padding: 0 1rem;
+  color: #ffffff;
+  outline: none;
+  border-radius: 0.5rem;
+  transition:
+    box-shadow 180ms ease,
+    border-color 180ms ease,
+    transform 120ms ease;
+}
+
+.field:focus {
+  border-color: var(--gold);
+  box-shadow:
+    0 8px 30px rgba(214, 173, 74, 0.06),
+    0 1px 0 rgba(214, 173, 74, 0.03) inset;
+  transform: translateY(-1px);
+}
+
+/* Make primary buttons full-width on small screens and finer hover */
+.btn-gold {
+  border-radius: 0.6rem;
+}
+
+@media (max-width: 640px) {
+  .btn-gold {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Member cards */
+.member-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.01),
+    rgba(0, 0, 0, 0.2)
+  );
+  border: 1px solid rgba(214, 173, 74, 0.08);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+.member-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
+  border-color: rgba(214, 173, 74, 0.32);
+}
+
+/* Small utilities */
+.muted {
+  color: #9ca3af;
 }
 
 .field {
