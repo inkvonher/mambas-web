@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { supabase } from "./lib/supabase";
 
 type Language = "es" | "en";
 type ServiceMode = "barber" | "tattoo";
@@ -177,13 +178,28 @@ export default function Home() {
     return Math.min(Math.max(Math.round(calculated / 50) * 50, 1600), 6500);
   }, [centimeters, detail, zone]);
 
-  function handleRegister(event: FormEvent<HTMLFormElement>) {
+  async function handleRegister(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    localStorage.setItem(
-      "mambas-loyalty",
-      JSON.stringify(Object.fromEntries(data.entries())),
-    );
+
+    const formData = new FormData(event.currentTarget);
+
+    const payload = {
+      name: formData.get("name"),
+      phone: formData.get("phone"),
+      birthday: formData.get("birthday"),
+      service: formData.get("interest"),
+      status: "Nuevo",
+    };
+
+    const { error } = await supabase.from("clients").insert([payload]);
+
+    if (error) {
+      console.error(error);
+      alert("Error saving registration");
+      return;
+    }
+
+    localStorage.setItem("mambas-register", JSON.stringify(payload));
     setSaved(true);
     event.currentTarget.reset();
   }
