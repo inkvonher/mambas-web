@@ -506,7 +506,7 @@ export default function Home() {
               {t.paymentMethods}
             </p>
           </div>
-          <div className="hidden sm:flex items-center justify-center">
+          <div className="flex items-center justify-center">
             <div className="symbol-pulse text-8xl text-[#d6ad4a] drop-shadow-lg">
               ₿
             </div>
