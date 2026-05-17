@@ -166,6 +166,8 @@ export default function Home() {
   const [centimeters, setCentimeters] = useState(3);
   const [detail, setDetail] = useState(1);
   const [zone, setZone] = useState(1);
+  const [copied, setCopied] = useState(false);
+  const walletAddress = "0x620D311425385e60743a2e9f3cE0e476E07cdCA1";
   const t = copy[language];
 
   const tattooEstimate = useMemo(() => {
@@ -426,7 +428,7 @@ export default function Home() {
             <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
               {t.depositText}
             </p>
-            <div className="mt-8">
+            <div className="mt-8 space-y-6">
               <a
                 href="https://mpago.la/2Nc6MvU"
                 target="_blank"
@@ -435,6 +437,63 @@ export default function Home() {
               >
                 {t.depositButton}
               </a>
+
+              <div className="w-full max-w-lg rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#050505] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src="/base-badge.svg"
+                        alt="Base"
+                        className="h-10 w-10 rounded-full shadow-md"
+                      />
+                      <div>
+                        <p className="text-xs text-zinc-400">
+                          Preferred network
+                        </p>
+                        <p className="text-sm font-semibold text-[#0ea5ff]">
+                          Base
+                        </p>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-sm text-zinc-400">
+                      Low fees • Fast transactions • International payments
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
+                        USDT on Base
+                      </span>
+                      <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
+                        ETH on Base
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-shrink-0 w-full sm:w-auto">
+                    <div className="mb-3 text-right">
+                      <p className="text-sm text-zinc-400">Wallet</p>
+                      <div className="mt-2 flex items-center gap-3">
+                        <code className="break-words bg-[#0b0b0b] px-3 py-2 rounded font-mono text-sm text-zinc-200 border border-[#d6ad4a]/10">
+                          {walletAddress}
+                        </code>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(walletAddress);
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                          }}
+                          className="btn-gold px-3 py-2 text-sm"
+                        >
+                          {copied ? "Copied" : "Copy"}
+                        </button>
+                      </div>
+                    </div>
+                    <p className="mt-2 text-xs italic text-zinc-400">
+                      Red recomendada: TRC20 o BEP20.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
             <p className="mt-8 text-sm italic text-zinc-400">
               {t.paymentMethods}
@@ -457,40 +516,83 @@ export default function Home() {
             <p className="mt-5 max-w-xl leading-7 text-zinc-300">
               {t.loyaltyText}
             </p>
+            <p className="mt-3 text-sm text-zinc-400">
+              Acumula beneficios, prioridad y recompensas exclusivas.
+            </p>
           </div>
-          <form
-            onSubmit={handleRegister}
-            className="panel grid gap-4 sm:grid-cols-2"
-          >
-            <input
-              name="name"
-              required
-              placeholder={t.fullName}
-              className="field sm:col-span-2"
-            />
-            <input
-              name="phone"
-              required
-              placeholder={t.phone}
-              className="field"
-            />
-            <input name="birthday" type="date" className="field" />
-            <select
-              name="interest"
-              className="field sm:col-span-2"
-              defaultValue={mode}
-              onChange={(event) => setMode(event.target.value as ServiceMode)}
+          <div className="sm:col-span-1">
+            <form
+              onSubmit={handleRegister}
+              className="panel grid gap-4 sm:grid-cols-2 p-6 rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#030303] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
             >
-              <option value="barber">{t.barberTitle}</option>
-              <option value="tattoo">{t.tattooTitle}</option>
-            </select>
-            <button className="btn-gold justify-center sm:col-span-2">
-              {t.register}
-            </button>
-            {saved && (
-              <p className="text-sm text-[#d6ad4a] sm:col-span-2">{t.saved}</p>
-            )}
-          </form>
+              <input
+                name="name"
+                required
+                placeholder={t.fullName}
+                className="field sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
+              />
+              <input
+                name="phone"
+                required
+                placeholder={t.phone}
+                className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
+              />
+              <input name="birthday" type="date" className="field" />
+              <select
+                name="interest"
+                className="field sm:col-span-2"
+                defaultValue={mode}
+                onChange={(event) => setMode(event.target.value as ServiceMode)}
+              >
+                <option value="barber">{t.barberTitle}</option>
+                <option value="tattoo">{t.tattooTitle}</option>
+              </select>
+              <button className="btn-gold justify-center sm:col-span-2 px-6 py-3 text-sm font-semibold rounded-md shadow-[0_8px_30px_rgba(214,173,74,0.12)] hover:scale-[1.02] transform transition duration-200">
+                {t.register}
+              </button>
+              {saved && (
+                <p className="text-sm text-[#d6ad4a] sm:col-span-2">
+                  {t.saved}
+                </p>
+              )}
+            </form>
+
+            <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
+                <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
+                  B
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-400">BLACK MEMBER</div>
+                  <div className="text-sm text-zinc-200">
+                    acceso prioritario
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
+                <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
+                  G
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-400">GOLD MEMBER</div>
+                  <div className="text-sm text-zinc-200">
+                    descuentos y recompensas
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
+                <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
+                  R
+                </div>
+                <div>
+                  <div className="text-xs text-zinc-400">RITUAL MEMBER</div>
+                  <div className="text-sm text-zinc-200">beneficios VIP</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
