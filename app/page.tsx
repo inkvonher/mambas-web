@@ -507,7 +507,9 @@ export default function Home() {
             </p>
           </div>
           <div className="hidden sm:flex items-center justify-center">
-            <div className="text-8xl text-[#d6ad4a] drop-shadow-lg">₿</div>
+            <div className="symbol-pulse text-8xl text-[#d6ad4a] drop-shadow-lg">
+              ₿
+            </div>
           </div>
         </div>
       </section>
