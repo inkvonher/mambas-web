@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import { content } from "../lib/content";
@@ -53,9 +54,11 @@ export default function Navbar() {
             whileTap={{ scale: 0.95 }}
             onClick={() => scrollToSection("hero")}
           >
-            <img
+            <Image
               src="/logo.png"
               alt="Mambas Tattoo & Cuts"
+              width={56}
+              height={56}
               className="h-14 w-auto opacity-90 hover:opacity-100 transition-opacity"
             />
           </motion.button>

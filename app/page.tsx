@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import Image from "next/image";
 import { supabase } from "./lib/supabase";
 
 type Language = "es" | "en";
@@ -51,7 +52,7 @@ const copy = {
     reviewsTitle: "Reseñas",
     reviewsText:
       "La ficha pública muestra calificaciones reales. Los textos de Google requieren integración oficial de Places API; por eso aquí enlazamos la fuente en vivo.",
-    viewReviews: "Ver resenas en Google Maps",
+    viewReviews: "Ver reseñas en Google Maps",
     sourceRating: "Apple Maps: 5 calificaciones, 100% general",
     inclusive:
       "Espacio inclusivo que no discrimina a nadie. LGBTQ+ friendly. Pet friendly.",
@@ -144,13 +145,13 @@ const tattooPrices = [
 
 const contacts = {
   barber: {
-    phone: "+529843675261",
+    phone: "529843675261",
     display: "+52 984 367 5261",
     instagram: "Instagram",
     url: "https://www.instagram.com/mambas_barberia.pdc/",
   },
   tattoo: {
-    phone: "+529841820414",
+    phone: "529841820414",
     display: "+52 984 182 0414",
     instagram: "Instagram",
     url: "https://www.instagram.com/mambas.tattoocuts/",
@@ -216,9 +217,11 @@ export default function Home() {
             onClick={() => scrollTo("inicio")}
             className="flex items-center gap-3"
           >
-            <img
+            <Image
               src="/logo.png"
               alt="Mambas Tattoo & Cuts"
+              width={40}
+              height={40}
               className="h-10 w-10 object-contain"
             />
             <span className="hidden text-xs font-bold tracking-[0.28em] text-[#d6ad4a] sm:block">
@@ -286,9 +289,12 @@ export default function Home() {
             </div>
           </div>
           <div className="relative z-10 mx-auto flex w-full max-w-md justify-center lg:max-w-none">
-            <img
+            <Image
               src="/logo.png"
               alt="Mambas Tattoo & Cuts logo"
+              width={320}
+              height={320}
+              priority
               className="w-full max-w-xs object-contain"
             />
           </div>
@@ -323,7 +329,7 @@ export default function Home() {
                 </h3>
               </div>
               <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
-                Próximamente
+                Mambas
               </p>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
@@ -337,8 +343,7 @@ export default function Home() {
               ))}
             </div>
             <p className="mt-5 text-sm leading-6 text-zinc-400">
-              TODO: Replace these placeholders with your barber shop photos when
-              ready.
+              Galería lista para integrar fotos reales del estudio.
             </p>
           </div>
         </div>
@@ -417,7 +422,7 @@ export default function Home() {
                 </h3>
               </div>
               <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
-                Próximamente
+                Mambas
               </p>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
@@ -431,8 +436,7 @@ export default function Home() {
               ))}
             </div>
             <p className="mt-5 text-sm leading-6 text-zinc-400">
-              TODO: Replace these placeholders with your tattoo photos when
-              ready.
+              Galería lista para integrar fotos reales del estudio.
             </p>
           </div>
         </div>
@@ -465,9 +469,11 @@ export default function Home() {
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-4">
-                      <img
+                      <Image
                         src="/base-badge.svg"
                         alt="Base"
+                        width={40}
+                        height={40}
                         className="h-10 w-10 rounded-full shadow-md"
                       />
                       <div>
@@ -512,7 +518,7 @@ export default function Home() {
                       </div>
                     </div>
                     <p className="mt-2 text-xs italic text-zinc-400">
-                      Red recomendada: TRC20 o BEP20.
+                      Red recomendada: Base.
                     </p>
                   </div>
                 </div>
@@ -693,9 +699,11 @@ export default function Home() {
         className="border-t border-[#d6ad4a]/20 px-4 py-10 text-center sm:px-6"
         aria-label="Footer"
       >
-        <img
+        <Image
           src="/logo.png"
           alt="Mambas Tattoo & Cuts logo"
+          width={56}
+          height={56}
           className="mx-auto mb-5 h-14 w-14 object-contain"
         />
         <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">

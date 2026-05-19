@@ -2,11 +2,10 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "./context/LanguageContext";
 
-const siteUrl = process.env.SITE_URL || "http://localhost:3000";
-
-export const metadataBase = new URL(siteUrl);
+const siteUrl = process.env.SITE_URL || "https://mambas-web.vercel.app";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Mambas Tattoo & Cuts | Tattoo Studio & Barbería in Playa del Carmen",
   description:
     "Premium tattoo studio, traditional Mexican barbershop and piercing space located in the heart of Playa del Carmen near the Cozumel ferry.",

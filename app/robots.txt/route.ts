@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const siteUrl = process.env.SITE_URL || "http://localhost:3000";
+const siteUrl = process.env.SITE_URL || "https://mambas-web.vercel.app";
 
 export async function GET() {
   const robots = `User-agent: *
