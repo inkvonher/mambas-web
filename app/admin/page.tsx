@@ -196,7 +196,7 @@ export default function AdminPage() {
     setErrorMessage("");
 
     if (!payload.client_name.trim() || !payload.client_phone.trim()) {
-      setErrorMessage("Nombre y telefono del cliente son obligatorios.");
+      setErrorMessage("Nombre y teléfono del cliente son obligatorios.");
       setSaving(false);
       return;
     }
@@ -240,7 +240,7 @@ export default function AdminPage() {
 
   async function handleDeleteAppointment(appointment: Appointment) {
     const confirmed = window.confirm(
-      `Eliminar la cita de ${appointment.client_name}?`,
+      `¿Eliminar la cita de ${appointment.client_name}?`,
     );
 
     if (!confirmed) {
@@ -341,7 +341,7 @@ export default function AdminPage() {
       setErrorMessage(
         error?.message
           ? `No se pudo eliminar el cliente: ${error.message}`
-          : "No se elimino ningun cliente. Revisa la policy DELETE de la tabla clients en Supabase.",
+          : "No se eliminó ningún cliente. Revisa la policy DELETE de la tabla clients en Supabase.",
       );
       setClients((current) =>
         [...current, client].sort((a, b) =>
@@ -443,7 +443,7 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-[#040404] text-white">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(214,173,74,0.14),transparent_34%),linear-gradient(135deg,rgba(214,173,74,0.05),transparent_42%)]" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(243,210,122,0.2),transparent_34%),radial-gradient(circle_at_88%_12%,rgba(255,255,255,0.08),transparent_24%),linear-gradient(135deg,rgba(214,173,74,0.07),transparent_42%)]" />
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
         <header className="sticky top-0 z-30 -mx-4 mb-6 border-b border-[#d6ad4a]/15 bg-[#040404]/86 px-4 py-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -483,7 +483,7 @@ export default function AdminPage() {
           <StatCard label="Clientes" value={clients.length.toString()} />
           <StatCard label="Citas" value={appointments.length.toString()} />
           <StatCard label="Tattoo" value={tattooAppointments.toString()} />
-          <StatCard label="Barberia" value={barberAppointments.toString()} />
+          <StatCard label="Barbería" value={barberAppointments.toString()} />
           <StatCard
             label="Anticipos"
             value={`${depositsTotal.toLocaleString("es-MX")} MXN`}
@@ -498,7 +498,7 @@ export default function AdminPage() {
                   Revenue
                 </p>
                 <h2 className="mt-2 text-2xl font-black uppercase text-white">
-                  Analitica financiera
+                  Analítica financiera
                 </h2>
                 <p className="mt-2 text-sm text-zinc-400">
                   Ingresos calculados desde anticipos registrados en citas.
@@ -552,10 +552,10 @@ export default function AdminPage() {
                   ]}
                 />
                 <ComparisonChart
-                  title="Depositos vs completadas"
+                  title="Depósitos vs completadas"
                   rows={[
                     {
-                      label: "Depositos",
+                      label: "Depósitos",
                       value: analytics.depositRevenue,
                     },
                     {
@@ -574,7 +574,7 @@ export default function AdminPage() {
                 Performance
               </p>
               <h2 className="mt-2 text-2xl font-black uppercase text-white">
-                Estadisticas
+                Estadísticas
               </h2>
             </div>
 
@@ -586,7 +586,7 @@ export default function AdminPage() {
                   Top clientes
                 </h3>
                 {analytics.topClients.length === 0 ? (
-                  <p className="text-sm text-zinc-500">Sin citas todavia.</p>
+                  <p className="text-sm text-zinc-500">Sin citas todavía.</p>
                 ) : (
                   <div className="space-y-3">
                     {analytics.topClients.map((client, index) => (
@@ -633,7 +633,7 @@ export default function AdminPage() {
                   }}
                   className="calendar-button"
                 >
-                  Prev
+                  Anterior
                 </button>
                 <button
                   onClick={() => {
@@ -652,7 +652,7 @@ export default function AdminPage() {
                   }}
                   className="calendar-button"
                 >
-                  Next
+                  Siguiente
                 </button>
               </div>
             </div>
@@ -715,7 +715,7 @@ export default function AdminPage() {
                       ))}
                       {dayAppointments.length > 2 ? (
                         <div className="text-[10px] text-zinc-500">
-                          +{dayAppointments.length - 2} mas
+                          +{dayAppointments.length - 2} más
                         </div>
                       ) : null}
                     </div>
@@ -787,16 +787,16 @@ export default function AdminPage() {
             <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
-                  {selectedCalendarDate ? "Dia seleccionado" : "Citas"}
+                  {selectedCalendarDate ? "Día seleccionado" : "Citas"}
                 </p>
                 <h2 className="mt-2 text-2xl font-black uppercase text-white">
                   {selectedCalendarDate
                     ? formatDate(selectedCalendarDate)
-                    : "Proximas citas"}
+                    : "Próximas citas"}
                 </h2>
                 {selectedCalendarDate ? (
                   <p className="mt-2 text-sm text-zinc-400">
-                    {selectedDayAppointments.length} citas en este dia
+                    {selectedDayAppointments.length} citas en este día
                   </p>
                 ) : null}
               </div>
@@ -830,12 +830,12 @@ export default function AdminPage() {
             ) : appointments.length === 0 ? (
               <EmptyState
                 title="No hay citas"
-                text="Crea la primera cita desde el boton Nueva cita."
+                text="Crea la primera cita desde el botón Nueva cita."
               />
             ) : filteredAppointments.length === 0 ? (
               <EmptyState
                 title="Sin resultados"
-                text="No encontramos citas que coincidan con esa busqueda."
+                text="No encontramos citas que coincidan con esa búsqueda."
               />
             ) : (
               <div className="space-y-3">
@@ -894,12 +894,12 @@ export default function AdminPage() {
           ) : clients.length === 0 ? (
             <EmptyState
               title="No hay clientes registrados"
-              text="Cuando alguien complete el formulario de lealtad, aparecera aqui."
+              text="Cuando alguien complete el formulario de lealtad, aparecerá aquí."
             />
           ) : filteredClients.length === 0 ? (
             <EmptyState
               title="Sin resultados"
-              text="No encontramos clientes que coincidan con esa busqueda."
+              text="No encontramos clientes que coincidan con esa búsqueda."
             />
           ) : (
             <>
@@ -908,8 +908,8 @@ export default function AdminPage() {
                   <thead>
                     <tr className="border-b border-[#d6ad4a]/10 bg-[#0d0d0d] text-left text-[11px] uppercase tracking-[0.22em] text-zinc-500">
                       <th className="px-5 py-4">Nombre</th>
-                      <th className="px-5 py-4">Telefono</th>
-                      <th className="px-5 py-4">Cumpleanos</th>
+                      <th className="px-5 py-4">Teléfono</th>
+                      <th className="px-5 py-4">Cumpleaños</th>
                       <th className="px-5 py-4">Servicio</th>
                       <th className="px-5 py-4">Estado</th>
                       <th className="px-5 py-4">Registro</th>
@@ -990,7 +990,7 @@ export default function AdminPage() {
                         value={formatDate(client.created_at)}
                       />
                       <InfoItem
-                        label="Cumpleanos"
+                        label="Cumpleaños"
                         value={formatDate(client.birthday)}
                       />
                     </dl>
@@ -1161,7 +1161,7 @@ function CreateAppointmentModal({
           </label>
 
           <label>
-            <FormLabel>Telefono</FormLabel>
+            <FormLabel>Teléfono</FormLabel>
             <input
               value={clientPhone}
               onChange={(event) => setClientPhone(event.target.value)}
@@ -1182,7 +1182,7 @@ function CreateAppointmentModal({
           </label>
 
           <label>
-            <FormLabel>Categoria</FormLabel>
+            <FormLabel>Categoría</FormLabel>
             <select
               value={category}
               onChange={(event) =>
@@ -1295,13 +1295,13 @@ function ConfirmDeleteClientModal({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 backdrop-blur-sm sm:items-center">
       <div className="w-full max-w-md rounded-xl border border-red-400/25 bg-[#070707] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.75)]">
         <p className="text-xs font-bold uppercase tracking-[0.24em] text-red-200">
-          Confirmar eliminacion
+          Confirmar eliminación
         </p>
         <h2 className="mt-3 text-2xl font-black uppercase text-white">
           Eliminar cliente
         </h2>
         <p className="mt-3 text-sm leading-6 text-zinc-400">
-          Se eliminara {client.name}. Esta accion no se puede deshacer.
+          Se eliminará {client.name}. Esta acción no se puede deshacer.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
           <button
@@ -1359,7 +1359,7 @@ function DailyScheduleView({
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
-            Dia operativo
+            Día operativo
           </p>
           <h2 className="mt-2 text-2xl font-black uppercase text-white">
             {formatDate(date)}
@@ -1597,7 +1597,7 @@ function AppointmentCard({
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
         <InfoItem label="Servicio" value={appointment.service || "-"} />
         <InfoItem
-          label="Categoria"
+          label="Categoría"
           value={appointment.category === "tattoo" ? "Tattoo" : "Barber"}
         />
         <InfoItem
@@ -1646,7 +1646,7 @@ function WhatsAppAutomationActions({
       message: buildWhatsAppMessage("deposit", appointment),
     },
     {
-      label: "Enviar ubicacion",
+      label: "Enviar ubicación",
       message: buildWhatsAppMessage("location", appointment),
     },
   ];
@@ -1654,7 +1654,7 @@ function WhatsAppAutomationActions({
   return (
     <div className="mt-4 border-t border-[#d6ad4a]/10 pt-4">
       <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
-        WhatsApp automatico
+        WhatsApp automático
       </p>
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {actions.map((action) => (
@@ -1723,7 +1723,7 @@ function CalendarMobileAppointment({
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
-    <article className="rounded-xl border border-[#d6ad4a]/15 bg-[#080808]/90 p-5 shadow-[0_24px_70px_rgba(0,0,0,0.38)] transition duration-200 hover:-translate-y-1 hover:border-[#d6ad4a]/45">
+    <article className="rounded-xl border border-[#d6ad4a]/25 bg-[linear-gradient(180deg,rgba(255,255,255,0.045),rgba(214,173,74,0.035)),#080808] p-5 shadow-[0_24px_70px_rgba(0,0,0,0.38),0_0_44px_rgba(214,173,74,0.08)] transition duration-200 hover:-translate-y-1 hover:border-[#f3d27a]/60 hover:shadow-[0_28px_76px_rgba(0,0,0,0.48),0_0_54px_rgba(214,173,74,0.14)]">
       <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-zinc-500">
         {label}
       </p>
@@ -1736,7 +1736,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
 
 function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[#d6ad4a]/12 bg-black/45 p-3">
+    <div className="rounded-xl border border-[#d6ad4a]/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(214,173,74,0.035)),rgba(0,0,0,0.45)] p-3 shadow-[0_14px_34px_rgba(0,0,0,0.28)]">
       <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
         {label}
       </p>
@@ -1761,7 +1761,7 @@ function RevenueBarChart({
           <div key={item.label} className="flex min-w-0 flex-1 flex-col gap-2">
             <div className="flex flex-1 items-end rounded-lg bg-white/[0.03] p-1">
               <div
-                className="w-full rounded-md bg-gradient-to-t from-[#8a6a1e] to-[#d6ad4a] shadow-[0_0_24px_rgba(214,173,74,0.16)] transition duration-300 hover:brightness-125"
+                className="w-full rounded-md bg-gradient-to-t from-[#8a6a1e] via-[#d6ad4a] to-[#f7dda0] shadow-[0_0_30px_rgba(214,173,74,0.22)] transition duration-300 hover:brightness-125"
                 style={{ height: `${height}%` }}
                 title={`${item.label}: ${item.revenue.toLocaleString(
                   "es-MX",
@@ -1793,7 +1793,7 @@ function ComparisonChart({
   const maxValue = Math.max(...rows.map((row) => row.value), 1);
 
   return (
-    <div className="rounded-xl border border-[#d6ad4a]/10 bg-black/35 p-4">
+    <div className="rounded-xl border border-[#d6ad4a]/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(214,173,74,0.025)),rgba(0,0,0,0.35)] p-4 shadow-[0_18px_45px_rgba(0,0,0,0.25)]">
       <h3 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-white">
         {title}
       </h3>
@@ -1808,7 +1808,7 @@ function ComparisonChart({
             </div>
             <div className="h-2 rounded-full bg-white/[0.06]">
               <div
-                className="h-full rounded-full bg-[#d6ad4a] transition-all duration-300"
+                className="h-full rounded-full bg-gradient-to-r from-[#8a6a1e] via-[#d6ad4a] to-[#f3d27a] shadow-[0_0_18px_rgba(214,173,74,0.2)] transition-all duration-300"
                 style={{ width: `${Math.max((row.value / maxValue) * 100, 3)}%` }}
               />
             </div>
@@ -1825,7 +1825,7 @@ function StatusDistribution({
   stats: Array<{ status: AppointmentStatus; count: number; percentage: number }>;
 }) {
   return (
-    <div className="rounded-xl border border-[#d6ad4a]/10 bg-black/35 p-4">
+    <div className="rounded-xl border border-[#d6ad4a]/18 bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(214,173,74,0.025)),rgba(0,0,0,0.35)] p-4 shadow-[0_18px_45px_rgba(0,0,0,0.25)]">
       <h3 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-white">
         Estado de citas
       </h3>
@@ -1840,7 +1840,7 @@ function StatusDistribution({
             </div>
             <div className="h-2 rounded-full bg-white/[0.06]">
               <div
-                className="h-full rounded-full bg-[#d6ad4a]"
+                className="h-full rounded-full bg-gradient-to-r from-[#8a6a1e] via-[#d6ad4a] to-[#f3d27a] shadow-[0_0_18px_rgba(214,173,74,0.2)]"
                 style={{ width: `${Math.max(item.percentage, item.count ? 4 : 0)}%` }}
               />
             </div>
@@ -1853,7 +1853,7 @@ function StatusDistribution({
 
 function Panel({ children }: { children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-[#d6ad4a]/15 bg-[#080808]/90 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.48)] sm:p-5">
+    <section className="rounded-xl border border-[#d6ad4a]/24 bg-[linear-gradient(180deg,rgba(255,255,255,0.045),rgba(214,173,74,0.025)),#080808] p-4 shadow-[0_28px_90px_rgba(0,0,0,0.48),0_0_58px_rgba(214,173,74,0.07)] sm:p-5">
       {children}
     </section>
   );
@@ -2301,18 +2301,18 @@ function buildWhatsAppMessage(
   }
 
   if (type === "reminder") {
-    return `${baseGreeting}\n\nTe recordamos tu cita:\nServicio: ${service}\nFecha: ${date}\nHora: ${time}\n\nPor favor llega unos minutos antes. Si tienes referencias o cambios, puedes enviarlos por aqui.`;
+    return `${baseGreeting}\n\nTe recordamos tu cita:\nServicio: ${service}\nFecha: ${date}\nHora: ${time}\n\nPor favor llega unos minutos antes. Si tienes referencias o cambios, puedes enviarlos por aquí.`;
   }
 
   if (type === "deposit") {
     return `${baseGreeting}\n\nPara apartar tu cita de ${service} el ${date} a las ${time}, se requiere anticipo.\nMonto registrado: ${deposit} MXN\nLink de pago: ${depositPaymentUrl}\n\nEl anticipo asegura tu espacio y se descuenta del total final cuando aplique.`;
   }
 
-  return `${baseGreeting}\n\nEsta es nuestra ubicacion para tu cita de ${service}:\nMambas Tattoo & Cuts\nCalle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen\n\nGoogle Maps: ${adminGoogleMapsUrl}\n\nTe esperamos.`;
+  return `${baseGreeting}\n\nEsta es nuestra ubicación para tu cita de ${service}:\nMambas Tattoo & Cuts\nCalle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen\n\nGoogle Maps: ${adminGoogleMapsUrl}\n\nTe esperamos.`;
 }
 
 function categoryLabel(category: AppointmentCategory) {
-  return category === "barber" ? "Barberia" : "Tattoo";
+  return category === "barber" ? "Barbería" : "Tattoo";
 }
 
 function toDateKey(date: Date) {

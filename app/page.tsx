@@ -10,14 +10,14 @@ type ServiceMode = "barber" | "tattoo";
 const copy = {
   es: {
     nav: ["Inicio", "Barbería", "Tattoo", "Lealtad", "Ubicación"],
-    heroKicker: "Barbería tradicional mexicana · Tattoo ritual · Piercing",
+    heroKicker: "Barbería tradicional mexicana · Tatuaje ritual · Piercing",
     heroText:
       "Desde 2021 en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel. Certificados ante COFEPRIS.",
     barberCta: "Reservar barbería",
     tattooCta: "Cotizar tattoo",
     aboutTitle: "Quiénes somos",
     about:
-      "Mambas Tattoo & Cuts une barbería tradicional mexicana, estudio de tatuajes ritual y piercing en un espacio sobrio, cuidado y profesional.",
+      "Mambas Tattoo & Cuts une barbería tradicional mexicana, tatuaje ritual y piercing en un espacio sobrio, cuidado y profesional.",
     barberTitle: "Barbería",
     barberSlogan: "LUCE FRESCO",
     tattooTitle: "Tattoo & Piercing",
@@ -30,13 +30,13 @@ const copy = {
       "Los servicios incluyen anestesia tópica en caso de requerirla y bebida de cortesía.",
     loyaltyTitle: "Registro / Lealtad",
     loyaltyText:
-      "Beneficios para clientes frecuentes: precios especiales, acceso a mercancía en preventa, descuentos de cumpleañero y prioridad para eventos.",
+      "Beneficios para clientes frecuentes: precios especiales, acceso a mercancía en preventa, descuentos de cumpleaños y prioridad para eventos.",
     fullName: "Nombre completo",
     phone: "WhatsApp",
     birthday: "Cumpleaños",
     interest: "Interés principal",
     register: "Registrarme",
-    saved: "Registro guardado en este dispositivo.",
+    saved: "Registro enviado correctamente.",
     quoteTitle: "Cotizador tattoo",
     centimeters: "Centímetros",
     detail: "Detalle",
@@ -46,22 +46,22 @@ const copy = {
       "Este cálculo orienta la conversación. La cotización final se confirma por WhatsApp con referencia visual.",
     locationTitle: "Ubicación",
     address:
-      "Calle 1 Sur esq. Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo",
+      "Calle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo",
     locationText:
       "Ubicado en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel.",
     reviewsTitle: "Reseñas",
     reviewsText:
-      "La ficha pública muestra calificaciones reales. Los textos de Google requieren integración oficial de Places API; por eso aquí enlazamos la fuente en vivo.",
+      "Consulta calificaciones reales, reseñas y ruta directa desde la ficha pública de Mambas.",
     viewReviews: "Ver reseñas en Google Maps",
     sourceRating: "Apple Maps: 5 calificaciones, 100% general",
     inclusive:
-      "Espacio inclusivo que no discrimina a nadie. LGBTQ+ friendly. Pet friendly.",
+      "Espacio inclusivo, LGBTQ+ friendly y pet friendly.",
     contact: "Contacto directo",
     map: "Abrir mapa",
     depositTitle: "Anticipo",
     depositKicker: "RESERVA TU CITA",
     depositText:
-      "Para reservar una cita de tatuaje se requiere anticipo. El anticipo asegura tu espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
+      "Para reservar una cita de tatuaje se requiere anticipo. Tu pago asegura espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
     depositButton: "Pagar anticipo",
     paymentMethods:
       "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
@@ -119,7 +119,7 @@ const copy = {
     depositTitle: "Deposit",
     depositKicker: "BOOK YOUR APPOINTMENT",
     depositText:
-      "A deposit is required to reserve a tattoo appointment. Your deposit secures your appointment slot, time, and design preparation. The deposit amount can be deducted from your final tattoo total.",
+      "A deposit is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
     depositButton: "Pay deposit",
     paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
   },
@@ -138,7 +138,7 @@ const barberServices = [
 
 const tattooPrices = [
   ["Precio mínimo", "Minimum price", "1600 MXN", "100 USD"],
-  ["Sesión 4/5 hrs aprox.", "4/5 hr session", "6500 MXN", "400 USD"],
+  ["Sesión 4-5 hrs aprox.", "4-5 hr session", "6500 MXN", "400 USD"],
   ["Piercing facial", "Facial piercing", "550 MXN", "35 USD"],
   ["Piercing genital", "Genital piercing", "1000 MXN", "65 USD"],
 ];
@@ -196,7 +196,11 @@ export default function Home() {
 
     if (error) {
       console.error(error);
-      alert("Error saving registration");
+      alert(
+        language === "es"
+          ? "No se pudo guardar el registro. Inténtalo de nuevo."
+          : "We could not save the registration. Please try again.",
+      );
       return;
     }
 
@@ -318,14 +322,14 @@ export default function Home() {
         <SectionHeader title={t.barberTitle} slogan={t.barberSlogan} />
         <PriceGrid rows={barberServices} language={language} />
         <div className="mx-auto mt-12 max-w-7xl">
-          <div className="overflow-hidden rounded-[2rem] border border-[#d6ad4a]/20 bg-[#070707] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+          <div className="gallery-shell">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
                   Galería
                 </p>
                 <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
-                  Fotos de barbería
+                  {language === "es" ? "Barbería Mambas" : "Mambas Barbershop"}
                 </h3>
               </div>
               <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
@@ -336,14 +340,18 @@ export default function Home() {
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
-                  className="snap-center min-w-[260px] shrink-0 rounded-[2rem] border border-[#d6ad4a]/20 bg-[#101010] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                  className="gallery-card snap-center min-w-[260px] shrink-0"
                 >
-                  <div className="h-56 rounded-[1.75rem] bg-gradient-to-br from-[#111111] via-[#121212] to-[#090909]" />
+                  <div className="gallery-frame">
+                    <span>{["CUT", "BEARD", "VIP"][item - 1]}</span>
+                  </div>
                 </div>
               ))}
             </div>
             <p className="mt-5 text-sm leading-6 text-zinc-400">
-              Galería lista para integrar fotos reales del estudio.
+              {language === "es"
+                ? "Cortes, ritual de barba y servicios premium con acabado limpio."
+                : "Haircuts, beard ritual and premium services with a clean finish."}
             </p>
           </div>
         </div>
@@ -411,14 +419,14 @@ export default function Home() {
           </div>
         </div>
         <div className="mx-auto mt-12 max-w-7xl">
-          <div className="overflow-hidden rounded-[2rem] border border-[#d6ad4a]/20 bg-[#070707] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
+          <div className="gallery-shell">
             <div className="mb-6 flex items-center justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
                   Galería
                 </p>
                 <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
-                  Fotos de tattoo
+                  {language === "es" ? "Tattoo & Piercing" : "Tattoo & Piercing"}
                 </h3>
               </div>
               <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
@@ -429,14 +437,18 @@ export default function Home() {
               {[1, 2, 3].map((item) => (
                 <div
                   key={item}
-                  className="snap-center min-w-[260px] shrink-0 rounded-[2rem] border border-[#d6ad4a]/20 bg-[#101010] p-4 shadow-[0_20px_60px_rgba(0,0,0,0.35)]"
+                  className="gallery-card snap-center min-w-[260px] shrink-0"
                 >
-                  <div className="h-56 rounded-[1.75rem] bg-gradient-to-br from-[#111111] via-[#121212] to-[#090909]" />
+                  <div className="gallery-frame">
+                    <span>{["INK", "PIERCE", "ART"][item - 1]}</span>
+                  </div>
                 </div>
               ))}
             </div>
             <p className="mt-5 text-sm leading-6 text-zinc-400">
-              Galería lista para integrar fotos reales del estudio.
+              {language === "es"
+                ? "Piezas personalizadas, piercing profesional y procesos cuidados."
+                : "Custom pieces, professional piercing and careful process."}
             </p>
           </div>
         </div>
@@ -446,7 +458,7 @@ export default function Home() {
       {/* TODO: connect this button to Stripe, Mercado Pago, or crypto payment link. */}
       <section
         id="anticipo"
-        className="border-t border-[#d6ad4a]/20 px-4 py-20 sm:px-6 bg-black"
+        className="border-t border-[#d6ad4a]/20 bg-black px-4 py-20 sm:px-6"
       >
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_1fr]">
           <div>
@@ -465,7 +477,7 @@ export default function Home() {
                 {t.depositButton}
               </a>
 
-              <div className="w-full max-w-full sm:max-w-lg rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#050505] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+              <div className="w-full max-w-full rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.1),rgba(255,255,255,0.035)),#070707] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-4">
@@ -478,7 +490,7 @@ export default function Home() {
                       />
                       <div>
                         <p className="text-xs text-zinc-400">
-                          Preferred network
+                          {language === "es" ? "Red recomendada" : "Preferred network"}
                         </p>
                         <p className="text-sm font-semibold text-[#0ea5ff]">
                           Base
@@ -486,7 +498,9 @@ export default function Home() {
                       </div>
                     </div>
                     <p className="mt-3 text-sm text-zinc-400">
-                      Low fees • Fast transactions • International payments
+                      {language === "es"
+                        ? "Comisiones bajas • Pagos rápidos • Pagos internacionales"
+                        : "Low fees • Fast transactions • International payments"}
                     </p>
                     <div className="mt-4 flex flex-wrap gap-3">
                       <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
@@ -500,7 +514,9 @@ export default function Home() {
 
                   <div className="flex-shrink-0 w-full sm:w-auto">
                     <div className="mb-3 text-right">
-                      <p className="text-sm text-zinc-400">Wallet</p>
+                      <p className="text-sm text-zinc-400">
+                        {language === "es" ? "Billetera" : "Wallet"}
+                      </p>
                       <div className="mt-2 flex items-center gap-3">
                         <code className="break-words overflow-x-auto max-w-full bg-[#0b0b0b] px-3 py-2 rounded font-mono text-sm text-zinc-200 border border-[#d6ad4a]/10">
                           {walletAddress}
@@ -513,12 +529,20 @@ export default function Home() {
                           }}
                           className="btn-gold px-3 py-2 text-sm w-full sm:w-auto"
                         >
-                          {copied ? "Copied" : "Copy"}
+                          {copied
+                            ? language === "es"
+                              ? "Copiado"
+                              : "Copied"
+                            : language === "es"
+                              ? "Copiar"
+                              : "Copy"}
                         </button>
                       </div>
                     </div>
                     <p className="mt-2 text-xs italic text-zinc-400">
-                      Red recomendada: Base.
+                      {language === "es"
+                        ? "Red recomendada: Base."
+                        : "Recommended network: Base."}
                     </p>
                   </div>
                 </div>
@@ -812,7 +836,11 @@ function LocationMapCard({ language }: { language: Language }) {
       target="_blank"
       rel="noreferrer"
       className="location-map-card"
-      aria-label="Open Mambas Tattoo & Cuts in Google Maps"
+      aria-label={
+        language === "es"
+          ? "Abrir Mambas Tattoo & Cuts en Google Maps"
+          : "Open Mambas Tattoo & Cuts in Google Maps"
+      }
     >
       <div className="location-map-grid" />
       <div className="location-route route-main" />

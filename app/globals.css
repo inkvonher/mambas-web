@@ -5,6 +5,7 @@
   --foreground: #ffffff;
   --gold: #d6ad4a;
   --gold-soft: #f3d27a;
+  --gold-glow: rgba(243, 210, 122, 0.34);
 }
 
 @theme inline {
@@ -44,15 +45,17 @@ a {
 
 .hero-texture {
   background:
-    linear-gradient(90deg, rgba(5, 5, 5, 0.92), rgba(5, 5, 5, 0.62)),
+    radial-gradient(circle at 82% 18%, rgba(255, 255, 255, 0.1), transparent 18%),
+    radial-gradient(circle at 70% 38%, rgba(243, 210, 122, 0.24), transparent 34%),
+    linear-gradient(90deg, rgba(5, 5, 5, 0.9), rgba(5, 5, 5, 0.55)),
     repeating-linear-gradient(
       135deg,
-      rgba(214, 173, 74, 0.12) 0 1px,
+      rgba(214, 173, 74, 0.16) 0 1px,
       transparent 1px 18px
     ),
     radial-gradient(
       circle at 72% 35%,
-      rgba(214, 173, 74, 0.18),
+      rgba(214, 173, 74, 0.2),
       transparent 34%
     ),
     #050505;
@@ -66,9 +69,11 @@ a {
   padding: clamp(1.25rem, 4vw, 3rem);
   border: 1px solid rgba(214, 173, 74, 0.36);
   background:
-    linear-gradient(145deg, rgba(214, 173, 74, 0.1), rgba(255, 255, 255, 0.02)),
+    linear-gradient(145deg, rgba(214, 173, 74, 0.14), rgba(255, 255, 255, 0.035)),
     #080808;
-  box-shadow: 0 32px 90px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 32px 90px rgba(0, 0, 0, 0.55),
+    0 0 74px rgba(214, 173, 74, 0.12);
 }
 
 .btn-gold,
@@ -94,11 +99,13 @@ a {
 .btn-gold {
   background: var(--gold);
   color: #080808;
+  box-shadow: 0 14px 34px rgba(214, 173, 74, 0.18);
 }
 
 .btn-outline {
   background: transparent;
   color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(214, 173, 74, 0.05) inset;
 }
 
 .btn-gold:hover,
@@ -107,6 +114,9 @@ a {
   background: #ffffff;
   border-color: #ffffff;
   color: #080808;
+  box-shadow:
+    0 18px 48px rgba(214, 173, 74, 0.2),
+    0 0 28px rgba(255, 255, 255, 0.1);
 }
 
 .section-kicker {
@@ -125,6 +135,9 @@ a {
   letter-spacing: 0;
   line-height: 0.95;
   text-transform: uppercase;
+  text-shadow:
+    0 0 28px rgba(214, 173, 74, 0.08),
+    0 12px 42px rgba(0, 0, 0, 0.42);
 }
 
 .discreet {
@@ -148,8 +161,10 @@ a {
 
 .price-item,
 .panel {
-  border: 1px solid rgba(214, 173, 74, 0.16);
-  background: rgba(255, 255, 255, 0.026);
+  border: 1px solid rgba(214, 173, 74, 0.22);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.018)),
+    rgba(255, 255, 255, 0.026);
 }
 
 .price-item {
@@ -163,8 +178,13 @@ a {
 
 .price-item:hover {
   transform: translateY(-2px);
-  border-color: rgba(214, 173, 74, 0.55);
-  background: rgba(214, 173, 74, 0.075);
+  border-color: rgba(243, 210, 122, 0.65);
+  background:
+    linear-gradient(180deg, rgba(214, 173, 74, 0.12), rgba(214, 173, 74, 0.045)),
+    rgba(214, 173, 74, 0.075);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.36),
+    0 0 30px rgba(214, 173, 74, 0.12);
 }
 
 .price-item h3 {
@@ -187,6 +207,82 @@ a {
   margin-top: 0.2rem;
   color: #a1a1aa;
   font-size: 0.9rem;
+}
+
+.gallery-shell {
+  overflow: hidden;
+  border: 1px solid rgba(214, 173, 74, 0.28);
+  border-radius: 1.35rem;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.08), transparent 26%),
+    radial-gradient(circle at 82% 18%, rgba(243, 210, 122, 0.18), transparent 30%),
+    linear-gradient(145deg, rgba(214, 173, 74, 0.075), rgba(255, 255, 255, 0.025)),
+    #070707;
+  padding: 1.5rem;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    0 0 58px rgba(214, 173, 74, 0.1);
+}
+
+.gallery-card {
+  border: 1px solid rgba(214, 173, 74, 0.24);
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(214, 173, 74, 0.035)),
+    #101010;
+  padding: 0.85rem;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    0 0 34px rgba(214, 173, 74, 0.06);
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.gallery-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(243, 210, 122, 0.62);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.42),
+    0 0 46px rgba(214, 173, 74, 0.14);
+}
+
+.gallery-frame {
+  position: relative;
+  display: grid;
+  min-height: 14rem;
+  place-items: end start;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background:
+    radial-gradient(circle at 68% 24%, rgba(243, 210, 122, 0.2), transparent 28%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), transparent 32%),
+    repeating-linear-gradient(
+      135deg,
+      rgba(214, 173, 74, 0.08) 0 1px,
+      transparent 1px 18px
+    ),
+    linear-gradient(145deg, #151515, #070707);
+}
+
+.gallery-frame::after {
+  position: absolute;
+  inset: 12%;
+  border: 1px solid rgba(214, 173, 74, 0.12);
+  border-radius: 999px;
+  content: "";
+  transform: rotate(-12deg);
+}
+
+.gallery-frame span {
+  position: relative;
+  z-index: 1;
+  padding: 1rem;
+  color: rgba(243, 210, 122, 0.88);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.22em;
 }
 
 .panel {
@@ -260,13 +356,16 @@ a {
   min-height: 420px;
   overflow: hidden;
   display: block;
-  border: 1px solid rgba(214, 173, 74, 0.22);
+  border: 1px solid rgba(214, 173, 74, 0.32);
   border-radius: 1.25rem;
   background:
-    radial-gradient(circle at 68% 28%, rgba(214, 173, 74, 0.16), transparent 34%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.045), transparent 38%),
+    radial-gradient(circle at 68% 28%, rgba(243, 210, 122, 0.24), transparent 34%),
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.08), transparent 22%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), transparent 38%),
     #060606;
-  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.5),
+    0 0 60px rgba(214, 173, 74, 0.12);
   transition:
     transform 220ms ease,
     border-color 220ms ease,
@@ -278,7 +377,8 @@ a {
   border-color: rgba(214, 173, 74, 0.58);
   box-shadow:
     0 34px 96px rgba(0, 0, 0, 0.56),
-    0 0 0 1px rgba(214, 173, 74, 0.08) inset;
+    0 0 0 1px rgba(214, 173, 74, 0.12) inset,
+    0 0 70px rgba(214, 173, 74, 0.18);
 }
 
 .location-map-grid {
@@ -289,15 +389,15 @@ a {
     linear-gradient(90deg, rgba(214, 173, 74, 0.08) 1px, transparent 1px);
   background-size: 54px 54px;
   transform: rotate(-8deg) scale(1.1);
-  opacity: 0.7;
+  opacity: 0.84;
 }
 
 .location-route {
   position: absolute;
   height: 2px;
   border-radius: 999px;
-  background: rgba(214, 173, 74, 0.44);
-  box-shadow: 0 0 24px rgba(214, 173, 74, 0.12);
+  background: rgba(243, 210, 122, 0.58);
+  box-shadow: 0 0 28px rgba(214, 173, 74, 0.2);
 }
 
 .route-main {
@@ -356,8 +456,8 @@ a {
   background: #d6ad4a;
   transform: rotate(-45deg);
   box-shadow:
-    0 0 0 8px rgba(214, 173, 74, 0.12),
-    0 0 34px rgba(214, 173, 74, 0.72);
+    0 0 0 8px rgba(214, 173, 74, 0.16),
+    0 0 42px rgba(243, 210, 122, 0.82);
   animation: map-pin-pulse 2.4s ease-in-out infinite;
 }
 
@@ -379,7 +479,7 @@ a {
   gap: 1rem;
   border-top: 1px solid rgba(214, 173, 74, 0.18);
   padding-top: 1rem;
-  background: linear-gradient(180deg, transparent, rgba(6, 6, 6, 0.86));
+  background: linear-gradient(180deg, transparent, rgba(6, 6, 6, 0.9));
 }
 
 .location-map-action {
