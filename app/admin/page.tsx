@@ -45,6 +45,41 @@ type AppointmentFormPayload = {
   deposit_amount: number;
 };
 
+type AppointmentMutationPayload = {
+  client_id?: string | null;
+  client_name: string;
+  client_phone: string;
+  service?: string;
+  category: AppointmentCategory;
+  appointment_date: string;
+  appointment_time: string;
+  status: AppointmentStatus;
+  notes: string | null;
+  deposit_amount: number;
+};
+
+type SupabaseMutationError = {
+  code?: string;
+  message?: string;
+  details?: string;
+  hint?: string;
+};
+
+const expectedAppointmentColumns = [
+  "id",
+  "client_id",
+  "client_name",
+  "client_phone",
+  "service",
+  "category",
+  "appointment_date",
+  "appointment_time",
+  "status",
+  "notes",
+  "deposit_amount",
+  "created_at",
+];
+
 const appointmentStatuses: AppointmentStatus[] = [
   "pending",
   "confirmed",
@@ -154,21 +189,21 @@ export default function AdminPage() {
       return;
     }
 
-    const request = editingAppointment
-      ? supabase
-          .from("appointments")
-          .update(payload)
-          .eq("id", editingAppointment.id)
-          .select("*")
-          .single()
-      : supabase.from("appointments").insert([payload]).select("*").single();
+    console.info("Mambas appointment schema comparison", {
+      expectedColumns: expectedAppointmentColumns,
+      frontendPayloadKeys: Object.keys(payload),
+      payload,
+    });
 
-    const { data, error } = await request;
+    const { data, error } = await saveAppointmentWithCompatibility(
+      payload,
+      editingAppointment,
+    );
 
     if (error) {
-      console.error(error);
+      logSupabaseAppointmentError(error, payload);
       setErrorMessage(
-        "No se pudo guardar la cita en Supabase. Revisa columnas y permisos de appointments.",
+        `No se pudo guardar la cita en Supabase: ${error.message || "error desconocido"}`,
       );
       setSaving(false);
       return;
@@ -1448,6 +1483,178 @@ function buildCalendarDays(date: Date) {
       today: toDateKey(day) === todayKey,
     };
   });
+}
+
+async function saveAppointmentWithCompatibility(
+  formPayload: AppointmentFormPayload,
+  editingAppointment: Appointment | null,
+) {
+  let payload = normalizeAppointmentPayload(formPayload);
+  let result = await mutateAppointment(payload, editingAppointment);
+
+  if (!result.error) {
+    return result;
+  }
+
+  logSupabaseAppointmentError(result.error, payload, "initial appointment save");
+
+  if (isMissingColumnError(result.error, "service")) {
+    const payloadWithoutService = { ...payload };
+    delete payloadWithoutService.service;
+    payload = payloadWithoutService;
+    console.warn(
+      "Retrying appointment save without service because Supabase schema does not expose appointments.service.",
+    );
+    result = await mutateAppointment(payload, editingAppointment);
+  }
+
+  if (!result.error) {
+    return result;
+  }
+
+  if (isClientIdNullConstraintError(result.error) && !payload.client_id) {
+    console.warn(
+      "Retrying appointment save after creating a client because appointments.client_id is still NOT NULL in Supabase.",
+    );
+    const clientId = await createClientForAppointment(formPayload);
+
+    if (clientId) {
+      payload = {
+        ...payload,
+        client_id: clientId,
+      };
+      result = await mutateAppointment(payload, editingAppointment);
+    }
+  }
+
+  return result;
+}
+
+function normalizeAppointmentPayload(
+  payload: AppointmentFormPayload,
+): AppointmentMutationPayload {
+  const normalized: AppointmentMutationPayload = {
+    client_name: payload.client_name.trim(),
+    client_phone: payload.client_phone.trim(),
+    category: appointmentCategoryOrDefault(payload.category),
+    appointment_date: payload.appointment_date,
+    appointment_time: normalizeTime(payload.appointment_time),
+    status: appointmentStatusOrDefault(payload.status),
+    notes: payload.notes?.trim() || null,
+    deposit_amount: Number.isFinite(Number(payload.deposit_amount))
+      ? Number(payload.deposit_amount)
+      : 0,
+  };
+
+  if (payload.client_id) {
+    normalized.client_id = payload.client_id;
+  }
+
+  if (payload.service.trim()) {
+    normalized.service = payload.service.trim();
+  }
+
+  return normalized;
+}
+
+async function mutateAppointment(
+  payload: AppointmentMutationPayload,
+  editingAppointment: Appointment | null,
+) {
+  if (editingAppointment) {
+    return supabase
+      .from("appointments")
+      .update(payload)
+      .eq("id", editingAppointment.id)
+      .select("*")
+      .single();
+  }
+
+  return supabase.from("appointments").insert([payload]).select("*").single();
+}
+
+async function createClientForAppointment(payload: AppointmentFormPayload) {
+  const clientPayload = {
+    name: payload.client_name.trim(),
+    phone: payload.client_phone.trim(),
+    birthday: null,
+    service: payload.service.trim() || payload.category,
+    status: "Nuevo",
+  };
+
+  const { data, error } = await supabase
+    .from("clients")
+    .insert([clientPayload])
+    .select("id")
+    .single();
+
+  if (error) {
+    console.error("Supabase client fallback insert failed", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      payload: clientPayload,
+    });
+    return null;
+  }
+
+  return data?.id as string | null;
+}
+
+function logSupabaseAppointmentError(
+  error: SupabaseMutationError,
+  payload: unknown,
+  context = "appointment save",
+) {
+  console.error(`Supabase ${context} failed`, {
+    code: error.code,
+    message: error.message,
+    details: error.details,
+    hint: error.hint,
+    expectedAppointmentColumns,
+    frontendPayload: payload,
+  });
+}
+
+function isMissingColumnError(
+  error: SupabaseMutationError,
+  column: string,
+) {
+  const text = `${error.code || ""} ${error.message || ""} ${
+    error.details || ""
+  } ${error.hint || ""}`.toLowerCase();
+
+  return (
+    text.includes("pgrst204") ||
+    (text.includes(column.toLowerCase()) &&
+      (text.includes("column") || text.includes("schema cache")))
+  );
+}
+
+function isClientIdNullConstraintError(error: SupabaseMutationError) {
+  const text = `${error.code || ""} ${error.message || ""} ${
+    error.details || ""
+  }`.toLowerCase();
+
+  return (
+    (text.includes("23502") || text.includes("null value")) &&
+    text.includes("client_id")
+  );
+}
+
+function appointmentStatusOrDefault(status: string): AppointmentStatus {
+  return appointmentStatuses.includes(status as AppointmentStatus)
+    ? (status as AppointmentStatus)
+    : "pending";
+}
+
+function appointmentCategoryOrDefault(category: string): AppointmentCategory {
+  return category === "barber" ? "barber" : "tattoo";
+}
+
+function normalizeTime(value: string) {
+  return value.length === 5 ? `${value}:00` : value;
 }
 
 function buildRevenueAnalytics(appointments: Appointment[]) {
