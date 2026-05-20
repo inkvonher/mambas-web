@@ -19,7 +19,6 @@ type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
 
 type Appointment = {
   id: string;
-  client_id: string | null;
   client_name: string;
   client_phone: string;
   service: string | null;
@@ -33,7 +32,6 @@ type Appointment = {
 };
 
 type AppointmentFormPayload = {
-  client_id: string | null;
   client_name: string;
   client_phone: string;
   service: string;
@@ -46,7 +44,6 @@ type AppointmentFormPayload = {
 };
 
 type AppointmentMutationPayload = {
-  client_id?: string | null;
   client_name: string;
   client_phone: string;
   service?: string;
@@ -67,7 +64,6 @@ type SupabaseMutationError = {
 
 const expectedAppointmentColumns = [
   "id",
-  "client_id",
   "client_name",
   "client_phone",
   "service",
@@ -896,7 +892,7 @@ function CreateAppointmentModal({
   onSubmit: (payload: AppointmentFormPayload) => void;
 }) {
   const today = toDateKey(new Date());
-  const [clientId, setClientId] = useState(appointment?.client_id || "");
+  const [clientId, setClientId] = useState("");
   const [clientName, setClientName] = useState(appointment?.client_name || "");
   const [clientPhone, setClientPhone] = useState(
     appointment?.client_phone || "",
@@ -940,7 +936,6 @@ function CreateAppointmentModal({
     event.preventDefault();
 
     onSubmit({
-      client_id: clientId || null,
       client_name: clientName.trim(),
       client_phone: clientPhone.trim(),
       service: service.trim(),
@@ -1512,21 +1507,6 @@ async function saveAppointmentWithCompatibility(
     return result;
   }
 
-  if (isClientIdNullConstraintError(result.error) && !payload.client_id) {
-    console.warn(
-      "Retrying appointment save after creating a client because appointments.client_id is still NOT NULL in Supabase.",
-    );
-    const clientId = await createClientForAppointment(formPayload);
-
-    if (clientId) {
-      payload = {
-        ...payload,
-        client_id: clientId,
-      };
-      result = await mutateAppointment(payload, editingAppointment);
-    }
-  }
-
   return result;
 }
 
@@ -1545,10 +1525,6 @@ function normalizeAppointmentPayload(
       ? Number(payload.deposit_amount)
       : 0,
   };
-
-  if (payload.client_id) {
-    normalized.client_id = payload.client_id;
-  }
 
   if (payload.service.trim()) {
     normalized.service = payload.service.trim();
@@ -1571,35 +1547,6 @@ async function mutateAppointment(
   }
 
   return supabase.from("appointments").insert([payload]).select("*").single();
-}
-
-async function createClientForAppointment(payload: AppointmentFormPayload) {
-  const clientPayload = {
-    name: payload.client_name.trim(),
-    phone: payload.client_phone.trim(),
-    birthday: null,
-    service: payload.service.trim() || payload.category,
-    status: "Nuevo",
-  };
-
-  const { data, error } = await supabase
-    .from("clients")
-    .insert([clientPayload])
-    .select("id")
-    .single();
-
-  if (error) {
-    console.error("Supabase client fallback insert failed", {
-      code: error.code,
-      message: error.message,
-      details: error.details,
-      hint: error.hint,
-      payload: clientPayload,
-    });
-    return null;
-  }
-
-  return data?.id as string | null;
 }
 
 function logSupabaseAppointmentError(
@@ -1629,17 +1576,6 @@ function isMissingColumnError(
     text.includes("pgrst204") ||
     (text.includes(column.toLowerCase()) &&
       (text.includes("column") || text.includes("schema cache")))
-  );
-}
-
-function isClientIdNullConstraintError(error: SupabaseMutationError) {
-  const text = `${error.code || ""} ${error.message || ""} ${
-    error.details || ""
-  }`.toLowerCase();
-
-  return (
-    (text.includes("23502") || text.includes("null value")) &&
-    text.includes("client_id")
   );
 }
 
@@ -1720,7 +1656,7 @@ function buildRevenueAnalytics(appointments: Appointment[]) {
     appointments.reduce<
       Record<string, { key: string; name: string; count: number; revenue: number }>
     >((clients, appointment) => {
-      const key = appointment.client_id || appointment.client_phone;
+      const key = appointment.client_phone || appointment.client_name;
       clients[key] ||= {
         key,
         name: appointment.client_name,

@@ -1,6 +1,5 @@
 create table if not exists public.appointments (
   id uuid primary key default gen_random_uuid(),
-  client_id uuid references public.clients(id) on delete set null,
   client_name text not null,
   client_phone text not null,
   service text,
@@ -14,9 +13,6 @@ create table if not exists public.appointments (
   deposit_amount numeric(10, 2) not null default 0,
   created_at timestamptz not null default now()
 );
-
-alter table public.appointments
-  alter column client_id drop not null;
 
 alter table public.appointments
   add column if not exists service text;
