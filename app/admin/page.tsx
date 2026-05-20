@@ -56,6 +56,9 @@ export default function AdminPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [calendarDate, setCalendarDate] = useState(() => new Date());
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<
+    string | null
+  >(null);
 
   useEffect(() => {
     async function loadAdminData() {
@@ -171,12 +174,17 @@ export default function AdminPage() {
 
   const filteredAppointments = useMemo(() => {
     const query = appointmentSearch.trim().toLowerCase();
+    const dateFiltered = selectedCalendarDate
+      ? appointments.filter(
+          (appointment) => appointment.appointment_date === selectedCalendarDate,
+        )
+      : appointments;
 
     if (!query) {
-      return appointments;
+      return dateFiltered;
     }
 
-    return appointments.filter((appointment) =>
+    return dateFiltered.filter((appointment) =>
       [
         appointment.client_name,
         appointment.client_phone,
@@ -187,7 +195,7 @@ export default function AdminPage() {
         .filter(Boolean)
         .some((value) => value.toLowerCase().includes(query)),
     );
-  }, [appointments, appointmentSearch]);
+  }, [appointments, appointmentSearch, selectedCalendarDate]);
 
   const calendarDays = useMemo(
     () => buildCalendarDays(calendarDate),
@@ -204,6 +212,10 @@ export default function AdminPage() {
       {},
     );
   }, [appointments]);
+
+  const selectedDayAppointments = selectedCalendarDate
+    ? appointmentsByDate[selectedCalendarDate] || []
+    : [];
 
   const tattooAppointments = appointments.filter(
     (appointment) => appointment.category === "tattoo",
@@ -409,19 +421,29 @@ export default function AdminPage() {
               </div>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setCalendarDate(addMonths(calendarDate, -1))}
+                  onClick={() => {
+                    setCalendarDate(addMonths(calendarDate, -1));
+                    setSelectedCalendarDate(null);
+                  }}
                   className="calendar-button"
                 >
                   Prev
                 </button>
                 <button
-                  onClick={() => setCalendarDate(new Date())}
+                  onClick={() => {
+                    const today = new Date();
+                    setCalendarDate(today);
+                    setSelectedCalendarDate(toDateKey(today));
+                  }}
                   className="calendar-button"
                 >
                   Hoy
                 </button>
                 <button
-                  onClick={() => setCalendarDate(addMonths(calendarDate, 1))}
+                  onClick={() => {
+                    setCalendarDate(addMonths(calendarDate, 1));
+                    setSelectedCalendarDate(null);
+                  }}
                   className="calendar-button"
                 >
                   Next
@@ -444,17 +466,21 @@ export default function AdminPage() {
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-1">
+            <div className="hidden grid-cols-7 gap-1 md:grid">
               {calendarDays.map((day) => {
                 const dayAppointments = appointmentsByDate[day.key] || [];
+                const selected = selectedCalendarDate === day.key;
 
                 return (
-                  <div
+                  <button
                     key={day.key}
-                    className={`min-h-24 rounded-lg border p-2 transition duration-200 hover:border-[#d6ad4a]/50 ${
-                      day.currentMonth
-                        ? "border-[#d6ad4a]/10 bg-black/40"
-                        : "border-white/5 bg-white/[0.02] text-zinc-600"
+                    onClick={() => setSelectedCalendarDate(day.key)}
+                    className={`min-h-32 rounded-lg border p-2 text-left transition duration-200 hover:-translate-y-0.5 hover:border-[#d6ad4a]/50 ${
+                      selected
+                        ? "border-[#d6ad4a] bg-[#d6ad4a]/10 shadow-[0_18px_44px_rgba(214,173,74,0.12)]"
+                        : day.currentMonth
+                          ? "border-[#d6ad4a]/10 bg-black/40"
+                          : "border-white/5 bg-white/[0.02] text-zinc-600"
                     }`}
                   >
                     <div className="mb-2 flex items-center justify-between">
@@ -473,13 +499,10 @@ export default function AdminPage() {
                     </div>
                     <div className="space-y-1">
                       {dayAppointments.slice(0, 2).map((appointment) => (
-                        <div
+                        <CalendarAppointmentPill
                           key={appointment.id}
-                          className="truncate rounded bg-[#d6ad4a]/10 px-2 py-1 text-[10px] text-[#d6ad4a]"
-                        >
-                          {formatTime(appointment.appointment_time)}{" "}
-                          {appointment.client_name}
-                        </div>
+                          appointment={appointment}
+                        />
                       ))}
                       {dayAppointments.length > 2 ? (
                         <div className="text-[10px] text-zinc-500">
@@ -487,9 +510,64 @@ export default function AdminPage() {
                         </div>
                       ) : null}
                     </div>
-                  </div>
+                  </button>
                 );
               })}
+            </div>
+
+            <div className="space-y-3 md:hidden">
+              {calendarDays
+                .filter((day) => day.currentMonth)
+                .map((day) => {
+                  const dayAppointments = appointmentsByDate[day.key] || [];
+                  const selected = selectedCalendarDate === day.key;
+
+                  return (
+                    <button
+                      key={day.key}
+                      onClick={() => setSelectedCalendarDate(day.key)}
+                      className={`w-full rounded-xl border p-4 text-left transition duration-200 ${
+                        selected
+                          ? "border-[#d6ad4a] bg-[#d6ad4a]/10"
+                          : "border-[#d6ad4a]/12 bg-black/45"
+                      }`}
+                    >
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <div>
+                          <p
+                            className={`text-sm font-black uppercase ${
+                              day.today ? "text-[#d6ad4a]" : "text-white"
+                            }`}
+                          >
+                            {formatDate(day.key)}
+                          </p>
+                          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">
+                            {dayAppointments.length} citas
+                          </p>
+                        </div>
+                        {day.today ? (
+                          <span className="rounded-full bg-[#d6ad4a] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-black">
+                            Hoy
+                          </span>
+                        ) : null}
+                      </div>
+                      {dayAppointments.length ? (
+                        <div className="space-y-2">
+                          {dayAppointments.map((appointment) => (
+                            <CalendarMobileAppointment
+                              key={appointment.id}
+                              appointment={appointment}
+                            />
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-zinc-500">
+                          Sin citas programadas.
+                        </p>
+                      )}
+                    </button>
+                  );
+                })}
             </div>
           </Panel>
 
@@ -497,18 +575,35 @@ export default function AdminPage() {
             <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
-                  Citas
+                  {selectedCalendarDate ? "Dia seleccionado" : "Citas"}
                 </p>
                 <h2 className="mt-2 text-2xl font-black uppercase text-white">
-                  Proximas citas
+                  {selectedCalendarDate
+                    ? formatDate(selectedCalendarDate)
+                    : "Proximas citas"}
                 </h2>
+                {selectedCalendarDate ? (
+                  <p className="mt-2 text-sm text-zinc-400">
+                    {selectedDayAppointments.length} citas en este dia
+                  </p>
+                ) : null}
               </div>
-              <button
-                onClick={() => setModalOpen(true)}
-                className="min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white sm:hidden"
-              >
-                Nueva cita
-              </button>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                {selectedCalendarDate ? (
+                  <button
+                    onClick={() => setSelectedCalendarDate(null)}
+                    className="min-h-11 rounded-lg border border-[#d6ad4a]/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
+                  >
+                    Ver todas
+                  </button>
+                ) : null}
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white sm:hidden"
+                >
+                  Nueva cita
+                </button>
+              </div>
             </div>
 
             <input
@@ -848,6 +943,50 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
         <InfoItem label="Notas" value={appointment.notes || "-"} />
       </dl>
     </article>
+  );
+}
+
+function CalendarAppointmentPill({
+  appointment,
+}: {
+  appointment: Appointment;
+}) {
+  return (
+    <div className="rounded-md border border-[#d6ad4a]/10 bg-[#d6ad4a]/10 px-2 py-1 text-[10px] text-[#d6ad4a]">
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-black">{formatTime(appointment.appointment_time)}</span>
+        <span className="uppercase text-zinc-400">
+          {appointment.category === "tattoo" ? "Tattoo" : "Barber"}
+        </span>
+      </div>
+      <p className="mt-0.5 truncate font-bold text-zinc-100">
+        {appointment.client_name}
+      </p>
+      <p className="mt-0.5 truncate uppercase tracking-[0.12em] text-zinc-500">
+        {statusLabels[appointment.status]}
+      </p>
+    </div>
+  );
+}
+
+function CalendarMobileAppointment({
+  appointment,
+}: {
+  appointment: Appointment;
+}) {
+  return (
+    <div className="rounded-lg border border-[#d6ad4a]/10 bg-black/45 p-3">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <p className="text-sm font-black text-[#d6ad4a]">
+          {formatTime(appointment.appointment_time)}
+        </p>
+        <AppointmentStatusBadge status={appointment.status} />
+      </div>
+      <p className="font-bold text-white">{appointment.client_name}</p>
+      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">
+        {appointment.category === "tattoo" ? "Tattoo" : "Barber"}
+      </p>
+    </div>
   );
 }
 
