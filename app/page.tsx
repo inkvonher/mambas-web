@@ -458,10 +458,10 @@ export default function Home() {
       {/* TODO: connect this button to Stripe, Mercado Pago, or crypto payment link. */}
       <section
         id="anticipo"
-        className="border-t border-[#d6ad4a]/20 bg-black px-4 py-20 sm:px-6"
+        className="overflow-hidden border-t border-[#d6ad4a]/20 bg-black px-4 py-20 sm:px-6"
       >
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1fr_1fr]">
-          <div>
+        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="min-w-0">
             <p className="section-kicker">{t.depositKicker}</p>
             <h2 className="section-title">{t.depositTitle}</h2>
             <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
@@ -477,9 +477,9 @@ export default function Home() {
                 {t.depositButton}
               </a>
 
-              <div className="w-full max-w-full rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.1),rgba(255,255,255,0.035)),#070707] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex-1">
+              <div className="w-full max-w-full overflow-hidden rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.1),rgba(255,255,255,0.035)),#070707] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg sm:p-5">
+                <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-4">
                       <Image
                         src="/base-badge.svg"
@@ -512,13 +512,13 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0 w-full sm:w-auto">
-                    <div className="mb-3 text-right">
+                  <div className="w-full min-w-0 flex-shrink-0 sm:w-auto">
+                    <div className="mb-3 text-left sm:text-right">
                       <p className="text-sm text-zinc-400">
                         {language === "es" ? "Billetera" : "Wallet"}
                       </p>
-                      <div className="mt-2 flex items-center gap-3">
-                        <code className="break-words overflow-x-auto max-w-full bg-[#0b0b0b] px-3 py-2 rounded font-mono text-sm text-zinc-200 border border-[#d6ad4a]/10">
+                      <div className="mt-2 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+                        <code className="block w-full min-w-0 overflow-hidden break-all rounded border border-[#d6ad4a]/10 bg-[#0b0b0b] px-3 py-2 font-mono text-xs leading-5 text-zinc-200 sm:max-w-[220px] sm:text-sm">
                           {walletAddress}
                         </code>
                         <button
@@ -527,7 +527,7 @@ export default function Home() {
                             setCopied(true);
                             setTimeout(() => setCopied(false), 2000);
                           }}
-                          className="btn-gold px-3 py-2 text-sm w-full sm:w-auto"
+                          className="btn-gold w-full justify-center px-3 py-2 text-sm sm:w-auto"
                         >
                           {copied
                             ? language === "es"
