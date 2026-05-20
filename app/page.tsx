@@ -655,12 +655,7 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <iframe
-            title="Mambas Tattoo & Cuts map"
-            className="h-[360px] w-full border border-[#d6ad4a]/30 grayscale"
-            loading="lazy"
-            src="https://www.google.com/maps?q=Calle%201%20Sur%20%26%2025%20Av.%20Sur%2C%20Centro%2C%20Playa%20del%20Carmen%2C%20Q.R.&output=embed"
-          />
+          <WorldLocationGlobe language={language} />
         </div>
       </section>
 
@@ -806,6 +801,38 @@ function ContactStrip({
         Instagram {contact.instagram}
       </a>
       <span className="sr-only">{language}</span>
+    </div>
+  );
+}
+
+function WorldLocationGlobe({ language }: { language: Language }) {
+  return (
+    <div className="world-stage" aria-label="Mambas location globe">
+      <div className="world-orbit">
+        <div className="world-globe" role="img" aria-label="Interactive world map focused on Playa del Carmen">
+          <div className="world-grid" />
+          <div className="continent continent-americas" />
+          <div className="continent continent-europe" />
+          <div className="continent continent-africa" />
+          <div className="continent continent-asia" />
+          <div className="continent continent-australia" />
+          <div className="location-pulse" />
+          <div className="location-pin">
+            <span />
+          </div>
+        </div>
+      </div>
+
+      <div className="world-caption">
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-[#d6ad4a]">
+          Mambas Tattoo & Cuts
+        </p>
+        <p className="mt-2 text-sm text-zinc-300">
+          {language === "es"
+            ? "Playa del Carmen, Quintana Roo"
+            : "Playa del Carmen, Quintana Roo"}
+        </p>
+      </div>
     </div>
   );
 }

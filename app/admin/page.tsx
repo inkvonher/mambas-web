@@ -102,6 +102,10 @@ export default function AdminPage() {
   const [editingAppointment, setEditingAppointment] =
     useState<Appointment | null>(null);
   const [modalInitialDate, setModalInitialDate] = useState<string | null>(null);
+  const [clientPendingDelete, setClientPendingDelete] = useState<Client | null>(
+    null,
+  );
+  const [deletingClientId, setDeletingClientId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<
@@ -253,16 +257,17 @@ export default function AdminPage() {
     );
   }
 
-  async function handleDeleteClient(client: Client) {
-    const confirmed = window.confirm(
-      `Eliminar el cliente ${client.name}? Esta accion no se puede deshacer.`,
-    );
+  async function handleConfirmDeleteClient() {
+    const client = clientPendingDelete;
 
-    if (!confirmed) {
+    if (!client) {
       return;
     }
 
     setErrorMessage("");
+    setClientPendingDelete(null);
+    setDeletingClientId(client.id);
+    setClients((current) => current.filter((item) => item.id !== client.id));
 
     const { error } = await supabase.from("clients").delete().eq("id", client.id);
 
@@ -277,10 +282,16 @@ export default function AdminPage() {
       setErrorMessage(
         `No se pudo eliminar el cliente: ${error.message || "error desconocido"}`,
       );
+      setClients((current) =>
+        [...current, client].sort((a, b) =>
+          b.created_at.localeCompare(a.created_at),
+        ),
+      );
+      setDeletingClientId(null);
       return;
     }
 
-    setClients((current) => current.filter((item) => item.id !== client.id));
+    setDeletingClientId(null);
   }
 
   const filteredClients = useMemo(() => {
@@ -854,10 +865,13 @@ export default function AdminPage() {
                         </td>
                         <td className="px-5 py-4 text-right">
                           <button
-                            onClick={() => handleDeleteClient(client)}
+                            onClick={() => setClientPendingDelete(client)}
+                            disabled={deletingClientId === client.id}
                             className="rounded-lg border border-red-400/30 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-red-200 transition hover:bg-red-400 hover:text-black"
                           >
-                            Eliminar
+                            {deletingClientId === client.id
+                              ? "Eliminando"
+                              : "Eliminar"}
                           </button>
                         </td>
                       </tr>
@@ -899,10 +913,13 @@ export default function AdminPage() {
                     </dl>
                     <div className="mt-4 border-t border-[#d6ad4a]/10 pt-4">
                       <button
-                        onClick={() => handleDeleteClient(client)}
+                        onClick={() => setClientPendingDelete(client)}
+                        disabled={deletingClientId === client.id}
                         className="min-h-10 w-full rounded-lg border border-red-400/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-200 transition hover:bg-red-400 hover:text-black"
                       >
-                        Eliminar cliente
+                        {deletingClientId === client.id
+                          ? "Eliminando..."
+                          : "Eliminar cliente"}
                       </button>
                     </div>
                   </article>
@@ -921,6 +938,14 @@ export default function AdminPage() {
           saving={saving}
           onClose={closeAppointmentModal}
           onSubmit={handleSaveAppointment}
+        />
+      ) : null}
+
+      {clientPendingDelete ? (
+        <ConfirmDeleteClientModal
+          client={clientPendingDelete}
+          onCancel={() => setClientPendingDelete(null)}
+          onConfirm={handleConfirmDeleteClient}
         />
       ) : null}
     </main>
@@ -1164,6 +1189,46 @@ function CreateAppointmentModal({
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmDeleteClientModal({
+  client,
+  onCancel,
+  onConfirm,
+}: {
+  client: Client;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 backdrop-blur-sm sm:items-center">
+      <div className="w-full max-w-md rounded-xl border border-red-400/25 bg-[#070707] p-5 shadow-[0_30px_120px_rgba(0,0,0,0.75)]">
+        <p className="text-xs font-bold uppercase tracking-[0.24em] text-red-200">
+          Confirmar eliminacion
+        </p>
+        <h2 className="mt-3 text-2xl font-black uppercase text-white">
+          Eliminar cliente
+        </h2>
+        <p className="mt-3 text-sm leading-6 text-zinc-400">
+          Se eliminara {client.name}. Esta accion no se puede deshacer.
+        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
+          <button
+            onClick={onCancel}
+            className="min-h-11 rounded-lg border border-[#d6ad4a]/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={onConfirm}
+            className="min-h-11 rounded-lg border border-red-400/30 bg-red-400 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition hover:bg-white"
+          >
+            Eliminar
+          </button>
+        </div>
       </div>
     </div>
   );

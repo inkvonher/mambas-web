@@ -255,6 +255,224 @@ a {
   opacity: 1;
 }
 
+.world-stage {
+  position: relative;
+  min-height: 420px;
+  overflow: hidden;
+  border: 1px solid rgba(214, 173, 74, 0.22);
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(214, 173, 74, 0.14), transparent 42%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.04), transparent 42%),
+    #060606;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.world-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(214, 173, 74, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(214, 173, 74, 0.08) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+  opacity: 0.4;
+}
+
+.world-stage::after {
+  content: "";
+  position: absolute;
+  width: 56%;
+  height: 16px;
+  bottom: 48px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.66);
+  filter: blur(18px);
+  z-index: -1;
+}
+
+.world-orbit {
+  width: min(78vw, 360px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  perspective: 900px;
+}
+
+.world-globe {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 173, 74, 0.42);
+  background:
+    radial-gradient(circle at 36% 28%, rgba(255, 255, 255, 0.16), transparent 18%),
+    radial-gradient(circle at 62% 60%, rgba(214, 173, 74, 0.12), transparent 34%),
+    linear-gradient(135deg, #131313, #050505 62%);
+  box-shadow:
+    inset -32px -28px 60px rgba(0, 0, 0, 0.72),
+    inset 18px 12px 42px rgba(214, 173, 74, 0.08),
+    0 28px 90px rgba(0, 0, 0, 0.58);
+  transform: rotateX(8deg) rotateY(-12deg);
+  transition:
+    transform 420ms ease,
+    border-color 220ms ease;
+}
+
+.world-stage:hover .world-globe {
+  transform: rotateX(2deg) rotateY(-24deg) scale(1.025);
+  border-color: rgba(214, 173, 74, 0.72);
+}
+
+.world-grid {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 29px,
+      rgba(214, 173, 74, 0.12) 30px 31px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 33px,
+      rgba(214, 173, 74, 0.1) 34px 35px
+    );
+  opacity: 0.42;
+  animation: globe-drift 16s linear infinite;
+}
+
+.continent {
+  position: absolute;
+  background: rgba(214, 173, 74, 0.24);
+  box-shadow: 0 0 28px rgba(214, 173, 74, 0.06);
+  filter: blur(0.15px);
+}
+
+.continent-americas {
+  width: 31%;
+  height: 46%;
+  left: 14%;
+  top: 23%;
+  border-radius: 48% 52% 44% 58%;
+  clip-path: polygon(28% 0, 58% 8%, 72% 24%, 61% 42%, 80% 54%, 62% 78%, 44% 100%, 34% 74%, 18% 58%, 29% 40%, 12% 20%);
+}
+
+.continent-europe {
+  width: 20%;
+  height: 18%;
+  left: 49%;
+  top: 28%;
+  border-radius: 45%;
+  clip-path: polygon(8% 34%, 32% 10%, 62% 18%, 92% 34%, 72% 58%, 42% 72%, 14% 58%);
+}
+
+.continent-africa {
+  width: 23%;
+  height: 36%;
+  left: 50%;
+  top: 43%;
+  border-radius: 45% 48% 55% 50%;
+  clip-path: polygon(44% 0, 74% 18%, 88% 48%, 66% 100%, 38% 86%, 18% 48%, 26% 16%);
+}
+
+.continent-asia {
+  width: 31%;
+  height: 31%;
+  right: 11%;
+  top: 29%;
+  border-radius: 48%;
+  clip-path: polygon(0 34%, 22% 8%, 56% 12%, 100% 34%, 88% 62%, 58% 76%, 22% 66%);
+}
+
+.continent-australia {
+  width: 15%;
+  height: 10%;
+  right: 20%;
+  bottom: 25%;
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+.location-pin {
+  position: absolute;
+  left: 36%;
+  top: 45%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50% 50% 50% 0;
+  background: #d6ad4a;
+  transform: rotate(-45deg);
+  box-shadow:
+    0 0 0 5px rgba(214, 173, 74, 0.14),
+    0 0 32px rgba(214, 173, 74, 0.68);
+  animation: pin-pop 2.6s ease-in-out infinite;
+}
+
+.location-pin span {
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: #050505;
+}
+
+.location-pulse {
+  position: absolute;
+  left: calc(36% - 21px);
+  top: calc(45% - 21px);
+  width: 60px;
+  height: 60px;
+  border: 1px solid rgba(214, 173, 74, 0.42);
+  border-radius: 50%;
+  animation: location-ring 2.6s ease-out infinite;
+}
+
+.world-caption {
+  position: absolute;
+  left: 1.25rem;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  border-top: 1px solid rgba(214, 173, 74, 0.18);
+  padding-top: 1rem;
+  background: linear-gradient(180deg, transparent, rgba(6, 6, 6, 0.82));
+}
+
+@keyframes globe-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-31px);
+  }
+}
+
+@keyframes location-ring {
+  0% {
+    opacity: 0.88;
+    transform: scale(0.38);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+  }
+}
+
+@keyframes pin-pop {
+  0%,
+  100% {
+    transform: rotate(-45deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-45deg) translateY(-5px);
+  }
+}
+
 @keyframes float-and-pulse {
   0%,
   100% {
