@@ -322,18 +322,26 @@ export default function AdminPage() {
     setDeletingClientId(client.id);
     setClients((current) => current.filter((item) => item.id !== client.id));
 
-    const { error } = await supabase.from("clients").delete().eq("id", client.id);
+    const { data, error } = await supabase
+      .from("clients")
+      .delete()
+      .eq("id", client.id)
+      .select("id")
+      .maybeSingle();
 
-    if (error) {
+    if (error || !data) {
       console.error("Supabase client delete failed", {
-        code: error.code,
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
+        code: error?.code,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        deletedRow: data,
         client,
       });
       setErrorMessage(
-        `No se pudo eliminar el cliente: ${error.message || "error desconocido"}`,
+        error?.message
+          ? `No se pudo eliminar el cliente: ${error.message}`
+          : "No se elimino ningun cliente. Revisa la policy DELETE de la tabla clients en Supabase.",
       );
       setClients((current) =>
         [...current, client].sort((a, b) =>
