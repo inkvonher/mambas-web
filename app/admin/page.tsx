@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { DragEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabase";
 
@@ -90,6 +90,8 @@ const statusLabels: Record<AppointmentStatus, string> = {
   cancelled: "Cancelada",
 };
 
+const scheduleHours = Array.from({ length: 13 }, (_, index) => index + 9);
+
 export default function AdminPage() {
   const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
@@ -102,6 +104,7 @@ export default function AdminPage() {
   const [editingAppointment, setEditingAppointment] =
     useState<Appointment | null>(null);
   const [modalInitialDate, setModalInitialDate] = useState<string | null>(null);
+  const [modalInitialTime, setModalInitialTime] = useState<string | null>(null);
   const [clientPendingDelete, setClientPendingDelete] = useState<Client | null>(
     null,
   );
@@ -165,9 +168,10 @@ export default function AdminPage() {
     router.push("/admin/login");
   }
 
-  function openCreateAppointment(date?: string) {
+  function openCreateAppointment(date?: string, time?: string) {
     setEditingAppointment(null);
     setModalInitialDate(date || null);
+    setModalInitialTime(time || null);
     setModalOpen(true);
   }
 
@@ -181,6 +185,7 @@ export default function AdminPage() {
     setModalOpen(false);
     setEditingAppointment(null);
     setModalInitialDate(null);
+    setModalInitialTime(null);
   }
 
   async function handleSaveAppointment(payload: AppointmentFormPayload) {
@@ -255,6 +260,51 @@ export default function AdminPage() {
     setAppointments((current) =>
       current.filter((item) => item.id !== appointment.id),
     );
+  }
+
+  async function handleRescheduleAppointment(
+    appointment: Appointment,
+    date: string,
+    hour: number,
+  ) {
+    const previousAppointments = appointments;
+    const appointment_time = normalizeTime(`${String(hour).padStart(2, "0")}:00`);
+
+    setErrorMessage("");
+    setAppointments((current) =>
+      current
+        .map((item) =>
+          item.id === appointment.id
+            ? {
+                ...item,
+                appointment_date: date,
+                appointment_time,
+              }
+            : item,
+        )
+        .sort(sortAppointments),
+    );
+
+    const { error } = await supabase
+      .from("appointments")
+      .update({ appointment_date: date, appointment_time })
+      .eq("id", appointment.id);
+
+    if (error) {
+      console.error("Supabase appointment reschedule failed", {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        appointment,
+        nextDate: date,
+        nextTime: appointment_time,
+      });
+      setAppointments(previousAppointments);
+      setErrorMessage(
+        `No se pudo reprogramar la cita: ${error.message || "error desconocido"}`,
+      );
+    }
   }
 
   async function handleConfirmDeleteClient() {
@@ -355,6 +405,12 @@ export default function AdminPage() {
   const selectedDayAppointments = selectedCalendarDate
     ? appointmentsByDate[selectedCalendarDate] || []
     : [];
+
+  const activeScheduleDate = selectedCalendarDate || toDateKey(new Date());
+
+  const activeScheduleAppointments = appointments.filter(
+    (appointment) => appointment.appointment_date === activeScheduleDate,
+  );
 
   const tattooAppointments = appointments.filter(
     (appointment) => appointment.category === "tattoo",
@@ -785,6 +841,22 @@ export default function AdminPage() {
           </Panel>
         </section>
 
+        <section className="mb-6">
+          <DailyScheduleView
+            date={activeScheduleDate}
+            appointments={activeScheduleAppointments}
+            onEdit={openEditAppointment}
+            onCreate={(date, hour) => {
+              setSelectedCalendarDate(date);
+              openCreateAppointment(
+                date,
+                `${String(hour).padStart(2, "0")}:00`,
+              );
+            }}
+            onReschedule={handleRescheduleAppointment}
+          />
+        </section>
+
         <section className="mb-6 overflow-hidden rounded-xl border border-[#d6ad4a]/15 bg-[#080808]/90 shadow-[0_28px_90px_rgba(0,0,0,0.48)]">
           <div className="flex flex-col gap-4 border-b border-[#d6ad4a]/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <div>
@@ -935,6 +1007,7 @@ export default function AdminPage() {
           clients={clients}
           appointment={editingAppointment}
           initialDate={modalInitialDate}
+          initialTime={modalInitialTime}
           saving={saving}
           onClose={closeAppointmentModal}
           onSubmit={handleSaveAppointment}
@@ -956,6 +1029,7 @@ function CreateAppointmentModal({
   clients,
   appointment,
   initialDate,
+  initialTime,
   saving,
   onClose,
   onSubmit,
@@ -963,6 +1037,7 @@ function CreateAppointmentModal({
   clients: Client[];
   appointment: Appointment | null;
   initialDate: string | null;
+  initialTime: string | null;
   saving: boolean;
   onClose: () => void;
   onSubmit: (payload: AppointmentFormPayload) => void;
@@ -983,7 +1058,9 @@ function CreateAppointmentModal({
   const [date, setDate] = useState(
     appointment?.appointment_date || initialDate || today,
   );
-  const [time, setTime] = useState(appointment?.appointment_time || "");
+  const [time, setTime] = useState(
+    appointment?.appointment_time || initialTime || "",
+  );
   const [deposit, setDeposit] = useState(
     String(appointment?.deposit_amount || ""),
   );
@@ -1231,6 +1308,242 @@ function ConfirmDeleteClientModal({
         </div>
       </div>
     </div>
+  );
+}
+
+function DailyScheduleView({
+  date,
+  appointments,
+  onEdit,
+  onCreate,
+  onReschedule,
+}: {
+  date: string;
+  appointments: Appointment[];
+  onEdit: (appointment: Appointment) => void;
+  onCreate: (date: string, hour: number) => void;
+  onReschedule: (appointment: Appointment, date: string, hour: number) => void;
+}) {
+  const appointmentsByHour = useMemo(() => {
+    return scheduleHours.reduce<Record<number, Appointment[]>>((grouped, hour) => {
+      grouped[hour] = appointments.filter(
+        (appointment) => appointmentHour(appointment) === hour,
+      );
+      return grouped;
+    }, {});
+  }, [appointments]);
+
+  function handleDrop(event: DragEvent<HTMLDivElement>, hour: number) {
+    event.preventDefault();
+    const appointmentId = event.dataTransfer.getData("appointment/id");
+    const appointment = appointments.find((item) => item.id === appointmentId);
+
+    if (appointment) {
+      onReschedule(appointment, date, hour);
+    }
+  }
+
+  return (
+    <Panel>
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
+            Dia operativo
+          </p>
+          <h2 className="mt-2 text-2xl font-black uppercase text-white">
+            {formatDate(date)}
+          </h2>
+          <p className="mt-2 text-sm text-zinc-400">
+            Timeline de 9:00 AM a 10:00 PM. Arrastra una cita para cambiar hora.
+          </p>
+        </div>
+        <div className="rounded-lg border border-[#d6ad4a]/15 bg-black/40 px-4 py-3 text-sm text-zinc-300">
+          <span className="font-black text-[#d6ad4a]">{appointments.length}</span>{" "}
+          citas programadas
+        </div>
+      </div>
+
+      <div className="hidden overflow-hidden rounded-xl border border-[#d6ad4a]/12 md:block">
+        {scheduleHours.map((hour) => {
+          const hourAppointments = appointmentsByHour[hour] || [];
+
+          return (
+            <div
+              key={hour}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => handleDrop(event, hour)}
+              className="grid min-h-[92px] grid-cols-[92px_minmax(0,1fr)] border-b border-[#d6ad4a]/10 last:border-b-0"
+            >
+              <button
+                onClick={() => onCreate(date, hour)}
+                className="border-r border-[#d6ad4a]/10 bg-black/35 px-3 py-4 text-left transition hover:bg-[#d6ad4a]/10"
+              >
+                <p className="text-sm font-black text-[#d6ad4a]">
+                  {formatHourLabel(hour)}
+                </p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+                  Nueva
+                </p>
+              </button>
+
+              <div className="relative bg-white/[0.015] p-3">
+                {hourAppointments.length === 0 ? (
+                  <button
+                    onClick={() => onCreate(date, hour)}
+                    className="flex h-full min-h-[66px] w-full items-center rounded-lg border border-dashed border-[#d6ad4a]/12 px-4 text-left text-sm text-zinc-600 transition hover:border-[#d6ad4a]/35 hover:text-zinc-300"
+                  >
+                    Disponible
+                  </button>
+                ) : (
+                  <div className="relative min-h-[66px]">
+                    {hourAppointments.map((appointment, index) => (
+                      <DailyAppointmentBlock
+                        key={appointment.id}
+                        appointment={appointment}
+                        index={index}
+                        total={hourAppointments.length}
+                        onEdit={onEdit}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="space-y-3 md:hidden">
+        {scheduleHours.map((hour) => {
+          const hourAppointments = appointmentsByHour[hour] || [];
+
+          return (
+            <div
+              key={hour}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => handleDrop(event, hour)}
+              className="rounded-xl border border-[#d6ad4a]/12 bg-black/35 p-4"
+            >
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <button
+                  onClick={() => onCreate(date, hour)}
+                  className="text-left"
+                >
+                  <p className="text-sm font-black text-[#d6ad4a]">
+                    {formatHourLabel(hour)}
+                  </p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">
+                    {hourAppointments.length} citas
+                  </p>
+                </button>
+                <button
+                  onClick={() => onCreate(date, hour)}
+                  className="rounded-lg border border-[#d6ad4a]/30 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-[#d6ad4a]"
+                >
+                  Nueva
+                </button>
+              </div>
+
+              {hourAppointments.length ? (
+                <div className="space-y-2">
+                  {hourAppointments.map((appointment) => (
+                    <DailyAppointmentMobileCard
+                      key={appointment.id}
+                      appointment={appointment}
+                      onEdit={onEdit}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="rounded-lg border border-dashed border-[#d6ad4a]/12 px-3 py-3 text-sm text-zinc-600">
+                  Disponible
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </Panel>
+  );
+}
+
+function DailyAppointmentBlock({
+  appointment,
+  index,
+  total,
+  onEdit,
+}: {
+  appointment: Appointment;
+  index: number;
+  total: number;
+  onEdit: (appointment: Appointment) => void;
+}) {
+  const width = `calc(${100 / total}% - 6px)`;
+  const left = `${(100 / total) * index}%`;
+
+  return (
+    <button
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.setData("appointment/id", appointment.id);
+        event.dataTransfer.effectAllowed = "move";
+      }}
+      onClick={() => onEdit(appointment)}
+      className={`absolute top-0 min-h-[66px] rounded-lg border p-3 text-left shadow-[0_14px_36px_rgba(0,0,0,0.26)] transition hover:-translate-y-0.5 ${appointmentCategoryClasses(
+        appointment.category,
+      )}`}
+      style={{ left, width }}
+    >
+      <div className="mb-2 flex items-start justify-between gap-2">
+        <div>
+          <p className="text-xs font-black uppercase text-white">
+            {formatTime(appointment.appointment_time)}
+          </p>
+          <p className="mt-1 truncate text-sm font-bold text-white">
+            {appointment.client_name}
+          </p>
+        </div>
+        <AppointmentStatusBadge status={appointment.status} />
+      </div>
+      <p className="truncate text-[11px] uppercase tracking-[0.16em] text-zinc-400">
+        {appointment.category === "tattoo" ? "Tattoo" : "Barber"} ·{" "}
+        {appointment.service || "Servicio"}
+      </p>
+    </button>
+  );
+}
+
+function DailyAppointmentMobileCard({
+  appointment,
+  onEdit,
+}: {
+  appointment: Appointment;
+  onEdit: (appointment: Appointment) => void;
+}) {
+  return (
+    <button
+      draggable
+      onDragStart={(event) => {
+        event.dataTransfer.setData("appointment/id", appointment.id);
+        event.dataTransfer.effectAllowed = "move";
+      }}
+      onClick={() => onEdit(appointment)}
+      className={`w-full rounded-lg border p-3 text-left ${appointmentCategoryClasses(
+        appointment.category,
+      )}`}
+    >
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <p className="text-sm font-black text-white">
+          {formatTime(appointment.appointment_time)}
+        </p>
+        <AppointmentStatusBadge status={appointment.status} />
+      </div>
+      <p className="font-bold text-white">{appointment.client_name}</p>
+      <p className="mt-1 text-xs uppercase tracking-[0.16em] text-zinc-400">
+        {appointment.category === "tattoo" ? "Tattoo" : "Barber"} ·{" "}
+        {appointment.service || "Servicio"}
+      </p>
+    </button>
   );
 }
 
@@ -1880,6 +2193,29 @@ function formatDate(value: string | null) {
 
 function formatTime(value: string) {
   return value.slice(0, 5);
+}
+
+function appointmentHour(appointment: Appointment) {
+  const parsed = Number(appointment.appointment_time.slice(0, 2));
+
+  if (!Number.isFinite(parsed)) {
+    return 9;
+  }
+
+  return Math.min(Math.max(parsed, 9), 21);
+}
+
+function formatHourLabel(hour: number) {
+  return new Date(2026, 0, 1, hour).toLocaleTimeString("es-MX", {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function appointmentCategoryClasses(category: AppointmentCategory) {
+  return category === "barber"
+    ? "border-sky-400/25 bg-sky-400/10 hover:border-sky-300/50"
+    : "border-[#d6ad4a]/25 bg-[#d6ad4a]/10 hover:border-[#d6ad4a]/55";
 }
 
 function toDateKey(date: Date) {
