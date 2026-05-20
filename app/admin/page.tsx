@@ -91,6 +91,9 @@ const statusLabels: Record<AppointmentStatus, string> = {
 };
 
 const scheduleHours = Array.from({ length: 13 }, (_, index) => index + 9);
+const adminGoogleMapsUrl =
+  "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
+const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -1597,6 +1600,7 @@ function AppointmentCard({
         />
         <InfoItem label="Notas" value={appointment.notes || "-"} />
       </dl>
+      <WhatsAppAutomationActions appointment={appointment} />
       <div className="mt-4 flex flex-col gap-2 border-t border-[#d6ad4a]/10 pt-4 sm:flex-row sm:justify-end">
         <button
           onClick={() => onEdit(appointment)}
@@ -1612,6 +1616,52 @@ function AppointmentCard({
         </button>
       </div>
     </article>
+  );
+}
+
+function WhatsAppAutomationActions({
+  appointment,
+}: {
+  appointment: Appointment;
+}) {
+  const actions = [
+    {
+      label: "Confirmar cita",
+      message: buildWhatsAppMessage("confirm", appointment),
+    },
+    {
+      label: "Recordatorio",
+      message: buildWhatsAppMessage("reminder", appointment),
+    },
+    {
+      label: "Solicitar anticipo",
+      message: buildWhatsAppMessage("deposit", appointment),
+    },
+    {
+      label: "Enviar ubicacion",
+      message: buildWhatsAppMessage("location", appointment),
+    },
+  ];
+
+  return (
+    <div className="mt-4 border-t border-[#d6ad4a]/10 pt-4">
+      <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
+        WhatsApp automatico
+      </p>
+      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+        {actions.map((action) => (
+          <a
+            key={action.label}
+            href={buildWhatsAppUrl(appointment.client_phone, action.message)}
+            target="_blank"
+            rel="noreferrer"
+            className="min-h-10 rounded-lg border border-emerald-400/25 bg-emerald-400/10 px-3 py-2 text-center text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100 transition hover:-translate-y-0.5 hover:border-emerald-300/60 hover:bg-emerald-400 hover:text-black"
+          >
+            {action.label}
+          </a>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -2216,6 +2266,45 @@ function appointmentCategoryClasses(category: AppointmentCategory) {
   return category === "barber"
     ? "border-sky-400/25 bg-sky-400/10 hover:border-sky-300/50"
     : "border-[#d6ad4a]/25 bg-[#d6ad4a]/10 hover:border-[#d6ad4a]/55";
+}
+
+type WhatsAppMessageType = "confirm" | "reminder" | "deposit" | "location";
+
+function buildWhatsAppUrl(phone: string, message: string) {
+  const cleanPhone = phone.replace(/\D/g, "");
+  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+}
+
+function buildWhatsAppMessage(
+  type: WhatsAppMessageType,
+  appointment: Appointment,
+) {
+  const service = appointment.service || categoryLabel(appointment.category);
+  const date = formatDate(appointment.appointment_date);
+  const time = formatTime(appointment.appointment_time);
+  const deposit = Number(appointment.deposit_amount || 0).toLocaleString(
+    "es-MX",
+  );
+
+  const baseGreeting = `Hola ${appointment.client_name}, somos Mambas Tattoo & Cuts.`;
+
+  if (type === "confirm") {
+    return `${baseGreeting}\n\nTu cita queda confirmada:\nServicio: ${service}\nFecha: ${date}\nHora: ${time}\n\nTe esperamos en el estudio. Si necesitas ajustar algo, respondemos por este medio.`;
+  }
+
+  if (type === "reminder") {
+    return `${baseGreeting}\n\nTe recordamos tu cita:\nServicio: ${service}\nFecha: ${date}\nHora: ${time}\n\nPor favor llega unos minutos antes. Si tienes referencias o cambios, puedes enviarlos por aqui.`;
+  }
+
+  if (type === "deposit") {
+    return `${baseGreeting}\n\nPara apartar tu cita de ${service} el ${date} a las ${time}, se requiere anticipo.\nMonto registrado: ${deposit} MXN\nLink de pago: ${depositPaymentUrl}\n\nEl anticipo asegura tu espacio y se descuenta del total final cuando aplique.`;
+  }
+
+  return `${baseGreeting}\n\nEsta es nuestra ubicacion para tu cita de ${service}:\nMambas Tattoo & Cuts\nCalle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen\n\nGoogle Maps: ${adminGoogleMapsUrl}\n\nTe esperamos.`;
+}
+
+function categoryLabel(category: AppointmentCategory) {
+  return category === "barber" ? "Barberia" : "Tattoo";
 }
 
 function toDateKey(date: Date) {
