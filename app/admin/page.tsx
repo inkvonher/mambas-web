@@ -253,6 +253,36 @@ export default function AdminPage() {
     );
   }
 
+  async function handleDeleteClient(client: Client) {
+    const confirmed = window.confirm(
+      `Eliminar el cliente ${client.name}? Esta accion no se puede deshacer.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setErrorMessage("");
+
+    const { error } = await supabase.from("clients").delete().eq("id", client.id);
+
+    if (error) {
+      console.error("Supabase client delete failed", {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        client,
+      });
+      setErrorMessage(
+        `No se pudo eliminar el cliente: ${error.message || "error desconocido"}`,
+      );
+      return;
+    }
+
+    setClients((current) => current.filter((item) => item.id !== client.id));
+  }
+
   const filteredClients = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -789,6 +819,7 @@ export default function AdminPage() {
                       <th className="px-5 py-4">Servicio</th>
                       <th className="px-5 py-4">Estado</th>
                       <th className="px-5 py-4">Registro</th>
+                      <th className="px-5 py-4 text-right">Acciones</th>
                     </tr>
                   </thead>
 
@@ -820,6 +851,14 @@ export default function AdminPage() {
                         </td>
                         <td className="px-5 py-4">
                           {formatDate(client.created_at)}
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <button
+                            onClick={() => handleDeleteClient(client)}
+                            className="rounded-lg border border-red-400/30 px-3 py-2 text-[10px] font-black uppercase tracking-[0.14em] text-red-200 transition hover:bg-red-400 hover:text-black"
+                          >
+                            Eliminar
+                          </button>
                         </td>
                       </tr>
                     ))}
@@ -858,6 +897,14 @@ export default function AdminPage() {
                         value={formatDate(client.birthday)}
                       />
                     </dl>
+                    <div className="mt-4 border-t border-[#d6ad4a]/10 pt-4">
+                      <button
+                        onClick={() => handleDeleteClient(client)}
+                        className="min-h-10 w-full rounded-lg border border-red-400/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-200 transition hover:bg-red-400 hover:text-black"
+                      >
+                        Eliminar cliente
+                      </button>
+                    </div>
                   </article>
                 ))}
               </div>
