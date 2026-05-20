@@ -19,9 +19,10 @@ type AppointmentStatus = "pending" | "confirmed" | "completed" | "cancelled";
 
 type Appointment = {
   id: string;
-  client_id: string;
+  client_id: string | null;
   client_name: string;
   client_phone: string;
+  service: string | null;
   category: AppointmentCategory;
   appointment_date: string;
   appointment_time: string;
@@ -29,6 +30,19 @@ type Appointment = {
   notes: string | null;
   deposit_amount: number | null;
   created_at: string;
+};
+
+type AppointmentFormPayload = {
+  client_id: string | null;
+  client_name: string;
+  client_phone: string;
+  service: string;
+  category: AppointmentCategory;
+  appointment_date: string;
+  appointment_time: string;
+  status: AppointmentStatus;
+  notes: string | null;
+  deposit_amount: number;
 };
 
 const appointmentStatuses: AppointmentStatus[] = [
@@ -54,6 +68,9 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [appointmentSearch, setAppointmentSearch] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingAppointment, setEditingAppointment] =
+    useState<Appointment | null>(null);
+  const [modalInitialDate, setModalInitialDate] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<
@@ -109,53 +126,96 @@ export default function AdminPage() {
     router.push("/admin/login");
   }
 
-  async function handleCreateAppointment(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function openCreateAppointment(date?: string) {
+    setEditingAppointment(null);
+    setModalInitialDate(date || null);
+    setModalOpen(true);
+  }
+
+  function openEditAppointment(appointment: Appointment) {
+    setEditingAppointment(appointment);
+    setModalInitialDate(null);
+    setModalOpen(true);
+  }
+
+  function closeAppointmentModal() {
+    setModalOpen(false);
+    setEditingAppointment(null);
+    setModalInitialDate(null);
+  }
+
+  async function handleSaveAppointment(payload: AppointmentFormPayload) {
     setSaving(true);
     setErrorMessage("");
 
-    const formData = new FormData(event.currentTarget);
-    const selectedClient = clients.find(
-      (client) => client.id === formData.get("client_id"),
-    );
-
-    if (!selectedClient) {
-      setErrorMessage("Selecciona un cliente para crear la cita.");
+    if (!payload.client_name.trim() || !payload.client_phone.trim()) {
+      setErrorMessage("Nombre y telefono del cliente son obligatorios.");
       setSaving(false);
       return;
     }
 
-    const payload = {
-      client_id: selectedClient.id,
-      client_name: selectedClient.name,
-      client_phone: selectedClient.phone,
-      category: formData.get("category"),
-      appointment_date: formData.get("appointment_date"),
-      appointment_time: formData.get("appointment_time"),
-      status: formData.get("status"),
-      notes: formData.get("notes") || null,
-      deposit_amount: Number(formData.get("deposit_amount") || 0),
-    };
+    const request = editingAppointment
+      ? supabase
+          .from("appointments")
+          .update(payload)
+          .eq("id", editingAppointment.id)
+          .select("*")
+          .single()
+      : supabase.from("appointments").insert([payload]).select("*").single();
 
-    const { data, error } = await supabase
-      .from("appointments")
-      .insert([payload])
-      .select("*")
-      .single();
+    const { data, error } = await request;
 
     if (error) {
       console.error(error);
-      setErrorMessage("No se pudo guardar la cita en Supabase.");
+      setErrorMessage(
+        "No se pudo guardar la cita en Supabase. Revisa columnas y permisos de appointments.",
+      );
       setSaving(false);
+      return;
+    }
+
+    setAppointments((current) => {
+      const saved = data as Appointment;
+
+      if (editingAppointment) {
+        return current
+          .map((appointment) =>
+            appointment.id === saved.id ? saved : appointment,
+          )
+          .sort(sortAppointments);
+      }
+
+      return [...current, saved].sort(sortAppointments);
+    });
+    closeAppointmentModal();
+    setSaving(false);
+  }
+
+  async function handleDeleteAppointment(appointment: Appointment) {
+    const confirmed = window.confirm(
+      `Eliminar la cita de ${appointment.client_name}?`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setErrorMessage("");
+
+    const { error } = await supabase
+      .from("appointments")
+      .delete()
+      .eq("id", appointment.id);
+
+    if (error) {
+      console.error(error);
+      setErrorMessage("No se pudo eliminar la cita en Supabase.");
       return;
     }
 
     setAppointments((current) =>
-      [...current, data as Appointment].sort(sortAppointments),
+      current.filter((item) => item.id !== appointment.id),
     );
-    setModalOpen(false);
-    setSaving(false);
-    event.currentTarget.reset();
   }
 
   const filteredClients = useMemo(() => {
@@ -178,7 +238,9 @@ export default function AdminPage() {
       ? appointments.filter(
           (appointment) => appointment.appointment_date === selectedCalendarDate,
         )
-      : appointments;
+      : appointments.filter(
+          (appointment) => appointment.appointment_date >= toDateKey(new Date()),
+        );
 
     if (!query) {
       return dateFiltered;
@@ -188,6 +250,7 @@ export default function AdminPage() {
       [
         appointment.client_name,
         appointment.client_phone,
+        appointment.service || "",
         appointment.category,
         statusLabels[appointment.status],
         appointment.notes || "",
@@ -252,7 +315,7 @@ export default function AdminPage() {
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setModalOpen(true)}
+                onClick={() => openCreateAppointment()}
                 className="hidden min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] sm:inline-flex sm:items-center"
               >
                 Nueva cita
@@ -474,7 +537,10 @@ export default function AdminPage() {
                 return (
                   <button
                     key={day.key}
-                    onClick={() => setSelectedCalendarDate(day.key)}
+                    onClick={() => {
+                      setSelectedCalendarDate(day.key);
+                      openCreateAppointment(day.key);
+                    }}
                     className={`min-h-32 rounded-lg border p-2 text-left transition duration-200 hover:-translate-y-0.5 hover:border-[#d6ad4a]/50 ${
                       selected
                         ? "border-[#d6ad4a] bg-[#d6ad4a]/10 shadow-[0_18px_44px_rgba(214,173,74,0.12)]"
@@ -525,7 +591,10 @@ export default function AdminPage() {
                   return (
                     <button
                       key={day.key}
-                      onClick={() => setSelectedCalendarDate(day.key)}
+                      onClick={() => {
+                        setSelectedCalendarDate(day.key);
+                        openCreateAppointment(day.key);
+                      }}
                       className={`w-full rounded-xl border p-4 text-left transition duration-200 ${
                         selected
                           ? "border-[#d6ad4a] bg-[#d6ad4a]/10"
@@ -598,7 +667,7 @@ export default function AdminPage() {
                   </button>
                 ) : null}
                 <button
-                  onClick={() => setModalOpen(true)}
+                  onClick={() => openCreateAppointment()}
                   className="min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white sm:hidden"
                 >
                   Nueva cita
@@ -631,6 +700,8 @@ export default function AdminPage() {
                   <AppointmentCard
                     key={appointment.id}
                     appointment={appointment}
+                    onEdit={openEditAppointment}
+                    onDelete={handleDeleteAppointment}
                   />
                 ))}
               </div>
@@ -763,9 +834,11 @@ export default function AdminPage() {
       {modalOpen ? (
         <CreateAppointmentModal
           clients={clients}
+          appointment={editingAppointment}
+          initialDate={modalInitialDate}
           saving={saving}
-          onClose={() => setModalOpen(false)}
-          onSubmit={handleCreateAppointment}
+          onClose={closeAppointmentModal}
+          onSubmit={handleSaveAppointment}
         />
       ) : null}
     </main>
@@ -774,16 +847,76 @@ export default function AdminPage() {
 
 function CreateAppointmentModal({
   clients,
+  appointment,
+  initialDate,
   saving,
   onClose,
   onSubmit,
 }: {
   clients: Client[];
+  appointment: Appointment | null;
+  initialDate: string | null;
   saving: boolean;
   onClose: () => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (payload: AppointmentFormPayload) => void;
 }) {
   const today = toDateKey(new Date());
+  const [clientId, setClientId] = useState(appointment?.client_id || "");
+  const [clientName, setClientName] = useState(appointment?.client_name || "");
+  const [clientPhone, setClientPhone] = useState(
+    appointment?.client_phone || "",
+  );
+  const [service, setService] = useState(appointment?.service || "");
+  const [category, setCategory] = useState<AppointmentCategory>(
+    appointment?.category || "tattoo",
+  );
+  const [status, setStatus] = useState<AppointmentStatus>(
+    appointment?.status || "pending",
+  );
+  const [date, setDate] = useState(
+    appointment?.appointment_date || initialDate || today,
+  );
+  const [time, setTime] = useState(appointment?.appointment_time || "");
+  const [deposit, setDeposit] = useState(
+    String(appointment?.deposit_amount || ""),
+  );
+  const [notes, setNotes] = useState(appointment?.notes || "");
+
+  function handleClientChange(value: string) {
+    setClientId(value);
+
+    const selectedClient = clients.find((client) => client.id === value);
+
+    if (!selectedClient) {
+      return;
+    }
+
+    setClientName(selectedClient.name);
+    setClientPhone(selectedClient.phone);
+    setService(selectedClient.service || "");
+    setCategory(
+      selectedClient.service.toLowerCase().includes("barber")
+        ? "barber"
+        : "tattoo",
+    );
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    onSubmit({
+      client_id: clientId || null,
+      client_name: clientName.trim(),
+      client_phone: clientPhone.trim(),
+      service: service.trim(),
+      category,
+      appointment_date: date,
+      appointment_time: time,
+      status,
+      notes: notes.trim() || null,
+      deposit_amount: Number(deposit || 0),
+    });
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 backdrop-blur-sm sm:items-center">
@@ -794,7 +927,7 @@ function CreateAppointmentModal({
               Agenda Mambas
             </p>
             <h2 className="mt-2 text-2xl font-black uppercase text-white">
-              Nueva cita
+              {appointment ? "Editar cita" : "Nueva cita"}
             </h2>
           </div>
           <button
@@ -805,11 +938,15 @@ function CreateAppointmentModal({
           </button>
         </div>
 
-        <form onSubmit={onSubmit} className="grid gap-4 p-5 sm:grid-cols-2">
+        <form onSubmit={handleSubmit} className="grid gap-4 p-5 sm:grid-cols-2">
           <label className="sm:col-span-2">
-            <FormLabel>Cliente</FormLabel>
-            <select name="client_id" required className="admin-field">
-              <option value="">Seleccionar cliente</option>
+            <FormLabel>Cliente registrado</FormLabel>
+            <select
+              value={clientId}
+              onChange={(event) => handleClientChange(event.target.value)}
+              className="admin-field"
+            >
+              <option value="">Captura manual</option>
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
                   {client.name} - {client.phone}
@@ -819,8 +956,47 @@ function CreateAppointmentModal({
           </label>
 
           <label>
+            <FormLabel>Nombre del cliente</FormLabel>
+            <input
+              value={clientName}
+              onChange={(event) => setClientName(event.target.value)}
+              required
+              className="admin-field"
+              placeholder="Nombre"
+            />
+          </label>
+
+          <label>
+            <FormLabel>Telefono</FormLabel>
+            <input
+              value={clientPhone}
+              onChange={(event) => setClientPhone(event.target.value)}
+              required
+              className="admin-field"
+              placeholder="+52..."
+            />
+          </label>
+
+          <label className="sm:col-span-2">
+            <FormLabel>Servicio</FormLabel>
+            <input
+              value={service}
+              onChange={(event) => setService(event.target.value)}
+              className="admin-field"
+              placeholder="Corte, blackwork, piercing, barba..."
+            />
+          </label>
+
+          <label>
             <FormLabel>Categoria</FormLabel>
-            <select name="category" required className="admin-field">
+            <select
+              value={category}
+              onChange={(event) =>
+                setCategory(event.target.value as AppointmentCategory)
+              }
+              required
+              className="admin-field"
+            >
               <option value="tattoo">Tattoo</option>
               <option value="barber">Barber</option>
             </select>
@@ -828,7 +1004,14 @@ function CreateAppointmentModal({
 
           <label>
             <FormLabel>Estado</FormLabel>
-            <select name="status" required className="admin-field">
+            <select
+              value={status}
+              onChange={(event) =>
+                setStatus(event.target.value as AppointmentStatus)
+              }
+              required
+              className="admin-field"
+            >
               {appointmentStatuses.map((status) => (
                 <option key={status} value={status}>
                   {statusLabels[status]}
@@ -840,9 +1023,10 @@ function CreateAppointmentModal({
           <label>
             <FormLabel>Fecha</FormLabel>
             <input
-              name="appointment_date"
+              value={date}
+              onChange={(event) => setDate(event.target.value)}
               type="date"
-              min={today}
+              min={appointment ? undefined : today}
               required
               className="admin-field"
             />
@@ -851,7 +1035,8 @@ function CreateAppointmentModal({
           <label>
             <FormLabel>Hora</FormLabel>
             <input
-              name="appointment_time"
+              value={time}
+              onChange={(event) => setTime(event.target.value)}
               type="time"
               required
               className="admin-field"
@@ -861,7 +1046,8 @@ function CreateAppointmentModal({
           <label className="sm:col-span-2">
             <FormLabel>Anticipo MXN</FormLabel>
             <input
-              name="deposit_amount"
+              value={deposit}
+              onChange={(event) => setDeposit(event.target.value)}
               type="number"
               min="0"
               step="50"
@@ -873,7 +1059,8 @@ function CreateAppointmentModal({
           <label className="sm:col-span-2">
             <FormLabel>Notas</FormLabel>
             <textarea
-              name="notes"
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
               rows={4}
               placeholder="Referencia, estilo, detalles del corte, zona, medidas..."
               className="admin-field min-h-28 resize-y py-3"
@@ -892,7 +1079,7 @@ function CreateAppointmentModal({
               disabled={saving}
               className="min-h-11 rounded-lg bg-[#d6ad4a] px-5 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving ? "Guardando..." : "Crear cita"}
+              {saving ? "Guardando..." : appointment ? "Guardar cambios" : "Crear cita"}
             </button>
           </div>
         </form>
@@ -901,7 +1088,15 @@ function CreateAppointmentModal({
   );
 }
 
-function AppointmentCard({ appointment }: { appointment: Appointment }) {
+function AppointmentCard({
+  appointment,
+  onEdit,
+  onDelete,
+}: {
+  appointment: Appointment;
+  onEdit: (appointment: Appointment) => void;
+  onDelete: (appointment: Appointment) => void;
+}) {
   return (
     <article className="rounded-xl border border-[#d6ad4a]/14 bg-black/45 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-[#d6ad4a]/45 hover:bg-[#d6ad4a]/5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -930,6 +1125,7 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
       </div>
 
       <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+        <InfoItem label="Servicio" value={appointment.service || "-"} />
         <InfoItem
           label="Categoria"
           value={appointment.category === "tattoo" ? "Tattoo" : "Barber"}
@@ -942,6 +1138,20 @@ function AppointmentCard({ appointment }: { appointment: Appointment }) {
         />
         <InfoItem label="Notas" value={appointment.notes || "-"} />
       </dl>
+      <div className="mt-4 flex flex-col gap-2 border-t border-[#d6ad4a]/10 pt-4 sm:flex-row sm:justify-end">
+        <button
+          onClick={() => onEdit(appointment)}
+          className="min-h-10 rounded-lg border border-[#d6ad4a]/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
+        >
+          Editar
+        </button>
+        <button
+          onClick={() => onDelete(appointment)}
+          className="min-h-10 rounded-lg border border-red-400/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-200 transition hover:bg-red-400 hover:text-black"
+        >
+          Eliminar
+        </button>
+      </div>
     </article>
   );
 }
@@ -952,7 +1162,11 @@ function CalendarAppointmentPill({
   appointment: Appointment;
 }) {
   return (
-    <div className="rounded-md border border-[#d6ad4a]/10 bg-[#d6ad4a]/10 px-2 py-1 text-[10px] text-[#d6ad4a]">
+    <div
+      className={`rounded-md border px-2 py-1 text-[10px] ${calendarStatusClasses(
+        appointment.status,
+      )}`}
+    >
       <div className="flex items-center justify-between gap-2">
         <span className="font-black">{formatTime(appointment.appointment_time)}</span>
         <span className="uppercase text-zinc-400">
@@ -1137,6 +1351,18 @@ function ClientStatusBadge({ status }: { status: string }) {
 }
 
 function AppointmentStatusBadge({ status }: { status: AppointmentStatus }) {
+  return (
+    <span
+      className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${appointmentStatusClasses(
+        status,
+      )}`}
+    >
+      {statusLabels[status]}
+    </span>
+  );
+}
+
+function appointmentStatusClasses(status: AppointmentStatus) {
   const styles: Record<AppointmentStatus, string> = {
     pending: "border-yellow-400/25 bg-yellow-400/10 text-yellow-200",
     confirmed: "border-[#d6ad4a]/30 bg-[#d6ad4a]/10 text-[#d6ad4a]",
@@ -1144,13 +1370,18 @@ function AppointmentStatusBadge({ status }: { status: AppointmentStatus }) {
     cancelled: "border-red-400/25 bg-red-400/10 text-red-200",
   };
 
-  return (
-    <span
-      className={`inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${styles[status]}`}
-    >
-      {statusLabels[status]}
-    </span>
-  );
+  return styles[status];
+}
+
+function calendarStatusClasses(status: AppointmentStatus) {
+  const styles: Record<AppointmentStatus, string> = {
+    pending: "border-yellow-400/15 bg-yellow-400/10 text-yellow-100",
+    confirmed: "border-[#d6ad4a]/20 bg-[#d6ad4a]/10 text-[#d6ad4a]",
+    completed: "border-emerald-400/15 bg-emerald-400/10 text-emerald-100",
+    cancelled: "border-red-400/15 bg-red-400/10 text-red-100",
+  };
+
+  return styles[status];
 }
 
 function EmptyState({ title, text }: { title: string; text: string }) {
