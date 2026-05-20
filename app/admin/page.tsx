@@ -218,6 +218,11 @@ export default function AdminPage() {
     0,
   );
 
+  const analytics = useMemo(
+    () => buildRevenueAnalytics(appointments),
+    [appointments],
+  );
+
   return (
     <main className="min-h-screen bg-[#040404] text-white">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(214,173,74,0.14),transparent_34%),linear-gradient(135deg,rgba(214,173,74,0.05),transparent_42%)]" />
@@ -265,6 +270,130 @@ export default function AdminPage() {
             label="Anticipos"
             value={`${depositsTotal.toLocaleString("es-MX")} MXN`}
           />
+        </section>
+
+        <section className="mb-6 grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+          <Panel>
+            <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
+                  Revenue
+                </p>
+                <h2 className="mt-2 text-2xl font-black uppercase text-white">
+                  Analitica financiera
+                </h2>
+                <p className="mt-2 text-sm text-zinc-400">
+                  Ingresos calculados desde anticipos registrados en citas.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:min-w-[430px]">
+                <MiniMetric
+                  label="Este mes"
+                  value={`${analytics.currentMonthRevenue.toLocaleString(
+                    "es-MX",
+                  )} MXN`}
+                />
+                <MiniMetric
+                  label="Completado"
+                  value={`${analytics.completedRevenue.toLocaleString(
+                    "es-MX",
+                  )} MXN`}
+                />
+                <MiniMetric
+                  label="Promedio"
+                  value={`${analytics.averageDeposit.toLocaleString(
+                    "es-MX",
+                  )} MXN`}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
+              <div className="rounded-xl border border-[#d6ad4a]/10 bg-black/35 p-4">
+                <div className="mb-4 flex items-center justify-between gap-4">
+                  <h3 className="text-sm font-black uppercase tracking-[0.18em] text-white">
+                    Ingreso mensual
+                  </h3>
+                  <span className="text-xs text-zinc-500">6 meses</span>
+                </div>
+                <RevenueBarChart data={analytics.monthlyRevenue} />
+              </div>
+
+              <div className="space-y-4">
+                <ComparisonChart
+                  title="Tattoo vs Barber"
+                  rows={[
+                    {
+                      label: "Tattoo",
+                      value: analytics.categoryRevenue.tattoo,
+                    },
+                    {
+                      label: "Barber",
+                      value: analytics.categoryRevenue.barber,
+                    },
+                  ]}
+                />
+                <ComparisonChart
+                  title="Depositos vs completadas"
+                  rows={[
+                    {
+                      label: "Depositos",
+                      value: analytics.depositRevenue,
+                    },
+                    {
+                      label: "Completadas",
+                      value: analytics.completedRevenue,
+                    },
+                  ]}
+                />
+              </div>
+            </div>
+          </Panel>
+
+          <Panel>
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
+                Performance
+              </p>
+              <h2 className="mt-2 text-2xl font-black uppercase text-white">
+                Estadisticas
+              </h2>
+            </div>
+
+            <div className="space-y-5">
+              <StatusDistribution stats={analytics.statusStats} />
+
+              <div className="rounded-xl border border-[#d6ad4a]/10 bg-black/35 p-4">
+                <h3 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-white">
+                  Top clientes
+                </h3>
+                {analytics.topClients.length === 0 ? (
+                  <p className="text-sm text-zinc-500">Sin citas todavia.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {analytics.topClients.map((client, index) => (
+                      <div
+                        key={client.key}
+                        className="flex items-center justify-between gap-4 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2"
+                      >
+                        <div>
+                          <p className="text-sm font-bold text-white">
+                            {index + 1}. {client.name}
+                          </p>
+                          <p className="text-xs text-zinc-500">
+                            {client.count} citas
+                          </p>
+                        </div>
+                        <p className="text-sm font-black text-[#d6ad4a]">
+                          {client.revenue.toLocaleString("es-MX")} MXN
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </Panel>
         </section>
 
         <section className="mb-6 grid gap-6 xl:grid-cols-[0.92fr_1.08fr]">
@@ -735,6 +864,123 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
+function MiniMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-xl border border-[#d6ad4a]/12 bg-black/45 p-3">
+      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
+        {label}
+      </p>
+      <p className="mt-2 text-lg font-black text-[#d6ad4a]">{value}</p>
+    </div>
+  );
+}
+
+function RevenueBarChart({
+  data,
+}: {
+  data: Array<{ label: string; revenue: number }>;
+}) {
+  const maxRevenue = Math.max(...data.map((item) => item.revenue), 1);
+
+  return (
+    <div className="flex h-64 items-end gap-2 sm:gap-3">
+      {data.map((item) => {
+        const height = Math.max((item.revenue / maxRevenue) * 100, 4);
+
+        return (
+          <div key={item.label} className="flex min-w-0 flex-1 flex-col gap-2">
+            <div className="flex flex-1 items-end rounded-lg bg-white/[0.03] p-1">
+              <div
+                className="w-full rounded-md bg-gradient-to-t from-[#8a6a1e] to-[#d6ad4a] shadow-[0_0_24px_rgba(214,173,74,0.16)] transition duration-300 hover:brightness-125"
+                style={{ height: `${height}%` }}
+                title={`${item.label}: ${item.revenue.toLocaleString(
+                  "es-MX",
+                )} MXN`}
+              />
+            </div>
+            <div className="text-center">
+              <p className="truncate text-[10px] font-bold uppercase text-zinc-500">
+                {item.label}
+              </p>
+              <p className="truncate text-[10px] text-[#d6ad4a]">
+                {item.revenue.toLocaleString("es-MX")}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ComparisonChart({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: Array<{ label: string; value: number }>;
+}) {
+  const maxValue = Math.max(...rows.map((row) => row.value), 1);
+
+  return (
+    <div className="rounded-xl border border-[#d6ad4a]/10 bg-black/35 p-4">
+      <h3 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-white">
+        {title}
+      </h3>
+      <div className="space-y-4">
+        {rows.map((row) => (
+          <div key={row.label}>
+            <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+              <span className="font-bold text-zinc-200">{row.label}</span>
+              <span className="text-[#d6ad4a]">
+                {row.value.toLocaleString("es-MX")} MXN
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-white/[0.06]">
+              <div
+                className="h-full rounded-full bg-[#d6ad4a] transition-all duration-300"
+                style={{ width: `${Math.max((row.value / maxValue) * 100, 3)}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StatusDistribution({
+  stats,
+}: {
+  stats: Array<{ status: AppointmentStatus; count: number; percentage: number }>;
+}) {
+  return (
+    <div className="rounded-xl border border-[#d6ad4a]/10 bg-black/35 p-4">
+      <h3 className="mb-4 text-sm font-black uppercase tracking-[0.18em] text-white">
+        Estado de citas
+      </h3>
+      <div className="space-y-3">
+        {stats.map((item) => (
+          <div key={item.status}>
+            <div className="mb-2 flex items-center justify-between gap-3">
+              <AppointmentStatusBadge status={item.status} />
+              <span className="text-sm text-zinc-400">
+                {item.count} · {item.percentage}%
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-white/[0.06]">
+              <div
+                className="h-full rounded-full bg-[#d6ad4a]"
+                style={{ width: `${Math.max(item.percentage, item.count ? 4 : 0)}%` }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Panel({ children }: { children: React.ReactNode }) {
   return (
     <section className="rounded-xl border border-[#d6ad4a]/15 bg-[#080808]/90 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.48)] sm:p-5">
@@ -832,6 +1078,117 @@ function buildCalendarDays(date: Date) {
       today: toDateKey(day) === todayKey,
     };
   });
+}
+
+function buildRevenueAnalytics(appointments: Appointment[]) {
+  const currentMonthKey = monthKey(new Date());
+  const monthlyRevenue = buildLastSixMonths().map((month) => {
+    const revenue = appointments
+      .filter((appointment) => appointment.appointment_date.startsWith(month.key))
+      .reduce(
+        (total, appointment) => total + Number(appointment.deposit_amount || 0),
+        0,
+      );
+
+    return {
+      label: month.label,
+      revenue,
+    };
+  });
+
+  const depositRevenue = appointments.reduce(
+    (total, appointment) => total + Number(appointment.deposit_amount || 0),
+    0,
+  );
+
+  const completedRevenue = appointments
+    .filter((appointment) => appointment.status === "completed")
+    .reduce(
+      (total, appointment) => total + Number(appointment.deposit_amount || 0),
+      0,
+    );
+
+  const categoryRevenue = appointments.reduce(
+    (totals, appointment) => {
+      totals[appointment.category] += Number(appointment.deposit_amount || 0);
+      return totals;
+    },
+    { tattoo: 0, barber: 0 } as Record<AppointmentCategory, number>,
+  );
+
+  const currentMonthRevenue = appointments
+    .filter((appointment) =>
+      appointment.appointment_date.startsWith(currentMonthKey),
+    )
+    .reduce(
+      (total, appointment) => total + Number(appointment.deposit_amount || 0),
+      0,
+    );
+
+  const statusStats = appointmentStatuses.map((status) => {
+    const count = appointments.filter(
+      (appointment) => appointment.status === status,
+    ).length;
+
+    return {
+      status,
+      count,
+      percentage: appointments.length
+        ? Math.round((count / appointments.length) * 100)
+        : 0,
+    };
+  });
+
+  const topClients = Object.values(
+    appointments.reduce<
+      Record<string, { key: string; name: string; count: number; revenue: number }>
+    >((clients, appointment) => {
+      const key = appointment.client_id || appointment.client_phone;
+      clients[key] ||= {
+        key,
+        name: appointment.client_name,
+        count: 0,
+        revenue: 0,
+      };
+      clients[key].count += 1;
+      clients[key].revenue += Number(appointment.deposit_amount || 0);
+      return clients;
+    }, {}),
+  )
+    .sort((a, b) => b.count - a.count || b.revenue - a.revenue)
+    .slice(0, 5);
+
+  return {
+    monthlyRevenue,
+    currentMonthRevenue,
+    completedRevenue,
+    depositRevenue,
+    averageDeposit: appointments.length
+      ? Math.round(depositRevenue / appointments.length)
+      : 0,
+    categoryRevenue,
+    statusStats,
+    topClients,
+  };
+}
+
+function buildLastSixMonths() {
+  const today = new Date();
+
+  return Array.from({ length: 6 }, (_, index) => {
+    const date = new Date(today.getFullYear(), today.getMonth() - 5 + index, 1);
+
+    return {
+      key: monthKey(date),
+      label: date.toLocaleDateString("es-MX", { month: "short" }),
+    };
+  });
+}
+
+function monthKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  return `${year}-${month}`;
 }
 
 function addMonths(date: Date, amount: number) {
