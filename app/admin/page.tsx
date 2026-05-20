@@ -143,7 +143,11 @@ export default function AdminPage() {
           "No se pudieron cargar las citas. Revisa que exista la tabla appointments en Supabase.",
         );
       } else {
-        setAppointments((appointmentsResult.data || []) as Appointment[]);
+        setAppointments(
+          (appointmentsResult.data || []).map((appointment) =>
+            hydrateAppointment(appointment),
+          ),
+        );
       }
 
       setLoading(false);
@@ -206,7 +210,7 @@ export default function AdminPage() {
     }
 
     setAppointments((current) => {
-      const saved = data as Appointment;
+      const saved = hydrateAppointment(data, payload);
 
       if (editingAppointment) {
         return current
@@ -1484,7 +1488,7 @@ async function saveAppointmentWithCompatibility(
   formPayload: AppointmentFormPayload,
   editingAppointment: Appointment | null,
 ) {
-  let payload = normalizeAppointmentPayload(formPayload);
+  const payload = normalizeAppointmentPayload(formPayload);
   let result = await mutateAppointment(payload, editingAppointment);
 
   if (!result.error) {
@@ -1493,12 +1497,20 @@ async function saveAppointmentWithCompatibility(
 
   logSupabaseAppointmentError(result.error, payload, "initial appointment save");
 
-  if (isMissingColumnError(result.error, "service")) {
-    const payloadWithoutService = { ...payload };
-    delete payloadWithoutService.service;
-    payload = payloadWithoutService;
+  const removedColumns: string[] = [];
+
+  for (let attempt = 0; attempt < 6 && result.error; attempt += 1) {
+    const missingColumn = getMissingColumnName(result.error);
+
+    if (!missingColumn || !(missingColumn in payload)) {
+      break;
+    }
+
+    removedColumns.push(missingColumn);
+    delete payload[missingColumn as keyof AppointmentMutationPayload];
     console.warn(
-      "Retrying appointment save without service because Supabase schema does not expose appointments.service.",
+      `Retrying appointment save without ${missingColumn} because Supabase schema does not expose appointments.${missingColumn}.`,
+      { removedColumns, nextPayload: payload },
     );
     result = await mutateAppointment(payload, editingAppointment);
   }
@@ -1533,6 +1545,28 @@ function normalizeAppointmentPayload(
   return normalized;
 }
 
+function hydrateAppointment(
+  row: unknown,
+  fallback?: AppointmentFormPayload,
+): Appointment {
+  const source = (row || {}) as Partial<Appointment>;
+
+  return {
+    id: source.id || crypto.randomUUID(),
+    client_name: source.client_name || fallback?.client_name || "",
+    client_phone: source.client_phone || fallback?.client_phone || "",
+    service: source.service || fallback?.service || "",
+    category: appointmentCategoryOrDefault(source.category || fallback?.category || "tattoo"),
+    appointment_date:
+      source.appointment_date || fallback?.appointment_date || toDateKey(new Date()),
+    appointment_time: source.appointment_time || fallback?.appointment_time || "00:00:00",
+    status: appointmentStatusOrDefault(source.status || fallback?.status || "pending"),
+    notes: source.notes ?? fallback?.notes ?? null,
+    deposit_amount: Number(source.deposit_amount ?? fallback?.deposit_amount ?? 0),
+    created_at: source.created_at || new Date().toISOString(),
+  };
+}
+
 async function mutateAppointment(
   payload: AppointmentMutationPayload,
   editingAppointment: Appointment | null,
@@ -1564,19 +1598,23 @@ function logSupabaseAppointmentError(
   });
 }
 
-function isMissingColumnError(
-  error: SupabaseMutationError,
-  column: string,
-) {
-  const text = `${error.code || ""} ${error.message || ""} ${
-    error.details || ""
-  } ${error.hint || ""}`.toLowerCase();
+function getMissingColumnName(error: SupabaseMutationError) {
+  const text = `${error.message || ""} ${error.details || ""} ${
+    error.hint || ""
+  }`;
+  const quotedColumn = text.match(/'([^']+)'\s+column/i);
 
-  return (
-    text.includes("pgrst204") ||
-    (text.includes(column.toLowerCase()) &&
-      (text.includes("column") || text.includes("schema cache")))
-  );
+  if (quotedColumn?.[1]) {
+    return quotedColumn[1];
+  }
+
+  const schemaCacheColumn = text.match(/column\s+\"?([a-zA-Z0-9_]+)\"?/i);
+
+  if (schemaCacheColumn?.[1]) {
+    return schemaCacheColumn[1];
+  }
+
+  return null;
 }
 
 function appointmentStatusOrDefault(status: string): AppointmentStatus {
