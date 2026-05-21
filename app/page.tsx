@@ -61,8 +61,8 @@ const copy = {
     depositTitle: "Anticipo",
     depositKicker: "RESERVA TU CITA",
     depositText:
-      "Para reservar una cita de tatuaje se requiere anticipo. Tu pago asegura espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
-    depositButton: "Pagar anticipo",
+      "Para reservar una cita de tatuaje se requiere un anticipo mínimo de 500 MXN. Tu pago asegura espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
+    depositButton: "Solicitar anticipo por WhatsApp",
     paymentMethods:
       "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
   },
@@ -119,8 +119,8 @@ const copy = {
     depositTitle: "Deposit",
     depositKicker: "BOOK YOUR APPOINTMENT",
     depositText:
-      "A deposit is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
-    depositButton: "Pay deposit",
+      "A minimum deposit of 500 MXN is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
+    depositButton: "Request deposit by WhatsApp",
     paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
   },
 };
@@ -455,7 +455,6 @@ export default function Home() {
         <ContactStrip kind="tattoo" language={language} />
       </section>
 
-      {/* TODO: connect this button to Stripe, Mercado Pago, or crypto payment link. */}
       <section
         id="anticipo"
         className="overflow-hidden border-t border-[#d6ad4a]/20 bg-black px-4 py-20 sm:px-6"
@@ -469,7 +468,11 @@ export default function Home() {
             </p>
             <div className="mt-8 space-y-6">
               <a
-                href="https://mpago.la/2Nc6MvU"
+                href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
+                  language === "es"
+                    ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden enviar las opciones de pago?"
+                    : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you send me the payment options?",
+                )}`}
                 target="_blank"
                 rel="noreferrer noopener"
                 className="btn-gold"
