@@ -930,7 +930,7 @@ export default function AdminPage() {
                         </td>
                         <td className="px-5 py-4">
                           <a
-                            href={`https://wa.me/${client.phone.replace(/\D/g, "")}`}
+                            href={buildWhatsAppUrl(client.phone, "")}
                             className="text-[#d6ad4a] transition hover:text-white"
                           >
                             {client.phone}
@@ -975,7 +975,7 @@ export default function AdminPage() {
                           {client.name}
                         </h2>
                         <a
-                          href={`https://wa.me/${client.phone.replace(/\D/g, "")}`}
+                          href={buildWhatsAppUrl(client.phone, "")}
                           className="mt-1 block text-sm text-[#d6ad4a]"
                         >
                           {client.phone}
@@ -1578,7 +1578,7 @@ function AppointmentCard({
             <AppointmentStatusBadge status={appointment.status} />
           </div>
           <a
-            href={`https://wa.me/${appointment.client_phone.replace(/\D/g, "")}`}
+            href={buildWhatsAppUrl(appointment.client_phone, "")}
             className="mt-1 inline-block text-sm text-[#d6ad4a] transition hover:text-white"
           >
             {appointment.client_phone}
@@ -2279,8 +2279,28 @@ function appointmentCategoryClasses(category: AppointmentCategory) {
 type WhatsAppMessageType = "confirm" | "reminder" | "deposit" | "location";
 
 function buildWhatsAppUrl(phone: string, message: string) {
-  const cleanPhone = phone.replace(/\D/g, "");
-  return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+  const cleanPhone = normalizeWhatsAppPhone(phone);
+  const params = new URLSearchParams({ phone: cleanPhone });
+
+  if (message.trim()) {
+    params.set("text", message);
+  }
+
+  return `https://api.whatsapp.com/send?${params.toString()}`;
+}
+
+function normalizeWhatsAppPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+
+  if (digits.length === 10) {
+    return `52${digits}`;
+  }
+
+  if (digits.length === 11 && digits.startsWith("1")) {
+    return digits;
+  }
+
+  return digits;
 }
 
 function buildWhatsAppMessage(
@@ -2305,7 +2325,7 @@ function buildWhatsAppMessage(
   }
 
   if (type === "deposit") {
-    return `${baseGreeting}\n\nPara apartar tu cita de ${service} el ${date} a las ${time}, se requiere anticipo.\nMonto registrado: ${deposit} MXN\nLink de pago: ${depositPaymentUrl}\n\nEl anticipo asegura tu espacio y se descuenta del total final cuando aplique.`;
+    return `${baseGreeting}\n\nPara apartar tu cita de ${service} el ${date} a las ${time}, se requiere un anticipo mínimo de 500 MXN.\nAnticipo registrado: ${deposit} MXN\nLink de pago: ${depositPaymentUrl}\n\nEl anticipo asegura tu espacio y se descuenta del total final cuando aplique.`;
   }
 
   return `${baseGreeting}\n\nEsta es nuestra ubicación para tu cita de ${service}:\nMambas Tattoo & Cuts\nCalle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen\n\nGoogle Maps: ${adminGoogleMapsUrl}\n\nTe esperamos.`;
