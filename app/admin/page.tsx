@@ -1166,9 +1166,15 @@ function CreateAppointmentModal({
               value={clientPhone}
               onChange={(event) => setClientPhone(event.target.value)}
               required
+              inputMode="tel"
+              autoComplete="tel"
               className="admin-field"
-              placeholder="+52..."
+              placeholder="+52 984 123 4567"
             />
+            <p className="mt-2 text-xs leading-5 text-zinc-500">
+              Para clientes extranjeros usa el código de país, por ejemplo +1
+              305 123 4567.
+            </p>
           </label>
 
           <label className="sm:col-span-2">
@@ -2280,17 +2286,26 @@ type WhatsAppMessageType = "confirm" | "reminder" | "deposit" | "location";
 
 function buildWhatsAppUrl(phone: string, message: string) {
   const cleanPhone = normalizeWhatsAppPhone(phone);
-  const params = new URLSearchParams({ phone: cleanPhone });
+  const text = message.trim();
 
-  if (message.trim()) {
-    params.set("text", message);
+  if (text) {
+    return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
   }
 
-  return `https://api.whatsapp.com/send?${params.toString()}`;
+  return `https://wa.me/${cleanPhone}`;
 }
 
 function normalizeWhatsAppPhone(phone: string) {
-  const digits = phone.replace(/\D/g, "");
+  const trimmedPhone = phone.trim();
+  const digits = trimmedPhone.replace(/\D/g, "");
+
+  if (trimmedPhone.startsWith("00") && digits.length > 2) {
+    return digits.slice(2);
+  }
+
+  if (digits.length === 13 && digits.startsWith("521")) {
+    return `52${digits.slice(3)}`;
+  }
 
   if (digits.length === 10) {
     return `52${digits}`;
