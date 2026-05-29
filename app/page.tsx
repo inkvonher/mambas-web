@@ -223,6 +223,38 @@ const tattooGallery: GalleryItem[] = [
     },
   },
   {
+    src: "/gallery/tattoo/tatuaje4.png",
+    label: { es: "Blackwork hombro", en: "Shoulder blackwork" },
+    alt: {
+      es: "Tatuaje blackwork de hombro con diseño abstracto orgánico realizado por Mambas Tattoo",
+      en: "Shoulder blackwork tattoo with organic abstract design by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuaje6.png",
+    label: { es: "Pieza ilustrativa", en: "Illustrative piece" },
+    alt: {
+      es: "Tatuaje ilustrativo en brazo con sombreado negro realizado por Mambas Tattoo",
+      en: "Illustrative arm tattoo with black shading by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuaje7.png",
+    label: { es: "Manga dragón", en: "Dragon sleeve" },
+    alt: {
+      es: "Tatuaje de manga con dragón y sombreado negro realizado por Mambas Tattoo",
+      en: "Dragon sleeve tattoo with black shading by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuaje8.png",
+    label: { es: "Dragón blackwork", en: "Blackwork dragon" },
+    alt: {
+      es: "Tatuaje blackwork de dragón en brazo realizado por Mambas Tattoo",
+      en: "Blackwork dragon arm tattoo by Mambas Tattoo",
+    },
+  },
+  {
     src: "/gallery/tattoo/piercing/piercing11.png",
     label: { es: "Septum + labret", en: "Septum + labret" },
     alt: {
