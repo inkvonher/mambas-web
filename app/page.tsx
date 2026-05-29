@@ -223,9 +223,8 @@ const tattooGallery: GalleryItem[] = [
     },
   },
   {
-    src: "/gallery/tattoo/piercing/piercing1.png",
+    src: "/gallery/tattoo/piercing/piercing11.png",
     label: { es: "Septum + labret", en: "Septum + labret" },
-    imageClassName: "object-contain bg-black",
     alt: {
       es: "Piercing septum y labret con joyería plateada realizado por Mambas",
       en: "Septum and labret piercing with silver jewelry by Mambas",
