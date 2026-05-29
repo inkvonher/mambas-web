@@ -9,7 +9,7 @@ type ServiceMode = "barber" | "tattoo";
 
 const copy = {
   es: {
-    nav: ["Inicio", "Barbería", "Tattoo", "Lealtad", "Ubicación"],
+    nav: ["Inicio", "Barbería", "Tattoo", "Anticipo", "Lealtad", "Ubicación"],
     heroKicker: "Barbería tradicional mexicana · Tatuaje ritual · Piercing",
     heroText:
       "Desde 2021 en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel. Certificados ante COFEPRIS.",
@@ -63,11 +63,12 @@ const copy = {
     depositText:
       "Para reservar una cita de tatuaje se requiere un anticipo mínimo de 500 MXN. Tu pago asegura espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
     depositButton: "Solicitar anticipo por WhatsApp",
+    depositPaymentButton: "Pagar anticipo",
     paymentMethods:
       "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
   },
   en: {
-    nav: ["Home", "Barbershop", "Tattoo", "Loyalty", "Location"],
+    nav: ["Home", "Barbershop", "Tattoo", "Deposit", "Loyalty", "Location"],
     heroKicker: "Traditional Mexican barbershop · Ritual tattoo · Piercing",
     heroText:
       "Since 2021 in the heart of Playa del Carmen, a few blocks from the Cozumel ferry. COFEPRIS certified.",
@@ -121,6 +122,7 @@ const copy = {
     depositText:
       "A minimum deposit of 500 MXN is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
     depositButton: "Request deposit by WhatsApp",
+    depositPaymentButton: "Pay deposit",
     paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
   },
 };
@@ -160,6 +162,7 @@ const contacts = {
 
 const googleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
+const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
 
 export default function Home() {
   const [language, setLanguage] = useState<Language>("es");
@@ -236,7 +239,7 @@ export default function Home() {
             aria-label="Primary site navigation"
             className="hidden items-center gap-6 lg:flex"
           >
-            {["inicio", "barberia", "tattoo", "lealtad", "ubicacion"].map(
+            {["inicio", "barberia", "tattoo", "anticipo", "lealtad", "ubicacion"].map(
               (id, index) => (
                 <button
                   key={id}
@@ -467,18 +470,28 @@ export default function Home() {
               {t.depositText}
             </p>
             <div className="mt-8 space-y-6">
-              <a
-                href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
-                  language === "es"
-                    ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden enviar las opciones de pago?"
-                    : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you send me the payment options?",
-                )}`}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="btn-gold"
-              >
-                {t.depositButton}
-              </a>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <a
+                  href={depositPaymentUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="btn-gold"
+                >
+                  {t.depositPaymentButton}
+                </a>
+                <a
+                  href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
+                    language === "es"
+                      ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden enviar las opciones de pago?"
+                      : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you send me the payment options?",
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="btn-outline"
+                >
+                  {t.depositButton}
+                </a>
+              </div>
 
               <div className="w-full max-w-full overflow-hidden rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.1),rgba(255,255,255,0.035)),#070707] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg sm:p-5">
                 <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
