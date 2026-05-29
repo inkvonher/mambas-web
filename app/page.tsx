@@ -440,7 +440,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
+      <section
+        id="quienes-somos"
+        className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6"
+      >
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <p className="section-kicker">MAMBAS · 2021</p>
@@ -448,6 +451,28 @@ export default function Home() {
           </div>
           <div className="space-y-5 text-lg leading-8 text-zinc-300">
             <p>{t.about}</p>
+            <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_28px_80px_rgba(0,0,0,0.48)] sm:min-h-[340px]">
+              <Image
+                src="/gallery/mbs3.jpg"
+                alt={
+                  language === "es"
+                    ? "Fachada nocturna de Mambas Tattoo & Cuts en Playa del Carmen"
+                    : "Mambas Tattoo & Cuts storefront at night in Playa del Carmen"
+                }
+                fill
+                sizes="(max-width: 1024px) 100vw, 760px"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.5)),linear-gradient(90deg,rgba(0,0,0,0.42),transparent_55%)]" />
+              <div className="absolute bottom-5 left-5 right-5">
+                <p className="text-xs font-black uppercase tracking-[0.26em] text-[#d6ad4a]">
+                  Playa del Carmen
+                </p>
+                <p className="mt-2 max-w-md text-2xl font-black uppercase leading-none text-white sm:text-4xl">
+                  Mambas Tattoo & Cuts
+                </p>
+              </div>
+            </div>
             <p className="discreet">{t.inclusive}</p>
           </div>
         </div>
