@@ -266,9 +266,18 @@ a {
     linear-gradient(145deg, #151515, #070707);
 }
 
+.gallery-frame::before {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 46%, rgba(0, 0, 0, 0.76));
+  content: "";
+}
+
 .gallery-frame::after {
   position: absolute;
   inset: 12%;
+  z-index: 1;
   border: 1px solid rgba(214, 173, 74, 0.12);
   border-radius: 999px;
   content: "";

@@ -164,6 +164,60 @@ const googleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
 const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
 
+const barberGallery = [
+  {
+    src: "/gallery/barber/IMG_3034.jpg",
+    label: { es: "Corte con diseño", en: "Designed cut" },
+    alt: {
+      es: "Corte infantil con fade y diseño de líneas en Mambas Barbería",
+      en: "Kids fade haircut with line design at Mambas Barbershop",
+    },
+  },
+  {
+    src: "/gallery/barber/IMG_3036.jpg",
+    label: { es: "Trenzas + fade", en: "Braids + fade" },
+    alt: {
+      es: "Corte fade con trenzas y barba perfilada de Mambas Barbería",
+      en: "Fade haircut with braids and shaped beard by Mambas Barbershop",
+    },
+  },
+  {
+    src: "/gallery/barber/IMG_3037.jpg",
+    label: { es: "Fade clásico", en: "Classic fade" },
+    alt: {
+      es: "Corte fade clásico con barba en la barbería Mambas",
+      en: "Classic fade haircut with beard at Mambas Barbershop",
+    },
+  },
+];
+
+const tattooGallery = [
+  {
+    src: "/gallery/tattoo/tatuaje1.png",
+    label: { es: "Blackwork pantera", en: "Blackwork panther" },
+    alt: {
+      es: "Tatuaje blackwork de pantera en pecho hecho por Mambas Tattoo",
+      en: "Blackwork panther chest tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuaje2.png",
+    label: { es: "Pieza de pecho", en: "Chest piece" },
+    alt: {
+      es: "Tatuaje de pecho con serpiente y cráneo realizado por Mambas Tattoo",
+      en: "Chest tattoo with snake and skull by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuaje3.jpg",
+    label: { es: "Lettering cuello", en: "Neck lettering" },
+    alt: {
+      es: "Tatuaje de lettering en cuello realizado por Mambas Tattoo",
+      en: "Neck lettering tattoo by Mambas Tattoo",
+    },
+  },
+];
+
 export default function Home() {
   const [language, setLanguage] = useState<Language>("es");
   const [mode, setMode] = useState<ServiceMode>("barber");
@@ -340,13 +394,20 @@ export default function Home() {
               </p>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
-              {[1, 2, 3].map((item) => (
+              {barberGallery.map((item) => (
                 <div
-                  key={item}
+                  key={item.src}
                   className="gallery-card snap-center min-w-[260px] shrink-0"
                 >
                   <div className="gallery-frame">
-                    <span>{["CUT", "BEARD", "VIP"][item - 1]}</span>
+                    <Image
+                      src={item.src}
+                      alt={item.alt[language]}
+                      fill
+                      sizes="(max-width: 640px) 260px, 320px"
+                      className="object-cover"
+                    />
+                    <span>{item.label[language]}</span>
                   </div>
                 </div>
               ))}
@@ -437,13 +498,20 @@ export default function Home() {
               </p>
             </div>
             <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
-              {[1, 2, 3].map((item) => (
+              {tattooGallery.map((item) => (
                 <div
-                  key={item}
+                  key={item.src}
                   className="gallery-card snap-center min-w-[260px] shrink-0"
                 >
                   <div className="gallery-frame">
-                    <span>{["INK", "PIERCE", "ART"][item - 1]}</span>
+                    <Image
+                      src={item.src}
+                      alt={item.alt[language]}
+                      fill
+                      sizes="(max-width: 640px) 260px, 320px"
+                      className="object-cover"
+                    />
+                    <span>{item.label[language]}</span>
                   </div>
                 </div>
               ))}
