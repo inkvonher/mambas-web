@@ -216,6 +216,46 @@ const tattooGallery = [
       en: "Neck lettering tattoo by Mambas Tattoo",
     },
   },
+  {
+    src: "/gallery/tattoo/piercing/piercing1.png",
+    label: { es: "Septum + labret", en: "Septum + labret" },
+    alt: {
+      es: "Piercing septum y labret con joyería plateada realizado por Mambas",
+      en: "Septum and labret piercing with silver jewelry by Mambas",
+    },
+  },
+  {
+    src: "/gallery/tattoo/piercing/piercing2.png",
+    label: { es: "Septum dorado", en: "Gold septum" },
+    alt: {
+      es: "Piercing septum con joyería dorada realizado por Mambas",
+      en: "Septum piercing with gold jewelry by Mambas",
+    },
+  },
+  {
+    src: "/gallery/tattoo/piercing/piercing3.png",
+    label: { es: "Nostril", en: "Nostril" },
+    alt: {
+      es: "Piercing nostril con joyería discreta realizado por Mambas",
+      en: "Nostril piercing with minimal jewelry by Mambas",
+    },
+  },
+  {
+    src: "/gallery/tattoo/piercing/piercing4.png",
+    label: { es: "Labret vertical", en: "Vertical labret" },
+    alt: {
+      es: "Piercing labret vertical con joyería plateada realizado por Mambas",
+      en: "Vertical labret piercing with silver jewelry by Mambas",
+    },
+  },
+  {
+    src: "/gallery/tattoo/piercing/piercing5.png",
+    label: { es: "Septum", en: "Septum" },
+    alt: {
+      es: "Piercing septum con joyería plateada realizado por Mambas",
+      en: "Septum piercing with silver jewelry by Mambas",
+    },
+  },
 ];
 
 export default function Home() {
