@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
 import { supabase } from "./lib/supabase";
 
@@ -11,12 +11,6 @@ type GalleryItem = {
   label: Record<Language, string>;
   alt: Record<Language, string>;
   imageClassName?: string;
-};
-type MachineSound = {
-  context: AudioContext;
-  gain: GainNode;
-  oscillators: OscillatorNode[];
-  noise: AudioBufferSourceNode;
 };
 
 const copy = {
@@ -78,8 +72,6 @@ const copy = {
     depositPaymentButton: "Pagar anticipo",
     paymentMethods:
       "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
-    soundOn: "Apagar sonido",
-    soundOff: "Sonido",
   },
   en: {
     nav: ["Home", "Barbershop", "Tattoo", "Deposit", "Loyalty", "Location"],
@@ -138,8 +130,6 @@ const copy = {
     depositButton: "Request deposit by WhatsApp",
     depositPaymentButton: "Pay deposit",
     paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
-    soundOn: "Turn sound off",
-    soundOff: "Sound",
   },
 };
 
@@ -314,8 +304,6 @@ export default function Home() {
   const [detail, setDetail] = useState(1);
   const [zone, setZone] = useState(1);
   const [copied, setCopied] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const soundRef = useRef<MachineSound | null>(null);
   const walletAddress = "0x620D311425385e60743a2e9f3cE0e476E07cdCA1";
   const t = copy[language];
 
@@ -325,98 +313,6 @@ export default function Home() {
       1600 + extraCentimeters * 110 + (detail - 1) * 450 + (zone - 1) * 250;
     return Math.min(Math.max(Math.round(calculated / 50) * 50, 1600), 6500);
   }, [centimeters, detail, zone]);
-
-  useEffect(() => {
-    return () => {
-      stopMachineSound();
-    };
-  }, []);
-
-  function startMachineSound() {
-    if (soundRef.current || typeof window === "undefined") {
-      return;
-    }
-
-    const AudioContextClass =
-      window.AudioContext ||
-      (window as typeof window & { webkitAudioContext?: typeof AudioContext })
-        .webkitAudioContext;
-
-    if (!AudioContextClass) {
-      return;
-    }
-
-    const context = new AudioContextClass();
-    const gain = context.createGain();
-    gain.gain.setValueAtTime(0.0001, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.045, context.currentTime + 0.25);
-    gain.connect(context.destination);
-
-    const filter = context.createBiquadFilter();
-    filter.type = "bandpass";
-    filter.frequency.value = 760;
-    filter.Q.value = 0.8;
-    filter.connect(gain);
-
-    const oscillators = [context.createOscillator(), context.createOscillator()];
-    oscillators[0].type = "sawtooth";
-    oscillators[0].frequency.value = 94;
-    oscillators[1].type = "square";
-    oscillators[1].frequency.value = 188;
-
-    oscillators.forEach((oscillator) => {
-      oscillator.connect(filter);
-      oscillator.start();
-    });
-
-    const buffer = context.createBuffer(1, context.sampleRate * 2, context.sampleRate);
-    const channel = buffer.getChannelData(0);
-    for (let index = 0; index < channel.length; index += 1) {
-      channel[index] = (Math.random() * 2 - 1) * 0.22;
-    }
-
-    const noise = context.createBufferSource();
-    const noiseGain = context.createGain();
-    noiseGain.gain.value = 0.018;
-    noise.buffer = buffer;
-    noise.loop = true;
-    noise.connect(noiseGain);
-    noiseGain.connect(filter);
-    noise.start();
-
-    soundRef.current = { context, gain, oscillators, noise };
-    setSoundEnabled(true);
-  }
-
-  function stopMachineSound() {
-    const sound = soundRef.current;
-    if (!sound) {
-      return;
-    }
-
-    const stopAt = sound.context.currentTime + 0.18;
-    sound.gain.gain.cancelScheduledValues(sound.context.currentTime);
-    sound.gain.gain.setValueAtTime(sound.gain.gain.value, sound.context.currentTime);
-    sound.gain.gain.exponentialRampToValueAtTime(0.0001, stopAt);
-
-    window.setTimeout(() => {
-      sound.oscillators.forEach((oscillator) => oscillator.stop());
-      sound.noise.stop();
-      sound.context.close();
-    }, 220);
-
-    soundRef.current = null;
-    setSoundEnabled(false);
-  }
-
-  function toggleMachineSound() {
-    if (soundEnabled) {
-      stopMachineSound();
-      return;
-    }
-
-    startMachineSound();
-  }
 
   async function handleRegister(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -487,21 +383,12 @@ export default function Home() {
               ),
             )}
           </nav>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleMachineSound}
-              aria-pressed={soundEnabled}
-              className="border border-[#d6ad4a] px-3 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
-            >
-              {soundEnabled ? t.soundOn : t.soundOff}
-            </button>
-            <button
-              onClick={() => setLanguage(language === "es" ? "en" : "es")}
-              className="border border-[#d6ad4a] px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
-            >
-              {language === "es" ? "EN" : "ES"}
-            </button>
-          </div>
+          <button
+            onClick={() => setLanguage(language === "es" ? "en" : "es")}
+            className="border border-[#d6ad4a] px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
+          >
+            {language === "es" ? "EN" : "ES"}
+          </button>
         </div>
       </header>
 
