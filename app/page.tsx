@@ -6,6 +6,12 @@ import { supabase } from "./lib/supabase";
 
 type Language = "es" | "en";
 type ServiceMode = "barber" | "tattoo";
+type GalleryItem = {
+  src: string;
+  label: Record<Language, string>;
+  alt: Record<Language, string>;
+  imageClassName?: string;
+};
 
 const copy = {
   es: {
@@ -164,7 +170,7 @@ const googleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
 const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
 
-const barberGallery = [
+const barberGallery: GalleryItem[] = [
   {
     src: "/gallery/barber/IMG_3034.jpg",
     label: { es: "Corte con diseño", en: "Designed cut" },
@@ -191,7 +197,7 @@ const barberGallery = [
   },
 ];
 
-const tattooGallery = [
+const tattooGallery: GalleryItem[] = [
   {
     src: "/gallery/tattoo/tatuaje1.png",
     label: { es: "Blackwork pantera", en: "Blackwork panther" },
@@ -219,6 +225,7 @@ const tattooGallery = [
   {
     src: "/gallery/tattoo/piercing/piercing1.png",
     label: { es: "Septum + labret", en: "Septum + labret" },
+    imageClassName: "object-contain bg-black",
     alt: {
       es: "Piercing septum y labret con joyería plateada realizado por Mambas",
       en: "Septum and labret piercing with silver jewelry by Mambas",
@@ -445,7 +452,7 @@ export default function Home() {
                       alt={item.alt[language]}
                       fill
                       sizes="(max-width: 640px) 260px, 320px"
-                      className="object-cover"
+                      className={item.imageClassName || "object-cover"}
                     />
                     <span>{item.label[language]}</span>
                   </div>
