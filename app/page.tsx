@@ -965,7 +965,7 @@ export default function Home() {
               : "Open WhatsApp options"
           }
           aria-expanded={floatingOpen}
-          className="whatsapp-float-button grid h-[68px] w-[68px] place-items-center rounded-full border border-[#d6ad4a]/70 bg-black text-white shadow-[0_18px_54px_rgba(0,0,0,0.5),0_0_34px_rgba(214,173,74,0.2)] transition hover:-translate-y-0.5 hover:border-[#d6ad4a]"
+          className="whatsapp-float-button grid h-[68px] w-[68px] place-items-center rounded-full border border-[#d6ad4a]/70 bg-black text-[#d6ad4a] shadow-[0_18px_54px_rgba(0,0,0,0.5),0_0_34px_rgba(214,173,74,0.2)] transition hover:-translate-y-0.5 hover:border-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black"
         >
           <WhatsAppIcon />
         </button>
@@ -977,7 +977,7 @@ export default function Home() {
 function WhatsAppIcon() {
   return (
     <span
-      className="grid h-12 w-12 place-items-center rounded-full bg-[#25D366] shadow-[inset_0_0_0_2px_rgba(255,255,255,0.18),0_0_24px_rgba(37,211,102,0.36)]"
+      className="grid h-12 w-12 place-items-center rounded-full border border-current bg-[rgba(214,173,74,0.08)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.08),0_0_24px_rgba(214,173,74,0.2)]"
       aria-hidden="true"
     >
       <svg
