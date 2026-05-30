@@ -965,7 +965,7 @@ export default function Home() {
               : "Open WhatsApp options"
           }
           aria-expanded={floatingOpen}
-          className="grid h-16 w-16 place-items-center rounded-full border border-[#d6ad4a]/70 bg-black text-[#d6ad4a] shadow-[0_18px_54px_rgba(0,0,0,0.5),0_0_34px_rgba(214,173,74,0.2)] transition hover:-translate-y-0.5 hover:border-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black"
+          className="whatsapp-float-button grid h-[68px] w-[68px] place-items-center rounded-full border border-[#d6ad4a]/70 bg-black text-white shadow-[0_18px_54px_rgba(0,0,0,0.5),0_0_34px_rgba(214,173,74,0.2)] transition hover:-translate-y-0.5 hover:border-[#d6ad4a]"
         >
           <WhatsAppIcon />
         </button>
@@ -977,15 +977,15 @@ export default function Home() {
 function WhatsAppIcon() {
   return (
     <span
-      className="grid h-9 w-9 place-items-center rounded-full border border-current bg-transparent"
+      className="grid h-12 w-12 place-items-center rounded-full bg-[#25D366] shadow-[inset_0_0_0_2px_rgba(255,255,255,0.18),0_0_24px_rgba(37,211,102,0.36)]"
       aria-hidden="true"
     >
       <svg
-        viewBox="0 0 32 32"
-        className="h-6 w-6 fill-current"
+        viewBox="0 0 24 24"
+        className="h-8 w-8 fill-white"
         role="img"
       >
-        <path d="M16.02 3.2A12.75 12.75 0 0 0 5.17 22.63L3.72 28.8l6.3-1.55A12.76 12.76 0 1 0 16.02 3.2Zm0 2.28a10.48 10.48 0 0 1 8.9 16.01 10.47 10.47 0 0 1-13.87 3.42l-.43-.25-3.74.92.87-3.67-.28-.45A10.48 10.48 0 0 1 16.02 5.48Zm-4.5 5.45c-.25 0-.65.09-.99.46-.34.37-1.3 1.27-1.3 3.1s1.33 3.6 1.52 3.86c.19.25 2.57 4.12 6.35 5.61 3.14 1.24 3.79 1 4.47.94.69-.07 2.22-.91 2.54-1.78.31-.88.31-1.63.22-1.78-.09-.16-.34-.25-.72-.44-.37-.19-2.21-1.09-2.55-1.22-.34-.12-.59-.18-.84.19-.25.38-.97 1.22-1.19 1.47-.22.25-.44.28-.81.09-.37-.19-1.58-.58-3.01-1.86-1.11-.99-1.86-2.22-2.08-2.59-.22-.38-.02-.58.16-.76.17-.17.38-.44.56-.66.19-.22.25-.38.38-.63.12-.25.06-.47-.03-.66-.09-.19-.84-2.02-1.15-2.77-.3-.72-.61-.62-.84-.63l-.71-.01Z" />
+        <path d="M12.04 2a9.91 9.91 0 0 0-8.49 15.03L2.38 22l5.08-1.15A9.91 9.91 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 0 1 6.89 12.34 8.1 8.1 0 0 1-10.74 2.62l-.34-.2-3.02.69.7-2.94-.22-.36A8.1 8.1 0 0 1 12.04 3.8Zm-3.15 4.37c-.17 0-.45.06-.69.33-.24.26-.91.88-.91 2.15 0 1.26.93 2.49 1.06 2.66.13.18 1.8 2.88 4.43 3.91 2.19.86 2.64.69 3.11.65.48-.04 1.55-.63 1.77-1.24.22-.61.22-1.13.15-1.24-.06-.11-.24-.18-.5-.31-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.58.13-.18.26-.68.85-.83 1.02-.16.18-.31.2-.57.07-.26-.13-1.1-.4-2.1-1.29-.78-.69-1.3-1.55-1.46-1.81-.15-.26-.02-.4.12-.53.12-.12.26-.31.39-.46.13-.15.17-.26.26-.44.09-.17.04-.32-.02-.46-.07-.13-.58-1.41-.8-1.93-.21-.5-.43-.43-.59-.44h-.5Z" />
       </svg>
     </span>
   );
