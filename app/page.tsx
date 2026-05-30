@@ -72,7 +72,6 @@ const copy = {
     depositPaymentButton: "Pagar anticipo",
     paymentMethods:
       "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
-    floatingCta: "Reservar",
     floatingBarber: "Barbería",
     floatingTattoo: "Tattoo & Piercing",
   },
@@ -133,7 +132,6 @@ const copy = {
     depositButton: "Request deposit by WhatsApp",
     depositPaymentButton: "Pay deposit",
     paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
-    floatingCta: "Book",
     floatingBarber: "Barbershop",
     floatingTattoo: "Tattoo & Piercing",
   },
@@ -961,16 +959,35 @@ export default function Home() {
         )}
         <button
           onClick={() => setFloatingOpen((open) => !open)}
+          aria-label={
+            language === "es"
+              ? "Abrir opciones de WhatsApp"
+              : "Open WhatsApp options"
+          }
           aria-expanded={floatingOpen}
-          className="inline-flex min-h-14 items-center gap-3 rounded-full border border-[#d6ad4a] bg-[#d6ad4a] px-5 py-3 text-sm font-black uppercase tracking-[0.16em] text-black shadow-[0_18px_54px_rgba(214,173,74,0.28)] transition hover:-translate-y-0.5 hover:bg-white hover:border-white"
+          className="grid h-16 w-16 place-items-center rounded-full border border-[#d6ad4a]/70 bg-black text-[#d6ad4a] shadow-[0_18px_54px_rgba(0,0,0,0.5),0_0_34px_rgba(214,173,74,0.2)] transition hover:-translate-y-0.5 hover:border-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black"
         >
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-black text-base text-[#d6ad4a]">
-            {floatingOpen ? "×" : "↗"}
-          </span>
-          {t.floatingCta}
+          <WhatsAppIcon />
         </button>
       </div>
     </main>
+  );
+}
+
+function WhatsAppIcon() {
+  return (
+    <span
+      className="grid h-9 w-9 place-items-center rounded-full border border-current bg-transparent"
+      aria-hidden="true"
+    >
+      <svg
+        viewBox="0 0 32 32"
+        className="h-6 w-6 fill-current"
+        role="img"
+      >
+        <path d="M16.02 3.2A12.75 12.75 0 0 0 5.17 22.63L3.72 28.8l6.3-1.55A12.76 12.76 0 1 0 16.02 3.2Zm0 2.28a10.48 10.48 0 0 1 8.9 16.01 10.47 10.47 0 0 1-13.87 3.42l-.43-.25-3.74.92.87-3.67-.28-.45A10.48 10.48 0 0 1 16.02 5.48Zm-4.5 5.45c-.25 0-.65.09-.99.46-.34.37-1.3 1.27-1.3 3.1s1.33 3.6 1.52 3.86c.19.25 2.57 4.12 6.35 5.61 3.14 1.24 3.79 1 4.47.94.69-.07 2.22-.91 2.54-1.78.31-.88.31-1.63.22-1.78-.09-.16-.34-.25-.72-.44-.37-.19-2.21-1.09-2.55-1.22-.34-.12-.59-.18-.84.19-.25.38-.97 1.22-1.19 1.47-.22.25-.44.28-.81.09-.37-.19-1.58-.58-3.01-1.86-1.11-.99-1.86-2.22-2.08-2.59-.22-.38-.02-.58.16-.76.17-.17.38-.44.56-.66.19-.22.25-.38.38-.63.12-.25.06-.47-.03-.66-.09-.19-.84-2.02-1.15-2.77-.3-.72-.61-.62-.84-.63l-.71-.01Z" />
+      </svg>
+    </span>
   );
 }
 
