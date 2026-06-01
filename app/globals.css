@@ -663,6 +663,137 @@ a {
   border-color: var(--gold);
 }
 
+.admin-dashboard {
+  color-scheme: dark;
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.admin-dashboard .admin-field {
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid rgba(214, 173, 74, 0.22);
+  border-radius: 0.5rem;
+  background: #050505;
+  padding: 0 1rem;
+  color: #ffffff;
+  outline: none;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.admin-dashboard textarea.admin-field {
+  padding-top: 0.75rem;
+}
+
+.admin-dashboard .admin-field:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(214, 173, 74, 0.12);
+}
+
+.admin-dashboard .calendar-button {
+  min-height: 2.75rem;
+  border: 1px solid rgba(214, 173, 74, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  color: var(--gold);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    color 180ms ease;
+}
+
+.admin-dashboard .calendar-button:hover {
+  transform: translateY(-1px);
+  background: var(--gold);
+  color: #050505;
+}
+
+.admin-dashboard.admin-light {
+  color-scheme: light;
+  background:
+    radial-gradient(circle at top left, rgba(214, 173, 74, 0.16), transparent 34%),
+    linear-gradient(180deg, #fffaf0, #f3efe5) !important;
+  color: #19150d !important;
+}
+
+.admin-dashboard.admin-light > .pointer-events-none {
+  background:
+    radial-gradient(circle at top left, rgba(214, 173, 74, 0.2), transparent 34%),
+    radial-gradient(circle at 88% 12%, rgba(0, 0, 0, 0.05), transparent 24%) !important;
+}
+
+.admin-dashboard.admin-light header,
+.admin-dashboard.admin-light section,
+.admin-dashboard.admin-light article,
+.admin-dashboard.admin-light table,
+.admin-dashboard.admin-light [class*="bg-[#070707]"],
+.admin-dashboard.admin-light [class*="bg-[#080808]"],
+.admin-dashboard.admin-light [class*="bg-[#0d0d0d]"],
+.admin-dashboard.admin-light [class*="bg-black"],
+.admin-dashboard.admin-light [class*="bg-white/["] {
+  background-color: rgba(255, 252, 246, 0.88) !important;
+  color: #19150d !important;
+}
+
+.admin-dashboard.admin-light header,
+.admin-dashboard.admin-light section,
+.admin-dashboard.admin-light article,
+.admin-dashboard.admin-light .panel,
+.admin-dashboard.admin-light table,
+.admin-dashboard.admin-light [class*="border-[#d6ad4a]"] {
+  border-color: rgba(138, 106, 30, 0.25) !important;
+}
+
+.admin-dashboard.admin-light .text-white,
+.admin-dashboard.admin-light .text-zinc-100,
+.admin-dashboard.admin-light .text-zinc-200,
+.admin-dashboard.admin-light .text-zinc-300 {
+  color: #19150d !important;
+}
+
+.admin-dashboard.admin-light .text-zinc-400,
+.admin-dashboard.admin-light .text-zinc-500,
+.admin-dashboard.admin-light .text-zinc-600 {
+  color: #6f6656 !important;
+}
+
+.admin-dashboard.admin-light .admin-field,
+.admin-dashboard.admin-light input,
+.admin-dashboard.admin-light select,
+.admin-dashboard.admin-light textarea {
+  border-color: rgba(138, 106, 30, 0.28) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  color: #19150d !important;
+}
+
+.admin-dashboard.admin-light ::placeholder {
+  color: #8a806f !important;
+}
+
+.admin-dashboard.admin-light th {
+  background: rgba(214, 173, 74, 0.13) !important;
+  color: #6f561b !important;
+}
+
+.admin-dashboard.admin-light tr,
+.admin-dashboard.admin-light td {
+  border-color: rgba(138, 106, 30, 0.16) !important;
+}
+
+.admin-dashboard.admin-light .bg-red-950\/30 {
+  background: rgba(254, 226, 226, 0.92) !important;
+  color: #7f1d1d !important;
+}
+
 ::placeholder {
   color: #71717a;
 }

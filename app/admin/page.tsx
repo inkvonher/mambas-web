@@ -117,6 +117,15 @@ export default function AdminPage() {
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<
     string | null
   >(null);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") {
+      return "dark";
+    }
+
+    return localStorage.getItem("mambas-admin-theme") === "light"
+      ? "light"
+      : "dark";
+  });
 
   useEffect(() => {
     async function loadAdminData() {
@@ -165,6 +174,10 @@ export default function AdminPage() {
 
     loadAdminData();
   }, [router]);
+
+  useEffect(() => {
+    localStorage.setItem("mambas-admin-theme", theme);
+  }, [theme]);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -442,7 +455,12 @@ export default function AdminPage() {
   );
 
   return (
-    <main className="min-h-screen bg-[#040404] text-white">
+    <main
+      suppressHydrationWarning
+      className={`admin-dashboard min-h-screen bg-[#040404] text-white ${
+        theme === "light" ? "admin-light" : "admin-dark"
+      }`}
+    >
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(243,210,122,0.2),transparent_34%),radial-gradient(circle_at_88%_12%,rgba(255,255,255,0.08),transparent_24%),linear-gradient(135deg,rgba(214,173,74,0.07),transparent_42%)]" />
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
@@ -457,6 +475,16 @@ export default function AdminPage() {
               </h1>
             </div>
             <div className="flex items-center gap-3">
+              <button
+                onClick={() =>
+                  setTheme((currentTheme) =>
+                    currentTheme === "dark" ? "light" : "dark",
+                  )
+                }
+                className="min-h-11 shrink-0 rounded-lg border border-[#d6ad4a]/50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
+              >
+                {theme === "dark" ? "Claro" : "Oscuro"}
+              </button>
               <button
                 onClick={() => openCreateAppointment()}
                 className="hidden min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] sm:inline-flex sm:items-center"
