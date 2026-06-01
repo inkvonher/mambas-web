@@ -565,24 +565,22 @@ export default function Home() {
                 Mambas
               </p>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
-              {barberGallery.map((item) => (
-                <div
-                  key={item.src}
-                  className="gallery-card snap-center min-w-[260px] shrink-0"
-                >
-                  <div className="gallery-frame">
-                    <Image
-                      src={item.src}
-                      alt={item.alt[language]}
-                      fill
-                      sizes="(max-width: 640px) 260px, 320px"
-                      className={item.imageClassName || "object-cover"}
-                    />
-                    <span>{item.label[language]}</span>
+            <div className="gallery-viewport">
+              <div className="gallery-track gallery-track-barber">
+                {[...barberGallery, ...barberGallery].map((item, index) => (
+                  <div key={`${item.src}-${index}`} className="gallery-card">
+                    <div className="gallery-frame">
+                      <Image
+                        src={item.src}
+                        alt={item.alt[language]}
+                        fill
+                        sizes="(max-width: 640px) 260px, 320px"
+                        className={item.imageClassName || "object-cover"}
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             <p className="mt-5 text-sm leading-6 text-zinc-400">
               {language === "es"
@@ -669,24 +667,22 @@ export default function Home() {
                 Mambas
               </p>
             </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 pr-2 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-[#d6ad4a]/40 scrollbar-track-transparent">
-              {tattooGallery.map((item) => (
-                <div
-                  key={item.src}
-                  className="gallery-card snap-center min-w-[260px] shrink-0"
-                >
-                  <div className="gallery-frame">
-                    <Image
-                      src={item.src}
-                      alt={item.alt[language]}
-                      fill
-                      sizes="(max-width: 640px) 260px, 320px"
-                      className="object-cover"
-                    />
-                    <span>{item.label[language]}</span>
+            <div className="gallery-viewport">
+              <div className="gallery-track gallery-track-tattoo">
+                {[...tattooGallery, ...tattooGallery].map((item, index) => (
+                  <div key={`${item.src}-${index}`} className="gallery-card">
+                    <div className="gallery-frame">
+                      <Image
+                        src={item.src}
+                        alt={item.alt[language]}
+                        fill
+                        sizes="(max-width: 640px) 260px, 320px"
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
             <p className="mt-5 text-sm leading-6 text-zinc-400">
               {language === "es"
