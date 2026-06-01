@@ -176,6 +176,46 @@ const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
 
 const barberGallery: GalleryItem[] = [
   {
+    src: "/gallery/barber/barber11.png",
+    label: { es: "Ritual de navaja", en: "Razor ritual" },
+    alt: {
+      es: "Barbero de Mambas realizando servicio con navaja en barbería",
+      en: "Mambas barber performing a razor service inside the barbershop",
+    },
+  },
+  {
+    src: "/gallery/barber/barber12.png",
+    label: { es: "Navaja clásica", en: "Classic razor" },
+    alt: {
+      es: "Detalle de navaja para servicio de barbería en Mambas",
+      en: "Close-up of a razor blade for barbershop service at Mambas",
+    },
+  },
+  {
+    src: "/gallery/barber/barber14.png",
+    label: { es: "Barbería en acción", en: "Barbershop in action" },
+    alt: {
+      es: "Barbero de Mambas trabajando con guantes y navaja",
+      en: "Mambas barber working with gloves and razor",
+    },
+  },
+  {
+    src: "/gallery/barber/barber15.png",
+    label: { es: "Perfilado", en: "Line-up" },
+    alt: {
+      es: "Servicio de perfilado y corte con navaja en Mambas Barbería",
+      en: "Line-up and razor haircut service at Mambas Barbershop",
+    },
+  },
+  {
+    src: "/gallery/barber/barber16.png",
+    label: { es: "Barbera Mambas", en: "Mambas barber" },
+    alt: {
+      es: "Barbera de Mambas posando en estación de trabajo",
+      en: "Mambas barber posing at her workstation",
+    },
+  },
+  {
     src: "/gallery/barber/IMG_3034.jpg",
     label: { es: "Corte con diseño", en: "Designed cut" },
     alt: {
@@ -256,6 +296,30 @@ const tattooGallery: GalleryItem[] = [
     alt: {
       es: "Tatuaje blackwork de dragón en brazo realizado por Mambas Tattoo",
       en: "Blackwork dragon arm tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tattoo.jpg",
+    label: { es: "Proceso tattoo", en: "Tattoo process" },
+    alt: {
+      es: "Detalle de máquina de tatuar trabajando durante una sesión en Mambas",
+      en: "Close-up of a tattoo machine working during a session at Mambas",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuador11.png",
+    label: { es: "Sesión Mambas", en: "Mambas session" },
+    alt: {
+      es: "Tatuador de Mambas trabajando en una pieza durante sesión",
+      en: "Mambas tattoo artist working on a piece during a session",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tatuador2.jpg",
+    label: { es: "Tattoo ritual", en: "Tattoo ritual" },
+    alt: {
+      es: "Artista de Mambas tatuando brazo en el estudio",
+      en: "Mambas artist tattooing an arm inside the studio",
     },
   },
   {
