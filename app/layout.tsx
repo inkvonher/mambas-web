@@ -2,47 +2,66 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { LanguageProvider } from "./context/LanguageContext";
 
-const siteUrl = process.env.SITE_URL || "https://mambas-web.vercel.app";
+const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
+  /\/$/,
+  "",
+);
+const siteName = "Mambas Tattoo & Cuts";
+const siteTitle =
+  "Mambas Tattoo & Cuts | Tattoo, piercing y barbería en Playa del Carmen";
+const siteDescription =
+  "Estudio premium de tatuajes, piercing y barbería tradicional mexicana en el centro de Playa del Carmen, cerca del ferry a Cozumel. Certificados ante COFEPRIS.";
+const address =
+  "Calle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo";
+const ogImage = "/gallery/mbs3.jpg";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Mambas Tattoo & Cuts | Tattoo Studio & Barbería in Playa del Carmen",
-  description:
-    "Premium tattoo studio, traditional Mexican barbershop and piercing space located in the heart of Playa del Carmen near the Cozumel ferry.",
-  applicationName: "Mambas Tattoo & Cuts",
+  title: {
+    default: siteTitle,
+    template: `%s | ${siteName}`,
+  },
+  description: siteDescription,
+  applicationName: siteName,
   keywords: [
-    "Tattoo Studio Playa del Carmen",
-    "Barbería Playa del Carmen",
-    "Tattoo Shop Playa del Carmen",
-    "Piercing Playa del Carmen",
-    "Blackwork Tattoo Mexico",
-    "Traditional Mexican Barbershop",
+    "tatuajes Playa del Carmen",
+    "tattoo studio Playa del Carmen",
+    "barbería Playa del Carmen",
+    "barber shop Playa del Carmen",
+    "piercing Playa del Carmen",
+    "blackwork tattoo México",
+    "barbería tradicional mexicana",
+    "Mambas Tattoo & Cuts",
   ],
+  authors: [{ name: siteName }],
+  creator: siteName,
+  publisher: siteName,
+  category: "Tattoo studio and barbershop",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title:
-      "Mambas Tattoo & Cuts | Tattoo Studio & Barbería in Playa del Carmen",
-    description:
-      "Premium tattoo studio, traditional Mexican barbershop and piercing space located in the heart of Playa del Carmen near the Cozumel ferry.",
+    title: siteTitle,
+    description: siteDescription,
     url: siteUrl,
-    siteName: "Mambas Tattoo & Cuts",
+    siteName,
     type: "website",
     locale: "es_MX",
+    alternateLocale: ["en_US"],
     images: [
       {
-        url: "/logo.png",
-        width: 1200,
-        height: 1200,
-        alt: "Mambas Tattoo & Cuts logo",
+        url: ogImage,
+        width: 1061,
+        height: 618,
+        alt: `${siteName} en Playa del Carmen`,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title:
-      "Mambas Tattoo & Cuts | Tattoo Studio & Barbería in Playa del Carmen",
-    description:
-      "Premium tattoo studio, traditional Mexican barbershop and piercing space located in the heart of Playa del Carmen near the Cozumel ferry.",
-    images: ["/logo.png"],
+    title: siteTitle,
+    description: siteDescription,
+    images: [ogImage],
   },
   manifest: "/manifest.webmanifest",
   appleWebApp: {
@@ -57,7 +76,23 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    nocache: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  other: {
+    "geo.region": "MX-ROO",
+    "geo.placename": "Playa del Carmen",
+    "geo.position": "20.62951;-87.07894",
+    ICBM: "20.62951, -87.07894",
+    "business:contact_data:street_address": address,
+    "business:contact_data:locality": "Playa del Carmen",
+    "business:contact_data:region": "Quintana Roo",
+    "business:contact_data:country_name": "Mexico",
   },
 };
 

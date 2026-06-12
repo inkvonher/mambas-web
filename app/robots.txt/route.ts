@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 
-const siteUrl = process.env.SITE_URL || "https://mambas-web.vercel.app";
+const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
+  /\/$/,
+  "",
+);
 
 export async function GET() {
   const robots = `User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /admin/
 Sitemap: ${siteUrl}/sitemap.xml
-
-# Directives for crawlers
-Host: ${siteUrl}`;
+`;
 
   return new NextResponse(robots, {
     headers: {

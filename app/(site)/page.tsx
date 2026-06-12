@@ -2,7 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
-import { supabase } from "./lib/supabase";
+import { supabase } from "../lib/supabase";
 
 type Language = "es" | "en";
 type ServiceMode = "barber" | "tattoo";
@@ -60,8 +60,15 @@ const copy = {
       "Consulta calificaciones reales, reseñas y ruta directa desde la ficha pública de Mambas.",
     viewReviews: "Ver reseñas en Google Maps",
     sourceRating: "Apple Maps: 5 calificaciones, 100% general",
+    sourceVerified:
+      "Fuente publica verificada: Apple Maps / ficha Mambas Tattoo & Cuts",
     inclusive:
       "Espacio inclusivo, LGBTQ+ friendly y pet friendly.",
+    loyaltySummary:
+      "Acumula beneficios, prioridad y recompensas exclusivas.",
+    memberBlack: "acceso prioritario",
+    memberGold: "descuentos y recompensas",
+    memberRitual: "beneficios VIP",
     contact: "Contacto directo",
     map: "Abrir mapa",
     depositTitle: "Anticipo",
@@ -121,8 +128,15 @@ const copy = {
       "The public listing shows real ratings. Google review text requires the official Places API, so this app links to the live source.",
     viewReviews: "View reviews on Google Maps",
     sourceRating: "Apple Maps: 5 ratings, 100% overall",
+    sourceVerified:
+      "Verified public source: Apple Maps / Mambas Tattoo & Cuts listing",
     inclusive:
       "Inclusive space. We do not discriminate. LGBTQ+ friendly. Pet friendly.",
+    loyaltySummary:
+      "Earn benefits, priority access and exclusive rewards.",
+    memberBlack: "priority access",
+    memberGold: "discounts and rewards",
+    memberRitual: "VIP benefits",
     contact: "Direct contact",
     map: "Open map",
     depositTitle: "Deposit",
@@ -466,7 +480,16 @@ export default function Home() {
         aria-labelledby="hero-heading"
         className="relative flex min-h-[92vh] items-center overflow-hidden border-b border-[#d6ad4a]/20 px-4 pt-24 sm:px-6"
       >
-        <div className="hero-texture absolute inset-0" />
+        <Image
+          src="/gallery/mbs3.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="absolute inset-0 object-cover opacity-55"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,5,5,0.96)_0%,rgba(5,5,5,0.78)_42%,rgba(5,5,5,0.42)_100%),linear-gradient(180deg,rgba(5,5,5,0.45)_0%,rgba(5,5,5,0.1)_45%,rgba(5,5,5,0.88)_100%)]" />
+        <div className="hero-texture absolute inset-0 opacity-55 mix-blend-screen" />
         <div className="mx-auto grid w-full max-w-7xl items-center gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr]">
           <div className="relative z-10">
             <p className="mb-5 text-xs font-bold uppercase tracking-[0.32em] text-[#d6ad4a]">
@@ -824,7 +847,7 @@ export default function Home() {
               {t.loyaltyText}
             </p>
             <p className="mt-3 text-sm text-zinc-400">
-              Acumula beneficios, prioridad y recompensas exclusivas.
+              {t.loyaltySummary}
             </p>
           </div>
           <div className="sm:col-span-1">
@@ -872,7 +895,7 @@ export default function Home() {
                 <div>
                   <div className="text-xs text-zinc-400">BLACK MEMBER</div>
                   <div className="text-sm text-zinc-200">
-                    acceso prioritario
+                    {t.memberBlack}
                   </div>
                 </div>
               </div>
@@ -884,7 +907,7 @@ export default function Home() {
                 <div>
                   <div className="text-xs text-zinc-400">GOLD MEMBER</div>
                   <div className="text-sm text-zinc-200">
-                    descuentos y recompensas
+                    {t.memberGold}
                   </div>
                 </div>
               </div>
@@ -895,7 +918,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div className="text-xs text-zinc-400">RITUAL MEMBER</div>
-                  <div className="text-sm text-zinc-200">beneficios VIP</div>
+                  <div className="text-sm text-zinc-200">{t.memberRitual}</div>
                 </div>
               </div>
             </div>
@@ -958,8 +981,7 @@ export default function Home() {
               <div className="mb-3 text-2xl text-[#d6ad4a]">★★★★★</div>
               <p className="text-zinc-300">{t.sourceRating}</p>
               <p className="mt-5 text-xs uppercase tracking-[0.2em] text-zinc-500">
-                Fuente pública verificada: Apple Maps / ficha Mambas Tattoo &
-                Cuts
+                {t.sourceVerified}
               </p>
             </div>
           </div>
@@ -978,7 +1000,9 @@ export default function Home() {
           className="mx-auto mb-5 h-14 w-14 object-contain"
         />
         <p className="text-xs uppercase tracking-[0.22em] text-zinc-500">
-          Mambas Tattoo & Cuts · MARCA REGISTRADA DESDE 2021 · COFEPRIS ·{" "}
+          Mambas Tattoo & Cuts ·{" "}
+          {language === "es" ? "MARCA REGISTRADA DESDE 2021" : "REGISTERED BRAND SINCE 2021"}{" "}
+          · COFEPRIS ·{" "}
           {t.contact}
         </p>
       </footer>
