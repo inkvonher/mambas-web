@@ -38,13 +38,24 @@ npx -y vercel --prod
 
 ## Dominio en Spaceship
 
-Cuando tengas el dominio exacto, agregalo primero en Vercel:
+Dominio final:
+
+```text
+https://mambaspdc.com
+```
+
+El dominio ya fue agregado en Vercel al proyecto `mambas-web`:
+
+- `mambaspdc.com`
+- `www.mambaspdc.com`
+
+Si necesitas repetirlo manualmente:
 
 1. Entrar a Vercel.
 2. Abrir el proyecto `mambas-web`.
 3. Ir a `Settings` -> `Domains`.
-4. Agregar el dominio apex, por ejemplo `tudominio.com`.
-5. Agregar tambien `www.tudominio.com` y dejar uno como principal con redirect.
+4. Agregar `mambaspdc.com`.
+5. Agregar tambien `www.mambaspdc.com` y dejar uno como principal con redirect.
 
 Luego configurar DNS en Spaceship. Usa los valores que muestre Vercel en la pantalla del dominio.
 
@@ -53,15 +64,15 @@ Configuracion tipica:
 | Tipo | Host | Valor |
 | --- | --- | --- |
 | A | `@` | `76.76.21.21` |
-| CNAME | `www` | valor CNAME indicado por Vercel |
+| A | `www` | `76.76.21.21` |
 
 Despues de cambiar DNS, volver a Vercel y esperar la verificacion. Cuando Vercel marque el dominio como valido, crear o actualizar la variable de entorno:
 
 ```text
-SITE_URL=https://tudominio.com
+SITE_URL=https://mambaspdc.com
 ```
 
-Aplicarla en `Production`, `Preview` y `Development` si quieres que sitemap, canonical y Open Graph usen el dominio nuevo en todos los entornos. Despues redeployar.
+Ya fue aplicada en `Production` y `Development`. Despues de cualquier cambio de `SITE_URL`, redeployar.
 
 ## Variables
 
