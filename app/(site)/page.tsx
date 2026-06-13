@@ -229,6 +229,14 @@ const reviews: Review[] = [
     time: { es: "Hace un año", en: "A year ago" },
     text: "Muy buenos. La chica Karen es excelente 😍 amé mi tatuaje 😍 Muy limpio y todo higiénico con las herramientas.",
   },
+  {
+    name: "Alex Pérez",
+    initials: "AP",
+    stars: 5,
+    localGuide: false,
+    time: { es: "Hace 4 años", en: "4 years ago" },
+    text: "¡Definitivamente el mejor lugar de Playa para tener el mejor look! Atendido por la mismísima Yam, quien es una experta y cada corte de cabello lo convierte en una obra de arte.",
+  },
 ];
 
 const contacts = {
