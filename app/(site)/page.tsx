@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
+import MapboxMap from "./MapboxMap";
 
 type Language = "es" | "en";
 type ServiceMode = "barber" | "tattoo";
@@ -1397,24 +1398,9 @@ function ContactStrip({
 }
 
 function LocationMapCard({ language }: { language: Language }) {
-  const embedUrl =
-    "https://www.google.com/maps?q=Mambas%20Tattoo%20%26%20Cuts%2C%20Calle%201%20Sur%20esquina%20Av.%2025%20Sur%2C%20Centro%2C%20Playa%20del%20Carmen&z=16&output=embed";
-
   return (
     <div className="overflow-hidden rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_24px_70px_rgba(0,0,0,0.5)]">
-      <iframe
-        src={embedUrl}
-        title={
-          language === "es"
-            ? "Mapa de Mambas Tattoo & Cuts en Playa del Carmen"
-            : "Map of Mambas Tattoo & Cuts in Playa del Carmen"
-        }
-        className="h-[320px] w-full sm:h-[380px]"
-        style={{ border: 0 }}
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        allowFullScreen
-      />
+      <MapboxMap />
       <a
         href={googleMapsUrl}
         target="_blank"
