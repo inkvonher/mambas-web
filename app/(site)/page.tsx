@@ -54,6 +54,11 @@ const copy = {
       "Calle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo",
     locationText:
       "Ubicado en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel.",
+    hoursTitle: "Horario",
+    hoursWeekdays: "Lunes a sábado",
+    hoursWeekdaysValue: "9:00 – 21:00",
+    hoursSunday: "Domingo",
+    hoursSundayValue: "12:00 – 21:00",
     reviewsTitle: "Reseñas",
     reviewsText:
       "Consulta calificaciones reales, reseñas y ruta directa desde la ficha pública de Mambas.",
@@ -122,6 +127,11 @@ const copy = {
       "Calle 1 Sur corner Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo",
     locationText:
       "Located in the heart of Playa del Carmen, a few blocks from the Cozumel ferry.",
+    hoursTitle: "Hours",
+    hoursWeekdays: "Monday to Saturday",
+    hoursWeekdaysValue: "9:00 AM – 9:00 PM",
+    hoursSunday: "Sunday",
+    hoursSundayValue: "12:00 PM – 9:00 PM",
     reviewsTitle: "Reviews",
     reviewsText:
       "The public listing shows real ratings. Google review text requires the official Places API, so this app links to the live source.",
@@ -917,6 +927,18 @@ export default function Home() {
               <button className="btn-gold justify-center sm:col-span-2 px-6 py-3 text-sm font-semibold rounded-md shadow-[0_8px_30px_rgba(214,173,74,0.12)] hover:scale-[1.02] transform transition duration-200">
                 {t.register}
               </button>
+              <p className="text-[11px] leading-5 text-zinc-500 sm:col-span-2">
+                {language === "es"
+                  ? "Al registrarte aceptas nuestro "
+                  : "By registering you accept our "}
+                <a
+                  href="/privacidad"
+                  className="text-[#d6ad4a] hover:underline"
+                >
+                  {language === "es" ? "Aviso de Privacidad" : "Privacy Notice"}
+                </a>
+                .
+              </p>
               {saved && (
                 <p className="text-sm text-[#d6ad4a] sm:col-span-2">
                   {t.saved}
@@ -972,6 +994,23 @@ export default function Home() {
               {t.locationText}
             </p>
             <p className="mt-5 text-xl font-bold text-white">{t.address}</p>
+            <div className="mt-6 rounded-xl border border-[#d6ad4a]/20 bg-[#070707] p-5">
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-[#d6ad4a]">
+                {t.hoursTitle}
+              </p>
+              <div className="mt-3 flex items-center justify-between gap-4 border-b border-[#d6ad4a]/10 pb-2">
+                <span className="text-sm text-zinc-300">{t.hoursWeekdays}</span>
+                <span className="text-sm font-semibold text-white">
+                  {t.hoursWeekdaysValue}
+                </span>
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-4">
+                <span className="text-sm text-zinc-300">{t.hoursSunday}</span>
+                <span className="text-sm font-semibold text-white">
+                  {t.hoursSundayValue}
+                </span>
+              </div>
+            </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <a
                 href={googleMapsUrl}
@@ -1041,6 +1080,11 @@ export default function Home() {
           {language === "es" ? "MARCA REGISTRADA DESDE 2021" : "REGISTERED BRAND SINCE 2021"}{" "}
           · COFEPRIS ·{" "}
           {t.contact}
+        </p>
+        <p className="mt-3 text-xs uppercase tracking-[0.22em] text-zinc-500">
+          <a href="/privacidad" className="transition hover:text-[#d6ad4a]">
+            {language === "es" ? "Aviso de Privacidad" : "Privacy Notice"}
+          </a>
         </p>
       </footer>
       <div className="fixed bottom-5 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">

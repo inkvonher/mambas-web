@@ -44,6 +44,27 @@ const structuredData = {
         latitude: 20.62951,
         longitude: -87.07894,
       },
+      openingHoursSpecification: [
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday",
+          ],
+          opens: "09:00",
+          closes: "21:00",
+        },
+        {
+          "@type": "OpeningHoursSpecification",
+          dayOfWeek: "Sunday",
+          opens: "12:00",
+          closes: "21:00",
+        },
+      ],
       areaServed: [
         "Playa del Carmen",
         "Riviera Maya",
