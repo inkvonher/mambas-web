@@ -178,6 +178,58 @@ const tattooPrices = [
   ["Piercing genital", "Genital piercing", "1000 MXN", "65 USD"],
 ];
 
+type Review = {
+  name: string;
+  initials: string;
+  stars: number;
+  localGuide: boolean;
+  time: Record<Language, string>;
+  text: string;
+};
+
+const reviews: Review[] = [
+  {
+    name: "Lorena Rosas",
+    initials: "LR",
+    stars: 5,
+    localGuide: true,
+    time: { es: "Hace un año", en: "A year ago" },
+    text: "Super recomendado, ya me he tatuado ahí varias veces y todo súper bien. También los servicios de barbería excelentes.",
+  },
+  {
+    name: "Iván Castellón",
+    initials: "IC",
+    stars: 5,
+    localGuide: false,
+    time: { es: "Hace un año", en: "A year ago" },
+    text: "A todos mis amigos y conocidos les recomiendo rayarse ahí. Recuerdo que solo iba por un tatuaje y ya llevo 10, y no cambio ese estudio para nada. Qué buen trabajo, y la persona encargada increíble.",
+  },
+  {
+    name: "Javier Monroy",
+    initials: "JM",
+    stars: 5,
+    localGuide: true,
+    time: { es: "Hace 3 años", en: "3 years ago" },
+    text: "El lugar siempre se encuentra limpio y fresco, las personas que trabajan ahí son super amables y atentos, te ayudan con cualquier duda sobre el corte o tatuaje que deseas. Excelentes personas y un servicio increíble.",
+  },
+  {
+    name: "Marlon Benítez",
+    initials: "MB",
+    stars: 5,
+    localGuide: false,
+    time: { es: "Hace un año", en: "A year ago" },
+    text: "Quedé muy feliz con mis tatuajes ❤️ La calidad del trabajo es excelente, con un ambiente cómodo y servicio muy ameno ✨ No puedo esperar para regresar.",
+  },
+  {
+    name: "Didiel Estrella",
+    initials: "DE",
+    stars: 5,
+    localGuide: false,
+    time: { es: "Hace un año", en: "A year ago" },
+    text: "Muy buenos. La chica Karen es excelente 😍 amé mi tatuaje 😍 Muy limpio y todo higiénico con las herramientas.",
+  },
+];
+
 const contacts = {
   barber: {
     phone: "529843675261",
@@ -1035,24 +1087,53 @@ export default function Home() {
       </section>
 
       <section className="border-t border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
-        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <p className="section-kicker">GOOGLE MAPS</p>
+        <div className="mx-auto max-w-7xl">
+          <div className="text-center">
+            <p className="section-kicker">GOOGLE MAPS · 5.0 ★</p>
             <h2 className="section-title">{t.reviewsTitle}</h2>
           </div>
-          <div>
-            <div className="panel">
-              <div className="mb-3 text-2xl text-[#d6ad4a]">★★★★★</div>
-              <p className="text-zinc-300">{t.reviewsText}</p>
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 inline-block text-sm font-bold uppercase tracking-[0.22em] text-[#d6ad4a]"
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {reviews.map((review) => (
+              <figure
+                key={review.name}
+                className="flex flex-col rounded-2xl border border-[#d6ad4a]/16 bg-[#070707] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.4)]"
               >
+                <div className="flex items-center gap-3">
+                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#d6ad4a]/15 text-sm font-bold text-[#d6ad4a]">
+                    {review.initials}
+                  </div>
+                  <div className="min-w-0">
+                    <figcaption className="truncate text-sm font-semibold text-white">
+                      {review.name}
+                    </figcaption>
+                    <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                      {review.localGuide ? "Local Guide · " : ""}
+                      {review.time[language]}
+                    </p>
+                  </div>
+                </div>
+                <div
+                  className="mt-3 text-base text-[#d6ad4a]"
+                  aria-label={`${review.stars} / 5`}
+                >
+                  {"★".repeat(review.stars)}
+                </div>
+                <blockquote className="mt-3 text-sm leading-6 text-zinc-300">
+                  {review.text}
+                </blockquote>
+              </figure>
+            ))}
+            <a
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d6ad4a]/30 bg-[#070707] p-5 text-center transition hover:border-[#d6ad4a]/60 hover:bg-[#0b0b0b]"
+            >
+              <span className="text-2xl text-[#d6ad4a]">★★★★★</span>
+              <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#d6ad4a]">
                 {t.viewReviews}
-              </a>
-            </div>
+              </span>
+            </a>
           </div>
         </div>
       </section>
