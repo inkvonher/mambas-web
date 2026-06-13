@@ -113,6 +113,14 @@ export default function AdminPage() {
   );
   const [deletingClientId, setDeletingClientId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<{
+    type: "ok" | "error";
+    text: string;
+  } | null>(null);
   const [calendarDate, setCalendarDate] = useState(() => new Date());
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<
     string | null
@@ -182,6 +190,54 @@ export default function AdminPage() {
   async function handleLogout() {
     await supabase.auth.signOut();
     router.push("/admin/login");
+  }
+
+  function openPasswordModal() {
+    setNewPassword("");
+    setConfirmPassword("");
+    setPasswordMessage(null);
+    setPasswordModalOpen(true);
+  }
+
+  async function handleChangePassword(event: FormEvent) {
+    event.preventDefault();
+
+    if (newPassword.length < 8) {
+      setPasswordMessage({
+        type: "error",
+        text: "La contraseña debe tener al menos 8 caracteres.",
+      });
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordMessage({
+        type: "error",
+        text: "Las contraseñas no coinciden.",
+      });
+      return;
+    }
+
+    setPasswordSaving(true);
+    setPasswordMessage(null);
+
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+
+    setPasswordSaving(false);
+
+    if (error) {
+      setPasswordMessage({
+        type: "error",
+        text: `No se pudo actualizar: ${error.message}`,
+      });
+      return;
+    }
+
+    setPasswordMessage({
+      type: "ok",
+      text: "Contraseña actualizada correctamente.",
+    });
+    setNewPassword("");
+    setConfirmPassword("");
   }
 
   function openCreateAppointment(date?: string, time?: string) {
@@ -490,6 +546,12 @@ export default function AdminPage() {
                 className="hidden min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] sm:inline-flex sm:items-center"
               >
                 Nueva cita
+              </button>
+              <button
+                onClick={openPasswordModal}
+                className="min-h-11 shrink-0 rounded-lg border border-[#d6ad4a]/50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
+              >
+                Contraseña
               </button>
               <button
                 onClick={handleLogout}
@@ -1059,6 +1121,71 @@ export default function AdminPage() {
           onCancel={() => setClientPendingDelete(null)}
           onConfirm={handleConfirmDeleteClient}
         />
+      ) : null}
+
+      {passwordModalOpen ? (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-4 backdrop-blur-sm sm:items-center">
+          <form
+            onSubmit={handleChangePassword}
+            className="w-full max-w-md rounded-2xl border border-[#d6ad4a]/30 bg-[#070707] p-6 shadow-[0_24px_70px_rgba(0,0,0,0.6)]"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d6ad4a]">
+              Seguridad
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-white">
+              Cambiar contraseña
+            </h2>
+            <p className="mt-2 text-sm text-zinc-400">
+              Escribe tu nueva contraseña (mínimo 8 caracteres).
+            </p>
+
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Nueva contraseña"
+              autoComplete="new-password"
+              className="mt-5 w-full rounded-lg border border-[#d6ad4a]/30 bg-black px-4 py-3 text-white outline-none focus:border-[#d6ad4a]"
+            />
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirmar contraseña"
+              autoComplete="new-password"
+              className="mt-3 w-full rounded-lg border border-[#d6ad4a]/30 bg-black px-4 py-3 text-white outline-none focus:border-[#d6ad4a]"
+            />
+
+            {passwordMessage ? (
+              <p
+                className={`mt-4 text-sm ${
+                  passwordMessage.type === "ok"
+                    ? "text-[#d6ad4a]"
+                    : "text-red-300"
+                }`}
+              >
+                {passwordMessage.text}
+              </p>
+            ) : null}
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setPasswordModalOpen(false)}
+                className="flex-1 rounded-lg border border-[#d6ad4a]/40 px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition hover:bg-[#d6ad4a]/10"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                disabled={passwordSaving}
+                className="flex-1 rounded-lg bg-[#d6ad4a] px-4 py-3 text-xs font-black uppercase tracking-[0.16em] text-black transition hover:bg-white disabled:opacity-60"
+              >
+                {passwordSaving ? "Guardando…" : "Guardar"}
+              </button>
+            </div>
+          </form>
+        </div>
       ) : null}
     </main>
   );
