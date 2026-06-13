@@ -249,6 +249,36 @@ a {
   mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 
+/* Swipeable / draggable gallery: native horizontal scroll with auto-advance
+   driven by JS. Works with finger swipe, trackpad and mouse drag. */
+.gallery-scroller {
+  display: flex;
+  gap: 1rem;
+  padding-bottom: 0.75rem;
+  padding-right: 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+  scrollbar-width: none; /* Firefox */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+
+.gallery-scroller::-webkit-scrollbar {
+  display: none; /* Chrome / Safari */
+}
+
+.gallery-scroller:active {
+  cursor: grabbing;
+}
+
+.gallery-scroller .gallery-card {
+  scroll-snap-align: center;
+}
+
 .gallery-track {
   display: flex;
   width: max-content;

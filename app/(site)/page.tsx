@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 
 type Language = "es" | "en";
@@ -663,23 +663,7 @@ export default function Home() {
                 Mambas
               </p>
             </div>
-            <div className="gallery-viewport">
-              <div className="gallery-track gallery-track-barber">
-                {[...barberGallery, ...barberGallery].map((item, index) => (
-                  <div key={`${item.src}-${index}`} className="gallery-card">
-                    <div className="gallery-frame">
-                      <Image
-                        src={item.src}
-                        alt={item.alt[language]}
-                        fill
-                        sizes="(max-width: 640px) 260px, 320px"
-                        className={item.imageClassName || "object-cover"}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Gallery items={barberGallery} language={language} speed={0.5} />
             <p className="mt-5 text-sm leading-6 text-zinc-400">
               {language === "es"
                 ? "Cortes, ritual de barba y servicios premium con acabado limpio."
@@ -765,23 +749,7 @@ export default function Home() {
                 Mambas
               </p>
             </div>
-            <div className="gallery-viewport">
-              <div className="gallery-track gallery-track-tattoo">
-                {[...tattooGallery, ...tattooGallery].map((item, index) => (
-                  <div key={`${item.src}-${index}`} className="gallery-card">
-                    <div className="gallery-frame">
-                      <Image
-                        src={item.src}
-                        alt={item.alt[language]}
-                        fill
-                        sizes="(max-width: 640px) 260px, 320px"
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <Gallery items={tattooGallery} language={language} speed={0.35} />
             <p className="mt-5 text-sm leading-6 text-zinc-400">
               {language === "es"
                 ? "Piezas personalizadas, piercing profesional y procesos cuidados."
@@ -1227,6 +1195,109 @@ function WhatsAppIcon() {
         <path d="M12.04 2a9.91 9.91 0 0 0-8.49 15.03L2.38 22l5.08-1.15A9.91 9.91 0 1 0 12.04 2Zm0 1.8a8.1 8.1 0 0 1 6.89 12.34 8.1 8.1 0 0 1-10.74 2.62l-.34-.2-3.02.69.7-2.94-.22-.36A8.1 8.1 0 0 1 12.04 3.8Zm-3.15 4.37c-.17 0-.45.06-.69.33-.24.26-.91.88-.91 2.15 0 1.26.93 2.49 1.06 2.66.13.18 1.8 2.88 4.43 3.91 2.19.86 2.64.69 3.11.65.48-.04 1.55-.63 1.77-1.24.22-.61.22-1.13.15-1.24-.06-.11-.24-.18-.5-.31-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.58.13-.18.26-.68.85-.83 1.02-.16.18-.31.2-.57.07-.26-.13-1.1-.4-2.1-1.29-.78-.69-1.3-1.55-1.46-1.81-.15-.26-.02-.4.12-.53.12-.12.26-.31.39-.46.13-.15.17-.26.26-.44.09-.17.04-.32-.02-.46-.07-.13-.58-1.41-.8-1.93-.21-.5-.43-.43-.59-.44h-.5Z" />
       </svg>
     </span>
+  );
+}
+
+function Gallery({
+  items,
+  language,
+  speed = 0.5,
+}: {
+  items: GalleryItem[];
+  language: Language;
+  speed?: number;
+}) {
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
+  const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
+
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    // Respect users who prefer reduced motion: no auto-scroll, only manual.
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (reduceMotion) return;
+
+    let frame: number;
+    const tick = () => {
+      if (!pausedRef.current) {
+        const half = el.scrollWidth / 2;
+        el.scrollLeft += speed;
+        if (half > 0 && el.scrollLeft >= half) {
+          el.scrollLeft -= half; // seamless loop (items are duplicated)
+        }
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [speed]);
+
+  const pause = () => {
+    pausedRef.current = true;
+  };
+  const resume = () => {
+    pausedRef.current = false;
+  };
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    pause();
+    // Mouse drag-to-scroll (touch already scrolls natively).
+    if (e.pointerType === "mouse" && scrollerRef.current) {
+      dragRef.current = {
+        active: true,
+        startX: e.clientX,
+        startScroll: scrollerRef.current.scrollLeft,
+      };
+      scrollerRef.current.setPointerCapture(e.pointerId);
+    }
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragRef.current.active && scrollerRef.current) {
+      scrollerRef.current.scrollLeft =
+        dragRef.current.startScroll - (e.clientX - dragRef.current.startX);
+    }
+  };
+
+  const endDrag = () => {
+    dragRef.current.active = false;
+    resume();
+  };
+
+  return (
+    <div
+      ref={scrollerRef}
+      className="gallery-scroller"
+      role="region"
+      aria-label={language === "es" ? "Galería de fotos" : "Photo gallery"}
+      onMouseEnter={pause}
+      onMouseLeave={endDrag}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onTouchStart={pause}
+      onTouchEnd={resume}
+    >
+      {[...items, ...items].map((item, index) => (
+        <div key={`${item.src}-${index}`} className="gallery-card">
+          <div className="gallery-frame">
+            <Image
+              src={item.src}
+              alt={item.alt[language]}
+              fill
+              sizes="(max-width: 640px) 260px, 320px"
+              className={item.imageClassName || "object-cover"}
+              draggable={false}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
