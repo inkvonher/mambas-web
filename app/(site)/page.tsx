@@ -1275,8 +1275,6 @@ function Gallery({
       className="gallery-scroller"
       role="region"
       aria-label={language === "es" ? "Galería de fotos" : "Photo gallery"}
-      onMouseEnter={pause}
-      onMouseLeave={endDrag}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
