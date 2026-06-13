@@ -258,8 +258,6 @@ a {
   padding-right: 1rem;
   overflow-x: auto;
   overflow-y: hidden;
-  scroll-snap-type: x proximity;
-  -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
   cursor: grab;
   scrollbar-width: none; /* Firefox */
@@ -276,7 +274,7 @@ a {
 }
 
 .gallery-scroller .gallery-card {
-  scroll-snap-align: center;
+  scroll-snap-align: none;
 }
 
 .gallery-track {
