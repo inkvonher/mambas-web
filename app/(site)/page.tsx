@@ -1040,7 +1040,7 @@ export default function Home() {
             <p className="section-kicker">GOOGLE MAPS</p>
             <h2 className="section-title">{t.reviewsTitle}</h2>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div>
             <div className="panel">
               <div className="mb-3 text-2xl text-[#d6ad4a]">★★★★★</div>
               <p className="text-zinc-300">{t.reviewsText}</p>
@@ -1052,13 +1052,6 @@ export default function Home() {
               >
                 {t.viewReviews}
               </a>
-            </div>
-            <div className="panel">
-              <div className="mb-3 text-2xl text-[#d6ad4a]">★★★★★</div>
-              <p className="text-zinc-300">{t.sourceRating}</p>
-              <p className="mt-5 text-xs uppercase tracking-[0.2em] text-zinc-500">
-                {t.sourceVerified}
-              </p>
             </div>
           </div>
         </div>
