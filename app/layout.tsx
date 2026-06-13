@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
@@ -108,6 +109,7 @@ export default function RootLayout({
     <html lang="es" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-black text-white">
         {children}
+        <Analytics />
       </body>
     </html>
   );

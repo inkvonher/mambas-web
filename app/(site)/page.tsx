@@ -1252,52 +1252,44 @@ function ContactStrip({
 }
 
 function LocationMapCard({ language }: { language: Language }) {
+  const embedUrl =
+    "https://www.google.com/maps?q=Mambas%20Tattoo%20%26%20Cuts%2C%20Calle%201%20Sur%20esquina%20Av.%2025%20Sur%2C%20Centro%2C%20Playa%20del%20Carmen&z=16&output=embed";
+
   return (
-    <a
-      href={googleMapsUrl}
-      target="_blank"
-      rel="noreferrer"
-      className="location-map-card"
-      aria-label={
-        language === "es"
-          ? "Abrir Mambas Tattoo & Cuts en Google Maps"
-          : "Open Mambas Tattoo & Cuts in Google Maps"
-      }
-    >
-      <div className="location-map-grid" />
-      <div className="location-route route-main" />
-      <div className="location-route route-cross" />
-      <div className="location-route route-diagonal" />
-      <div className="location-zone zone-one" />
-      <div className="location-zone zone-two" />
-      <div className="location-map-pin">
-        <span />
-      </div>
-      <div className="location-map-info">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-[#d6ad4a]">
-            Mambas Tattoo & Cuts
-          </p>
-          <p className="mt-2 text-sm text-zinc-300">
+    <div className="overflow-hidden rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_24px_70px_rgba(0,0,0,0.5)]">
+      <iframe
+        src={embedUrl}
+        title={
+          language === "es"
+            ? "Mapa de Mambas Tattoo & Cuts en Playa del Carmen"
+            : "Map of Mambas Tattoo & Cuts in Playa del Carmen"
+        }
+        className="h-[320px] w-full sm:h-[380px]"
+        style={{ border: 0 }}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+      <a
+        href={googleMapsUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="flex items-center justify-between gap-4 border-t border-[#d6ad4a]/16 px-5 py-4 transition hover:bg-[#0b0b0b]"
+      >
+        <span>
+          <span className="block text-xs font-black uppercase tracking-[0.24em] text-[#d6ad4a]">
+            Mambas Tattoo &amp; Cuts
+          </span>
+          <span className="mt-1 block text-sm text-zinc-300">
             {language === "es"
-              ? "Calle 1 Sur esquina Av. 25 Sur"
-              : "Calle 1 Sur corner Av. 25 Sur"}
-          </p>
-        </div>
-        <div className="location-map-action">
+              ? "Calle 1 Sur esquina Av. 25 Sur · Playa del Carmen"
+              : "Calle 1 Sur corner Av. 25 Sur · Playa del Carmen"}
+          </span>
+        </span>
+        <span className="shrink-0 text-xs font-bold uppercase tracking-[0.18em] text-[#d6ad4a]">
           {language === "es" ? "Abrir mapa" : "Open map"}
-        </div>
-      </div>
-      <div className="location-map-meta">
-        <div>
-          <span>25 Av. Sur</span>
-          <span>Centro</span>
-        </div>
-        <div>
-          <span>Playa del Carmen</span>
-          <span>Q. Roo</span>
-        </div>
-      </div>
-    </a>
+        </span>
+      </a>
+    </div>
   );
 }
