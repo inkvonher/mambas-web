@@ -87,8 +87,8 @@ export const metadata: Metadata = {
   other: {
     "geo.region": "MX-ROO",
     "geo.placename": "Playa del Carmen",
-    "geo.position": "20.62951;-87.07894",
-    ICBM: "20.62951, -87.07894",
+    "geo.position": "20.623873555147917;-87.07942999344887",
+    ICBM: "20.623873555147917, -87.07942999344887",
     "business:contact_data:street_address": address,
     "business:contact_data:locality": "Playa del Carmen",
     "business:contact_data:region": "Quintana Roo",

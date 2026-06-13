@@ -6,8 +6,8 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
-const LNG = -87.07894;
-const LAT = 20.62951;
+const LNG = -87.07942999344887;
+const LAT = 20.623873555147917;
 
 export default function MapboxMap() {
   const containerRef = useRef<HTMLDivElement>(null);
