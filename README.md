@@ -76,7 +76,30 @@ Ya fue aplicada en `Production` y `Development`. Despues de cualquier cambio de 
 
 ## Variables
 
-El sitio usa:
+Copia `.env.example` a `.env.local` y rellena los valores. El sitio usa:
 
 - `SITE_URL`: URL publica canonica del sitio.
-- Variables Supabase en `.env.local` para el registro de clientes.
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: conexion a Supabase (publicas).
+- `SUPABASE_SERVICE_ROLE_KEY`: secreta, solo servidor. Opcional pero recomendada (ver Seguridad).
+
+## Seguridad
+
+El proyecto incluye varias capas de proteccion:
+
+- **Cabeceras HTTP** (`next.config.ts`): CSP, HSTS, X-Frame-Options, X-Content-Type-Options,
+  Referrer-Policy y Permissions-Policy aplicadas a todas las rutas.
+- **Registro protegido**: el formulario de lealtad ya no escribe directo a Supabase desde el
+  navegador. Pasa por `/api/register`, que valida los datos, usa un campo *honeypot* anti-bots
+  y aplica un rate limit basico por IP.
+- **Base de datos**: ejecuta `supabase-hardening.sql` en el SQL editor de Supabase (despues de
+  `supabase-appointments.sql` y `supabase-clients-policies.sql`). Anade limites de longitud
+  (CHECK constraints) que aplican a cualquier insercion.
+
+### Cerrar la insercion anonima (recomendado)
+
+Por defecto cualquiera con la anon key puede insertar en `clients`. Para cerrarlo del todo:
+
+1. En Vercel anade `SUPABASE_SERVICE_ROLE_KEY` (Supabase > Project Settings > API > `service_role`).
+2. En `supabase-hardening.sql`, descomenta el bloque de la seccion 3 y vuelve a ejecutarlo.
+
+El sitio sigue funcionando porque `/api/register` inserta del lado del servidor con esa clave.

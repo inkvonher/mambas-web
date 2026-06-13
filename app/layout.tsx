@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { LanguageProvider } from "./context/LanguageContext";
 
 const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
   /\/$/,
@@ -108,7 +107,7 @@ export default function RootLayout({
   return (
     <html lang="es" className="h-full antialiased" suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-black text-white">
-        <LanguageProvider>{children}</LanguageProvider>
+        {children}
       </body>
     </html>
   );

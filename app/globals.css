@@ -329,6 +329,8 @@ a {
 .field {
   min-height: 50px;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   border: 1px solid rgba(214, 173, 74, 0.22);
   background: #050505;
   padding: 0 1rem;

@@ -2,7 +2,6 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
-import { supabase } from "../lib/supabase";
 
 type Language = "es" | "en";
 type ServiceMode = "barber" | "tattoo";
@@ -400,31 +399,45 @@ export default function Home() {
   async function handleRegister(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     const payload = {
       name: formData.get("name"),
       phone: formData.get("phone"),
       birthday: formData.get("birthday"),
-      service: formData.get("interest"),
-      status: "Nuevo",
+      interest: formData.get("interest"),
+      company: formData.get("company"), // honeypot, must stay empty
     };
 
-    const { error } = await supabase.from("clients").insert([payload]);
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (error) {
-      console.error(error);
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        alert(
+          data.error ||
+            (language === "es"
+              ? "No se pudo guardar el registro. Inténtalo de nuevo."
+              : "We could not save the registration. Please try again."),
+        );
+        return;
+      }
+    } catch {
       alert(
         language === "es"
-          ? "No se pudo guardar el registro. Inténtalo de nuevo."
-          : "We could not save the registration. Please try again.",
+          ? "No se pudo conectar. Revisa tu conexión e inténtalo de nuevo."
+          : "Connection failed. Check your network and try again.",
       );
       return;
     }
 
-    localStorage.setItem("mambas-register", JSON.stringify(payload));
     setSaved(true);
-    event.currentTarget.reset();
+    form.reset();
   }
 
   function scrollTo(id: string) {
@@ -855,19 +868,43 @@ export default function Home() {
               onSubmit={handleRegister}
               className="panel grid gap-4 sm:grid-cols-2 p-6 rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#030303] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
             >
+              {/* Honeypot: hidden from users, bots fill it and get rejected */}
+              <input
+                type="text"
+                name="company"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="hidden"
+              />
               <input
                 name="name"
                 required
                 placeholder={t.fullName}
                 className="field sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
               />
-              <input
-                name="phone"
-                required
-                placeholder={t.phone}
-                className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
-              />
-              <input name="birthday" type="date" className="field" />
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
+                  {t.phone}
+                </span>
+                <input
+                  name="phone"
+                  required
+                  placeholder={t.phone}
+                  className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
+                />
+              </label>
+              <label className="flex min-w-0 flex-col gap-1.5">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
+                  {t.birthday}
+                </span>
+                <input
+                  name="birthday"
+                  type="date"
+                  aria-label={t.birthday}
+                  className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
+                />
+              </label>
               <select
                 name="interest"
                 className="field sm:col-span-2"
