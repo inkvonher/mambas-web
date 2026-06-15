@@ -1137,6 +1137,18 @@ export default function Home() {
             {language === "es" ? "Aviso de Privacidad" : "Privacy Notice"}
           </a>
         </p>
+        <p className="mt-4 text-[10px] tracking-[0.18em] text-zinc-600">
+          <a
+            href="https://www.freewillstudiotech.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition hover:text-[#d6ad4a]"
+          >
+            {language === "es"
+              ? "Diseñado con conciencia"
+              : "Designed with conscience"}
+          </a>
+        </p>
       </footer>
       <div className="fixed bottom-5 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
         {floatingOpen && (
