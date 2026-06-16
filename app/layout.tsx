@@ -84,6 +84,9 @@ export const metadata: Metadata = {
       "max-video-preview": -1,
     },
   },
+  verification: {
+    google: "1JcDDPcAvO6t7EzD_3q7R2kzMQnolG0_O4Er4x-arM4",
+  },
   other: {
     "geo.region": "MX-ROO",
     "geo.placename": "Playa del Carmen",
