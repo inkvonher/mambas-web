@@ -861,3 +861,72 @@ input[type="date"].field::-webkit-calendar-picker-indicator {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gold);
 }
+
+/* ---- Brand intro overlay ---- */
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(214, 173, 74, 0.12), transparent 55%),
+    #050505;
+}
+
+.intro-overlay.intro-hide {
+  opacity: 0;
+  transform: scale(1.04);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+  pointer-events: none;
+}
+
+.intro-logo {
+  animation: intro-logo-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  filter: drop-shadow(0 0 34px rgba(214, 173, 74, 0.28));
+}
+
+@keyframes intro-logo-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+    filter: blur(8px) drop-shadow(0 0 0 rgba(214, 173, 74, 0));
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.05);
+    filter: blur(0) drop-shadow(0 0 40px rgba(214, 173, 74, 0.35));
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ---- Scroll reveal entrances ---- */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay {
+    display: none;
+  }
+  .reveal-init,
+  .reveal-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

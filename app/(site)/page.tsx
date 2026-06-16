@@ -3,6 +3,8 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import MapboxMap from "./MapboxMap";
+import IntroOverlay from "./IntroOverlay";
+import ScrollReveal from "./ScrollReveal";
 
 type Language = "es" | "en";
 type ServiceMode = "barber" | "tattoo";
@@ -518,6 +520,8 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#050505] text-white">
+      <IntroOverlay />
+      <ScrollReveal />
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#d6ad4a]/20 bg-black/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <button
