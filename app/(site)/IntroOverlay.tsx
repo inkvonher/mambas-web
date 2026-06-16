@@ -23,12 +23,12 @@ export default function IntroOverlay() {
     }
 
     document.body.style.overflow = "hidden";
-    const startFade = setTimeout(() => setHide(true), 1600);
+    const startFade = setTimeout(() => setHide(true), 1500);
     const remove = setTimeout(() => {
       setShow(false);
       sessionStorage.setItem("mambas-intro-seen", "1");
       document.body.style.overflow = "";
-    }, 2250);
+    }, 2400);
 
     return () => {
       clearTimeout(startFade);

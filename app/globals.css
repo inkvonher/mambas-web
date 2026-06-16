@@ -876,16 +876,20 @@ input[type="date"].field::-webkit-calendar-picker-indicator {
 
 .intro-overlay.intro-hide {
   opacity: 0;
-  transform: scale(1.04);
-  transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+  transition: opacity 0.7s ease;
   pointer-events: none;
 }
 
+/* On exit, the logo zooms in (grows) as the site is revealed. */
+.intro-overlay.intro-hide .intro-logo {
+  transform: scale(2.4);
+}
+
 .intro-logo {
-  animation: intro-logo-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: intro-logo-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   filter: drop-shadow(0 0 34px rgba(214, 173, 74, 0.28));
+  transition: transform 0.75s cubic-bezier(0.5, 0, 0.75, 0);
+  will-change: transform;
 }
 
 @keyframes intro-logo-in {
