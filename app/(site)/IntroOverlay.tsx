@@ -22,13 +22,18 @@ export default function IntroOverlay() {
       return () => clearTimeout(skip);
     }
 
+    // Shorter, snappier intro on phones (less GPU strain, less perceived lag).
+    const isMobile = window.matchMedia("(max-width: 640px)").matches;
+    const fadeAt = isMobile ? 1000 : 1300;
+    const removeAt = isMobile ? 1900 : 3700;
+
     document.body.style.overflow = "hidden";
-    const startFade = setTimeout(() => setHide(true), 1300);
+    const startFade = setTimeout(() => setHide(true), fadeAt);
     const remove = setTimeout(() => {
       setShow(false);
       sessionStorage.setItem("mambas-intro-seen", "1");
       document.body.style.overflow = "";
-    }, 3700);
+    }, removeAt);
 
     return () => {
       clearTimeout(startFade);
