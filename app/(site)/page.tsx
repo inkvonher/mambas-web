@@ -1223,28 +1223,27 @@ function Gallery({
   language: Language;
   speed?: number;
 }) {
-  const scrollerRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const xRef = useRef(0);
   const pausedRef = useRef(false);
-  const dragRef = useRef({ active: false, startX: 0, startScroll: 0 });
+  const dragRef = useRef({ active: false, startX: 0, startPos: 0 });
 
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
+    const track = trackRef.current;
+    if (!track) return;
 
-    // Respect users who prefer reduced motion: no auto-scroll, only manual.
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    if (reduceMotion) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let frame: number;
     const tick = () => {
       if (!pausedRef.current) {
-        const half = el.scrollWidth / 2;
-        el.scrollLeft += speed;
-        if (half > 0 && el.scrollLeft >= half) {
-          el.scrollLeft -= half; // seamless loop (items are duplicated)
+        xRef.current -= speed;
+        const half = track.scrollWidth / 2;
+        if (half > 0 && Math.abs(xRef.current) >= half) {
+          xRef.current += half; // seamless loop
         }
+        track.style.transform = `translateX(${xRef.current}px)`;
       }
       frame = requestAnimationFrame(tick);
     };
@@ -1252,41 +1251,26 @@ function Gallery({
     return () => cancelAnimationFrame(frame);
   }, [speed]);
 
-  const pause = () => {
-    pausedRef.current = true;
-  };
-  const resume = () => {
-    pausedRef.current = false;
-  };
-
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    pause();
-    // Mouse drag-to-scroll (touch already scrolls natively).
-    if (e.pointerType === "mouse" && scrollerRef.current) {
-      dragRef.current = {
-        active: true,
-        startX: e.clientX,
-        startScroll: scrollerRef.current.scrollLeft,
-      };
-      scrollerRef.current.setPointerCapture(e.pointerId);
-    }
+    pausedRef.current = true;
+    dragRef.current = { active: true, startX: e.clientX, startPos: xRef.current };
+    viewportRef.current?.setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (dragRef.current.active && scrollerRef.current) {
-      scrollerRef.current.scrollLeft =
-        dragRef.current.startScroll - (e.clientX - dragRef.current.startX);
-    }
+    if (!dragRef.current.active || !trackRef.current) return;
+    xRef.current = dragRef.current.startPos + (e.clientX - dragRef.current.startX);
+    trackRef.current.style.transform = `translateX(${xRef.current}px)`;
   };
 
   const endDrag = () => {
     dragRef.current.active = false;
-    resume();
+    pausedRef.current = false;
   };
 
   return (
     <div
-      ref={scrollerRef}
+      ref={viewportRef}
       className="gallery-scroller"
       role="region"
       aria-label={language === "es" ? "Galería de fotos" : "Photo gallery"}
@@ -1294,23 +1278,23 @@ function Gallery({
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      onTouchStart={pause}
-      onTouchEnd={resume}
     >
-      {[...items, ...items].map((item, index) => (
-        <div key={`${item.src}-${index}`} className="gallery-card">
-          <div className="gallery-frame">
-            <Image
-              src={item.src}
-              alt={item.alt[language]}
-              fill
-              sizes="(max-width: 640px) 260px, 320px"
-              className={item.imageClassName || "object-cover"}
-              draggable={false}
-            />
+      <div ref={trackRef} className="gallery-track-inner">
+        {[...items, ...items].map((item, index) => (
+          <div key={`${item.src}-${index}`} className="gallery-card">
+            <div className="gallery-frame">
+              <Image
+                src={item.src}
+                alt={item.alt[language]}
+                fill
+                sizes="(max-width: 640px) 260px, 320px"
+                className={item.imageClassName || "object-cover"}
+                draggable={false}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
