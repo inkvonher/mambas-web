@@ -873,15 +873,18 @@ input[type="date"].field::-webkit-calendar-picker-indicator {
   pointer-events: none;
 }
 
-/* On exit, the logo zooms in (grows) as the site is revealed. */
+/* On exit, the logo explodes forward (huge zoom) as the site is revealed. */
 .intro-overlay.intro-hide .intro-logo {
-  transform: scale(2.4);
+  transform: scale(16);
+  filter: drop-shadow(0 0 80px rgba(214, 173, 74, 0.55));
 }
 
 .intro-logo {
-  animation: intro-logo-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  animation: intro-logo-in 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
   filter: drop-shadow(0 0 34px rgba(214, 173, 74, 0.28));
-  transition: transform 0.75s cubic-bezier(0.5, 0, 0.75, 0);
+  transition:
+    transform 0.9s cubic-bezier(0.66, 0, 0.86, 0),
+    filter 0.9s ease;
   will-change: transform;
 }
 
