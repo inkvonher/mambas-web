@@ -1159,7 +1159,7 @@ export default function Home() {
       <div className="fixed bottom-5 right-4 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
         {floatingOpen && (
           <div className="w-[min(92vw,300px)] overflow-hidden rounded-2xl border border-[#d6ad4a]/28 bg-black/92 shadow-[0_22px_70px_rgba(0,0,0,0.58)] backdrop-blur-xl">
-            <
+            <a
               href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
                 language === "es"
                   ? "Hola Mambas, quiero información para tattoo o piercing."
