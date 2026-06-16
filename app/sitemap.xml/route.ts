@@ -4,7 +4,7 @@ const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replac
   /\/$/,
   "",
 );
-const lastModified = "2026-06-01";
+const lastModified = new Date().toISOString().split("T")[0];
 
 export async function GET() {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -26,6 +26,12 @@ export async function GET() {
       <image:loc>${siteUrl}/gallery/barber/IMG_3036.jpg</image:loc>
       <image:title>Barbería Mambas en Playa del Carmen</image:title>
     </image:image>
+  </url>
+  <url>
+    <loc>${siteUrl}/privacidad</loc>
+    <lastmod>${lastModified}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>`;
 

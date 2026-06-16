@@ -98,6 +98,87 @@ const structuredData = {
         "https://www.instagram.com/mambas_barberia.pdc/",
         "https://www.instagram.com/mambas.tattoocuts/",
       ],
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "5.0",
+        reviewCount: "6",
+        bestRating: "5",
+        worstRating: "1",
+      },
+      review: [
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Lorena Rosas" },
+          datePublished: "2025-06-01",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          reviewBody:
+            "Super recomendado, ya me he tatuado ahí varias veces y todo súper bien. También los servicios de barbería excelentes.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Iván Castellón" },
+          datePublished: "2025-06-01",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          reviewBody:
+            "A todos mis amigos y conocidos les recomiendo rayarse ahí. Solo iba por un tatuaje y ya llevo 10, y no cambio ese estudio para nada. Qué buen trabajo.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Javier Monroy" },
+          datePublished: "2023-06-01",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          reviewBody:
+            "El lugar siempre se encuentra limpio y fresco, las personas que trabajan ahí son super amables y atentos. Excelentes personas y un servicio increíble.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Marlon Benítez" },
+          datePublished: "2025-06-01",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          reviewBody:
+            "Quedé muy feliz con mis tatuajes. La calidad del trabajo es excelente, con un ambiente cómodo y servicio muy ameno. No puedo esperar para regresar.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Didiel Estrella" },
+          datePublished: "2025-06-01",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          reviewBody:
+            "Muy buenos. La chica Karen es excelente, amé mi tatuaje. Muy limpio y todo higiénico con las herramientas.",
+        },
+        {
+          "@type": "Review",
+          author: { "@type": "Person", name: "Alex Pérez" },
+          datePublished: "2022-06-01",
+          reviewRating: {
+            "@type": "Rating",
+            ratingValue: "5",
+            bestRating: "5",
+          },
+          reviewBody:
+            "¡Definitivamente el mejor lugar de Playa para tener el mejor look! Atendido por la mismísima Yam, quien es una experta y cada corte lo convierte en una obra de arte.",
+        },
+      ],
     },
   ],
 };
