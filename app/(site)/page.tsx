@@ -1171,7 +1171,7 @@ export default function Home() {
             >
               {t.floatingTattoo}
               <span className="mt-1 block text-xs font-medium normal-case tracking-normal text-zinc-400">
-                WhatsApp {contacts.tattoo.display}
+                WhatsApp
               </span>
             </a>
           </div>
@@ -1406,7 +1406,7 @@ function ContactStrip({
           href={`https://wa.me/${contact.phone}`}
           className="btn-gold"
         >
-          WhatsApp {contact.display}
+          WhatsApp
         </a>
       )}
       <a
