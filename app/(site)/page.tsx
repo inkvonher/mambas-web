@@ -257,6 +257,7 @@ const contacts = {
 const googleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
 const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
+const barberBookingUrl = "https://calendar.app.google/N2Vq9L7HwybvPXZW8";
 
 const barberGallery: GalleryItem[] = [
   {
@@ -590,7 +591,9 @@ export default function Home() {
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
-                href={`https://wa.me/${contacts.barber.phone}`}
+                href={barberBookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-gold"
               >
                 {t.barberCta}
@@ -1400,9 +1403,23 @@ function ContactStrip({
   language: Language;
 }) {
   const contact = contacts[kind];
+  const isBarber = kind === "barber";
   return (
     <div className="mx-auto mt-10 flex max-w-3xl flex-col items-center justify-center gap-3 sm:flex-row">
-      <a href={`https://wa.me/${contact.phone}`} className="btn-gold">
+      {isBarber && (
+        <a
+          href={barberBookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn-gold"
+        >
+          {language === "es" ? "Reservar cita en línea" : "Book online"}
+        </a>
+      )}
+      <a
+        href={`https://wa.me/${contact.phone}`}
+        className={isBarber ? "btn-outline" : "btn-gold"}
+      >
         WhatsApp {contact.display}
       </a>
       <a
