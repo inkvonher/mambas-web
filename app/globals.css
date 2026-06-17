@@ -865,6 +865,17 @@ input[type="date"].field::-webkit-calendar-picker-indicator {
   background:
     radial-gradient(circle at 50% 45%, rgba(214, 173, 74, 0.12), transparent 55%),
     #050505;
+  /* Failsafe: if JS never runs/hydrates, force-hide the intro so the page is
+     never stuck on a black screen. The JS path normally removes it earlier. */
+  animation: intro-failsafe 0.6s ease 4s forwards;
+}
+
+@keyframes intro-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 .intro-overlay.intro-hide {
