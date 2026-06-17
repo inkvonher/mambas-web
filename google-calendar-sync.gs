@@ -130,5 +130,7 @@ function sendWhatsApp(ev, header) {
     "&text=" + encodeURIComponent(msg) +
     "&apikey=" + encodeURIComponent(CALLMEBOT_APIKEY);
 
-  UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+  Logger.log("CallMeBot: " + resp.getContentText());
+  Utilities.sleep(8000); // espacia los mensajes para no saturar CallMeBot (API gratis)
 }
