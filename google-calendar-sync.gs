@@ -13,6 +13,9 @@ const TZ_OFFSET = "-05:00";
 // Avisos por WhatsApp (CallMeBot)
 const WHATSAPP_PHONE = "+5219843675261";
 const CALLMEBOT_APIKEY = "8604341";
+
+// Calendario donde caen las RESERVAS EN LÍNEA (tu horario de citas de Google).
+const BOOKING_CAL_ID = "clandestinobeer9@gmail.com";
 // ======================
 
 function syncCalendar() {
@@ -75,7 +78,8 @@ function importGoogleToAdmin() {
   }
   const last = Number(stored);
 
-  const cal = CalendarApp.getDefaultCalendar();
+  // Lee el calendario de las reservas en línea (no el principal).
+  const cal = CalendarApp.getCalendarById(BOOKING_CAL_ID);
   const from = new Date(now - 24 * 60 * 60 * 1000);
   const to = new Date(now + 120 * 24 * 60 * 60 * 1000);
   const events = cal.getEvents(from, to);
