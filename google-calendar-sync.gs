@@ -59,6 +59,8 @@ function pushAdminToGoogle() {
       payload: JSON.stringify({ id: a.id, gcal_event_id: ev.getId() }),
       muteHttpExceptions: true,
     });
+
+    sendWhatsApp(ev, "🗓️ *Nueva cita (panel) - Mambas*");
   });
 }
 
@@ -113,11 +115,11 @@ function importGoogleToAdmin() {
   props.setProperty("lastCheck", String(now));
 }
 
-function sendWhatsApp(ev) {
+function sendWhatsApp(ev, header) {
   const fecha = Utilities.formatDate(ev.getStartTime(), TIMEZONE, "dd/MM/yyyy HH:mm");
   const desc = (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim();
 
-  let msg = "🐍 *Nueva reserva - Mambas*\n";
+  let msg = (header || "🐍 *Nueva reserva - Mambas*") + "\n";
   msg += "Servicio: " + ev.getTitle() + "\n";
   msg += "Fecha: " + fecha + "\n";
   if (desc) msg += "Detalle: " + desc.substring(0, 250);
