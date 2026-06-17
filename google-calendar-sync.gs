@@ -31,6 +31,15 @@ function syncCalendar() {
   }
 }
 
+// Función de PRUEBA: revisa las reservas de los últimos 30 minutos y las importa.
+function testImportNow() {
+  PropertiesService.getScriptProperties().setProperty(
+    "lastCheck",
+    String(Date.now() - 30 * 60 * 1000),
+  );
+  syncCalendar();
+}
+
 function authHeaders() {
   return { Authorization: "Bearer " + SYNC_SECRET };
 }
@@ -91,6 +100,7 @@ function importGoogleToAdmin() {
   const from = new Date(now - 24 * 60 * 60 * 1000);
   const to = new Date(now + 120 * 24 * 60 * 60 * 1000);
   const events = cal.getEvents(from, to);
+  Logger.log("Eventos en calendario de reservas: " + events.length);
 
   events.forEach(function (ev) {
     if (ev.getDateCreated().getTime() <= last) return;     // ya revisado
@@ -116,11 +126,13 @@ function importGoogleToAdmin() {
       muteHttpExceptions: true,
     });
 
+    Logger.log(
+      "from-google (" + ev.getTitle() + "): " +
+        res.getResponseCode() + " " + res.getContentText(),
+    );
     if (res.getResponseCode() === 200) {
       const j = JSON.parse(res.getContentText());
       if (!j.skipped) sendWhatsApp(ev); // avisa solo de reservas genuinas nuevas
-    } else {
-      Logger.log("from-google error: " + res.getContentText());
     }
   });
 
