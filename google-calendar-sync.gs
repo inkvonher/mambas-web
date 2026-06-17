@@ -19,8 +19,16 @@ const BOOKING_CAL_ID = "clandestinobeer9@gmail.com";
 // ======================
 
 function syncCalendar() {
-  pushAdminToGoogle();
-  importGoogleToAdmin();
+  try {
+    pushAdminToGoogle();
+  } catch (e) {
+    Logger.log("Error en pushAdminToGoogle: " + e);
+  }
+  try {
+    importGoogleToAdmin();
+  } catch (e) {
+    Logger.log("Error en importGoogleToAdmin: " + e);
+  }
 }
 
 function authHeaders() {
