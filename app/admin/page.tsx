@@ -334,6 +334,43 @@ export default function AdminPage() {
     );
   }
 
+  async function handleCancelAppointment(appointment: Appointment) {
+    if (appointment.status === "cancelled") {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `¿Cancelar la cita de ${appointment.client_name}? Se marcará como cancelada (no se elimina).`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const previousAppointments = appointments;
+    setErrorMessage("");
+    setAppointments((current) =>
+      current.map((item) =>
+        item.id === appointment.id
+          ? { ...item, status: "cancelled" as AppointmentStatus }
+          : item,
+      ),
+    );
+
+    const { error } = await supabase
+      .from("appointments")
+      .update({ status: "cancelled" })
+      .eq("id", appointment.id);
+
+    if (error) {
+      console.error(error);
+      setAppointments(previousAppointments);
+      setErrorMessage(
+        `No se pudo cancelar la cita: ${error.message || "error desconocido"}`,
+      );
+    }
+  }
+
   async function handleRescheduleAppointment(
     appointment: Appointment,
     date: string,
@@ -934,6 +971,7 @@ export default function AdminPage() {
                     key={appointment.id}
                     appointment={appointment}
                     onEdit={openEditAppointment}
+                    onCancel={handleCancelAppointment}
                     onDelete={handleDeleteAppointment}
                   />
                 ))}
@@ -1722,10 +1760,12 @@ function DailyAppointmentMobileCard({
 function AppointmentCard({
   appointment,
   onEdit,
+  onCancel,
   onDelete,
 }: {
   appointment: Appointment;
   onEdit: (appointment: Appointment) => void;
+  onCancel: (appointment: Appointment) => void;
   onDelete: (appointment: Appointment) => void;
 }) {
   return (
@@ -1777,6 +1817,14 @@ function AppointmentCard({
         >
           Editar
         </button>
+        {appointment.status !== "cancelled" && (
+          <button
+            onClick={() => onCancel(appointment)}
+            className="min-h-10 rounded-lg border border-amber-400/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-amber-200 transition hover:bg-amber-400 hover:text-black"
+          >
+            Cancelar
+          </button>
+        )}
         <button
           onClick={() => onDelete(appointment)}
           className="min-h-10 rounded-lg border border-red-400/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-200 transition hover:bg-red-400 hover:text-black"
