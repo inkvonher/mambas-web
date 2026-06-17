@@ -48,19 +48,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, skipped: true, id: existing.id });
   }
 
-  const name = (body.client_name || "Reserva Google").trim().slice(0, 80);
+  const name = (body.client_name || "Reserva Google").trim().slice(0, 120);
   const phone = (body.client_phone || "").trim().slice(0, 25);
 
   const payload = {
     client_name: name || "Reserva Google",
-    client_phone: phone, // may be empty (constraint allows it)
-    service: (body.service || "").slice(0, 120) || null,
+    client_phone: phone, // nullable, empty is fine
+    service: (body.service || "Reserva en línea").slice(0, 200),
     category: body.category === "tattoo" ? "tattoo" : "barber",
     appointment_date: body.appointment_date,
     appointment_time: body.appointment_time,
     status: "confirmed",
     notes: (body.notes || "").slice(0, 2000) || null,
-    deposit_amount: 0,
     gcal_event_id: body.gcal_event_id,
     source: "google",
   };

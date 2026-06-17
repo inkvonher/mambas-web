@@ -38,7 +38,9 @@ function pushAdminToGoogle() {
   const cal = CalendarApp.getDefaultCalendar();
 
   list.forEach(function (a) {
-    const start = new Date(a.appointment_date + "T" + a.appointment_time + TZ_OFFSET);
+    var t = a.appointment_time || "00:00";
+    if (t.length === 5) t = t + ":00"; // "HH:mm" -> "HH:mm:ss"
+    const start = new Date(a.appointment_date + "T" + t + TZ_OFFSET);
     const end = new Date(start.getTime() + 60 * 60 * 1000);
     const tipo = a.category === "tattoo" ? "Tattoo" : "Barbería";
     const title = tipo + " · " + (a.client_name || "Cita");
@@ -88,7 +90,7 @@ function importGoogleToAdmin() {
       service: ev.getTitle(),
       category: "barber", // por ahora la reserva en línea es barbería
       appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
-      appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm:ss"),
+      appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
       notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
     };
 
