@@ -687,6 +687,28 @@ export default function Home() {
             </p>
           </div>
         </div>
+        <div className="mx-auto mt-12 max-w-7xl">
+          <p className="mb-5 text-center text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
+            {language === "es" ? "En acción" : "In action"}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            {["video1", "video2"].map((v) => (
+              <video
+                key={v}
+                controls
+                playsInline
+                preload="none"
+                poster={`/gallery/barber/videos/${v}.jpg`}
+                className="h-[440px] w-auto max-w-full rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
+              >
+                <source
+                  src={`/gallery/barber/videos/${v}.mp4`}
+                  type="video/mp4"
+                />
+              </video>
+            ))}
+          </div>
+        </div>
         <p className="mx-auto mt-8 max-w-2xl text-center text-sm italic text-zinc-400">
           {t.barberNote}
         </p>
