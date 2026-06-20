@@ -36,7 +36,7 @@ const copy = {
     tattooNote:
       "El precio por pieza depende del nivel de detalle, centímetros, estilo y zona a tatuar.",
     piercingNote:
-      "Los servicios incluyen anestesia tópica en caso de requerirla y bebida de cortesía.",
+      "Los servicios incluyen anestesia tópica en caso de requerirla.",
     loyaltyTitle: "Registro / Lealtad",
     loyaltyText:
       "Beneficios para clientes frecuentes: precios especiales, acceso a mercancía en preventa, descuentos de cumpleaños y prioridad para eventos.",
@@ -110,7 +110,7 @@ const copy = {
     tattooNote:
       "Piece pricing depends on detail level, centimeters, style and tattoo placement.",
     piercingNote:
-      "Services include topical anesthesia if required and a complimentary drink.",
+      "Services include topical anesthesia if required.",
     loyaltyTitle: "Registration / Loyalty",
     loyaltyText:
       "Benefits for returning clients: special pricing, early merchandise access, birthday discounts and priority event access.",
