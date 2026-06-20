@@ -1418,7 +1418,7 @@ function ContactStrip({
         rel="noopener noreferrer"
         className="btn-outline"
       >
-        Instagram {contact.instagram}
+        Instagram
       </a>
       <span className="sr-only">{language}</span>
     </div>
