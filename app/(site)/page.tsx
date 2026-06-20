@@ -672,7 +672,7 @@ export default function Home() {
                   Galería
                 </p>
                 <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
-                  {language === "es" ? "Barbería Mambas" : "Mambas Barbershop"}
+                  {language === "es" ? "Barbería" : "Barbershop"}
                 </h3>
               </div>
               <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
