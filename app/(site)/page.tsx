@@ -682,8 +682,8 @@ export default function Home() {
             <Gallery items={barberGallery} language={language} speed={0.5} />
             <p className="mt-5 text-sm leading-6 text-zinc-400">
               {language === "es"
-                ? "Cortes, ritual de barba y servicios premium con acabado limpio."
-                : "Haircuts, beard ritual and premium services with a clean finish."}
+                ? "Cortes de cabello modernos y servicio premium para caballeros."
+                : "Modern haircuts and premium service for gentlemen."}
             </p>
           </div>
         </div>
