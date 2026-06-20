@@ -31,7 +31,8 @@ const copy = {
     tattooTitle: "Tattoo & Piercing",
     tattooSlogan: "FREEWILL",
     included: "Incluido",
-    barberNote: "Bebida + facial relajante de cortesía para nuestros clientes.",
+    barberNote:
+      "Disfruta de un facial relajante con toallas calientes y frías al finalizar tu servicio.",
     tattooNote:
       "El precio por pieza depende del nivel de detalle, centímetros, estilo y zona a tatuar.",
     piercingNote:
@@ -104,7 +105,8 @@ const copy = {
     tattooTitle: "Tattoo & Piercing",
     tattooSlogan: "FREEWILL",
     included: "Included",
-    barberNote: "Complimentary drink + relaxing facial for our clients.",
+    barberNote:
+      "Enjoy a relaxing facial with hot and cold towels at the end of your service.",
     tattooNote:
       "Piece pricing depends on detail level, centimeters, style and tattoo placement.",
     piercingNote:
