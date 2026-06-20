@@ -13,6 +13,7 @@ type GalleryItem = {
   label: Record<Language, string>;
   alt: Record<Language, string>;
   imageClassName?: string;
+  video?: string;
 };
 
 const copy = {
@@ -264,6 +265,24 @@ const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
 const barberBookingUrl = "https://calendar.app.google/N2Vq9L7HwybvPXZW8";
 
 const barberGallery: GalleryItem[] = [
+  {
+    src: "/gallery/barber/videos/video1.jpg",
+    video: "/gallery/barber/videos/video1.mp4",
+    label: { es: "Corte en vivo", en: "Live cut" },
+    alt: {
+      es: "Video de corte de cabello en Mambas Barbería",
+      en: "Haircut video at Mambas Barbershop",
+    },
+  },
+  {
+    src: "/gallery/barber/videos/video2.jpg",
+    video: "/gallery/barber/videos/video2.mp4",
+    label: { es: "Fade en vivo", en: "Live fade" },
+    alt: {
+      es: "Video de fade en Mambas Barbería",
+      en: "Fade haircut video at Mambas Barbershop",
+    },
+  },
   {
     src: "/gallery/barber/barber11.png",
     label: { es: "Ritual de navaja", en: "Razor ritual" },
@@ -687,28 +706,6 @@ export default function Home() {
                 ? "Cortes de cabello modernos y servicio premium para caballeros."
                 : "Modern haircuts and premium service for gentlemen."}
             </p>
-          </div>
-        </div>
-        <div className="mx-auto mt-12 max-w-7xl">
-          <p className="mb-5 text-center text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
-            {language === "es" ? "En acción" : "In action"}
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            {["video1", "video2"].map((v) => (
-              <video
-                key={v}
-                controls
-                playsInline
-                preload="none"
-                poster={`/gallery/barber/videos/${v}.jpg`}
-                className="h-[440px] w-auto max-w-full rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_20px_60px_rgba(0,0,0,0.45)]"
-              >
-                <source
-                  src={`/gallery/barber/videos/${v}.mp4`}
-                  type="video/mp4"
-                />
-              </video>
-            ))}
           </div>
         </div>
         <p className="mx-auto mt-8 max-w-2xl text-center text-sm italic text-zinc-400">
@@ -1322,14 +1319,28 @@ function Gallery({
         {[...items, ...items].map((item, index) => (
           <div key={`${item.src}-${index}`} className="gallery-card">
             <div className="gallery-frame">
-              <Image
-                src={item.src}
-                alt={item.alt[language]}
-                fill
-                sizes="(max-width: 640px) 260px, 320px"
-                className={item.imageClassName || "object-cover"}
-                draggable={false}
-              />
+              {item.video ? (
+                <video
+                  src={item.video}
+                  poster={item.src}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                  aria-label={item.alt[language]}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <Image
+                  src={item.src}
+                  alt={item.alt[language]}
+                  fill
+                  sizes="(max-width: 640px) 260px, 320px"
+                  className={item.imageClassName || "object-cover"}
+                  draggable={false}
+                />
+              )}
             </div>
           </div>
         ))}
