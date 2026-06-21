@@ -266,29 +266,20 @@ const barberBookingUrl = "https://calendar.app.google/N2Vq9L7HwybvPXZW8";
 
 const barberGallery: GalleryItem[] = [
   {
+    src: "/gallery/barber/barber11.png",
+    label: { es: "Ritual de navaja", en: "Razor ritual" },
+    alt: {
+      es: "Barbero de Mambas realizando servicio con navaja en barbería",
+      en: "Mambas barber performing a razor service inside the barbershop",
+    },
+  },
+  {
     src: "/gallery/barber/videos/video1.jpg",
     video: "/gallery/barber/videos/video1.mp4",
     label: { es: "Corte en vivo", en: "Live cut" },
     alt: {
       es: "Video de corte de cabello en Mambas Barbería",
       en: "Haircut video at Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/videos/video2.jpg",
-    video: "/gallery/barber/videos/video2.mp4",
-    label: { es: "Fade en vivo", en: "Live fade" },
-    alt: {
-      es: "Video de fade en Mambas Barbería",
-      en: "Fade haircut video at Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/barber11.png",
-    label: { es: "Ritual de navaja", en: "Razor ritual" },
-    alt: {
-      es: "Barbero de Mambas realizando servicio con navaja en barbería",
-      en: "Mambas barber performing a razor service inside the barbershop",
     },
   },
   {
@@ -305,6 +296,15 @@ const barberGallery: GalleryItem[] = [
     alt: {
       es: "Barbero de Mambas trabajando con guantes y navaja",
       en: "Mambas barber working with gloves and razor",
+    },
+  },
+  {
+    src: "/gallery/barber/videos/video2.jpg",
+    video: "/gallery/barber/videos/video2.mp4",
+    label: { es: "Fade en vivo", en: "Live fade" },
+    alt: {
+      es: "Video de fade en Mambas Barbería",
+      en: "Fade haircut video at Mambas Barbershop",
     },
   },
   {
@@ -350,6 +350,72 @@ const barberGallery: GalleryItem[] = [
 ];
 
 const tattooGallery: GalleryItem[] = [
+  {
+    src: "/gallery/tattoo/tnew1.jpg",
+    label: { es: "Pieza en muslo", en: "Thigh piece" },
+    alt: {
+      es: "Tatuaje detallado de figura egipcia en el muslo por Mambas Tattoo",
+      en: "Detailed Egyptian figure thigh tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/videos/video1.jpg",
+    video: "/gallery/tattoo/videos/video1.mp4",
+    label: { es: "Blackout en vivo", en: "Blackout in progress" },
+    alt: {
+      es: "Video de manga blackwork sólida realizada por Mambas Tattoo",
+      en: "Video of a solid blackwork sleeve by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tnew2.jpg",
+    label: { es: "Ojo de Horus", en: "Eye of Horus" },
+    alt: {
+      es: "Tatuaje de Ojo de Horus en antebrazo por Mambas Tattoo",
+      en: "Eye of Horus forearm tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tnew3.jpg",
+    label: { es: "Lettering cuello", en: "Neck lettering" },
+    alt: {
+      es: "Tatuaje de lettering en el cuello por Mambas Tattoo",
+      en: "Neck lettering tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/videos/video2.jpg",
+    video: "/gallery/tattoo/videos/video2.mp4",
+    label: { es: "Pieza floral en vivo", en: "Floral piece in progress" },
+    alt: {
+      es: "Video de tatuaje floral en la espalda por Mambas Tattoo",
+      en: "Video of a floral back tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tnew4.jpg",
+    label: { es: "Koi en costillas", en: "Koi on ribs" },
+    alt: {
+      es: "Tatuaje de koi en las costillas por Mambas Tattoo",
+      en: "Koi rib tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tnew5.jpg",
+    label: { es: "Escorpión", en: "Scorpion" },
+    alt: {
+      es: "Tatuaje de escorpión en el costado por Mambas Tattoo",
+      en: "Scorpion side tattoo by Mambas Tattoo",
+    },
+  },
+  {
+    src: "/gallery/tattoo/tnew6.jpg",
+    label: { es: "Plumas blackwork", en: "Blackwork feathers" },
+    alt: {
+      es: "Tatuaje blackwork de plumas por Mambas Tattoo",
+      en: "Blackwork feather tattoo by Mambas Tattoo",
+    },
+  },
   {
     src: "/gallery/tattoo/tatuaje1.png",
     label: { es: "Blackwork pantera", en: "Blackwork panther" },
