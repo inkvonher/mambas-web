@@ -353,6 +353,7 @@ const tattooGallery: GalleryItem[] = [
   {
     src: "/gallery/tattoo/tnew1.jpg",
     label: { es: "Pieza en muslo", en: "Thigh piece" },
+    imageClassName: "object-contain",
     alt: {
       es: "Tatuaje detallado de figura egipcia en el muslo por Mambas Tattoo",
       en: "Detailed Egyptian figure thigh tattoo by Mambas Tattoo",
@@ -419,6 +420,7 @@ const tattooGallery: GalleryItem[] = [
   {
     src: "/gallery/tattoo/tatuaje1.png",
     label: { es: "Blackwork pantera", en: "Blackwork panther" },
+    imageClassName: "object-contain",
     alt: {
       es: "Tatuaje blackwork de pantera en pecho hecho por Mambas Tattoo",
       en: "Blackwork panther chest tattoo by Mambas Tattoo",
