@@ -84,6 +84,9 @@ function pushAdminToGoogle() {
   });
 }
 
+// Calendarios donde pueden caer las reservas en línea.
+const BOOKING_CALENDARS = [BOOKING_CAL_ID, "mambastattoo@gmail.com"];
+
 // 2) Reservas nuevas en Google Calendar -> citas en el panel admin (+ WhatsApp)
 function importGoogleToAdmin() {
   const props = PropertiesService.getScriptProperties();
@@ -94,46 +97,47 @@ function importGoogleToAdmin() {
     return;
   }
   const last = Number(stored);
-
-  // Lee el calendario de las reservas en línea (no el principal).
-  const cal = CalendarApp.getCalendarById(BOOKING_CAL_ID);
   const from = new Date(now - 24 * 60 * 60 * 1000);
   const to = new Date(now + 120 * 24 * 60 * 60 * 1000);
-  const events = cal.getEvents(from, to);
-  Logger.log("Eventos en calendario de reservas: " + events.length);
 
-  events.forEach(function (ev) {
-    if (ev.getDateCreated().getTime() <= last) return;     // ya revisado
-    if (ev.getTag("mambasSource") === "admin") return;     // la creamos nosotros
+  BOOKING_CALENDARS.forEach(function (calId) {
+    const cal = CalendarApp.getCalendarById(calId);
+    if (!cal) return;
+    const events = cal.getEvents(from, to);
+    Logger.log("Calendario " + calId + ": " + events.length + " eventos");
 
-    const start = ev.getStartTime();
-    const payload = {
-      gcal_event_id: ev.getId(),
-      client_name: ev.getTitle(),
-      client_phone: "",
-      service: ev.getTitle(),
-      category: "barber", // por ahora la reserva en línea es barbería
-      appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
-      appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
-      notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
-    };
+    events.forEach(function (ev) {
+      if (ev.getDateCreated().getTime() <= last) return;   // ya revisado
+      if (ev.getTag("mambasSource") === "admin") return;   // la creamos nosotros
+      if (ev.isAllDayEvent()) return;                       // bloque de disponibilidad
+      const title = (ev.getTitle() || "").trim();
+      if (!title) return;                                   // sin título = disponibilidad
 
-    const res = UrlFetchApp.fetch(SITE + "/api/sync/from-google", {
-      method: "post",
-      contentType: "application/json",
-      headers: authHeaders(),
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true,
+      const start = ev.getStartTime();
+      const payload = {
+        gcal_event_id: ev.getId(),
+        client_name: title,
+        client_phone: "",
+        service: title,
+        category: "barber",
+        appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
+        appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
+        notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
+      };
+
+      const res = UrlFetchApp.fetch(SITE + "/api/sync/from-google", {
+        method: "post",
+        contentType: "application/json",
+        headers: authHeaders(),
+        payload: JSON.stringify(payload),
+        muteHttpExceptions: true,
+      });
+      Logger.log("from-google (" + title + "): " + res.getResponseCode() + " " + res.getContentText());
+      if (res.getResponseCode() === 200) {
+        const j = JSON.parse(res.getContentText());
+        if (!j.skipped) sendWhatsApp(ev);
+      }
     });
-
-    Logger.log(
-      "from-google (" + ev.getTitle() + "): " +
-        res.getResponseCode() + " " + res.getContentText(),
-    );
-    if (res.getResponseCode() === 200) {
-      const j = JSON.parse(res.getContentText());
-      if (!j.skipped) sendWhatsApp(ev); // avisa solo de reservas genuinas nuevas
-    }
   });
 
   props.setProperty("lastCheck", String(now));
