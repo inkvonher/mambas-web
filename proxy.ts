@@ -5,7 +5,7 @@ import { createServerClient } from "@supabase/ssr";
 // reads the Supabase session from cookies, and redirects unauthenticated
 // visitors to the login page. This is the real protection — the client-side
 // check in the dashboard is now just a second layer.
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
