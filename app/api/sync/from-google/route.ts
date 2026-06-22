@@ -71,6 +71,10 @@ export async function POST(request: Request) {
     .single();
 
   if (error) {
+    // 23505 = unique violation: the booking was already inserted (race-safe).
+    if (error.code === "23505") {
+      return NextResponse.json({ ok: true, skipped: true });
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
   return NextResponse.json({ ok: true, id: data.id });
