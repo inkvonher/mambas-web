@@ -1,6 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { Cinzel, Outfit } from "next/font/google";
 import "./globals.css";
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
+});
 
 const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
   /\/$/,
@@ -114,8 +127,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-black text-white">
+    <html
+      lang="es"
+      className={`${cinzel.variable} ${outfit.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col bg-black text-white font-sans">
         {children}
         <Analytics />
       </body>

@@ -4,539 +4,23 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import MapboxMap from "./MapboxMap";
 import IntroOverlay from "./IntroOverlay";
-import ScrollReveal from "./ScrollReveal";
+import { motion, AnimatePresence } from "framer-motion";
 
-type Language = "es" | "en";
-type ServiceMode = "barber" | "tattoo";
-type GalleryItem = {
-  src: string;
-  label: Record<Language, string>;
-  alt: Record<Language, string>;
-  imageClassName?: string;
-  video?: string;
-};
-
-const copy = {
-  es: {
-    nav: ["Inicio", "Barbería", "Tattoo", "Anticipo", "Lealtad", "Ubicación"],
-    heroKicker: "Barbería tradicional mexicana · Tatuaje ritual · Piercing",
-    heroText:
-      "Desde 2021 en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel. Certificados ante COFEPRIS.",
-    barberCta: "Reservar barbería",
-    tattooCta: "Cotizar tattoo",
-    aboutTitle: "Quiénes somos",
-    about:
-      "Mambas Tattoo & Cuts une barbería tradicional mexicana, tatuaje ritual y piercing en un espacio sobrio, cuidado y profesional.",
-    barberTitle: "Barbería",
-    barberSlogan: "LUCE FRESCO",
-    tattooTitle: "Tattoo & Piercing",
-    tattooSlogan: "FREEWILL",
-    included: "Incluido",
-    barberNote:
-      "Disfruta de un facial relajante con toallas calientes y frías al finalizar tu servicio.",
-    tattooNote:
-      "El precio por pieza depende del nivel de detalle, centímetros, estilo y zona a tatuar.",
-    piercingNote:
-      "Los servicios incluyen anestesia tópica en caso de requerirla.",
-    loyaltyTitle: "Registro / Lealtad",
-    loyaltyText:
-      "Beneficios para clientes frecuentes: precios especiales, acceso a mercancía en preventa, descuentos de cumpleaños y prioridad para eventos.",
-    fullName: "Nombre completo",
-    phone: "WhatsApp",
-    birthday: "Cumpleaños",
-    interest: "Interés principal",
-    register: "Registrarme",
-    saved: "Registro enviado correctamente.",
-    quoteTitle: "Cotizador tattoo",
-    centimeters: "Centímetros",
-    detail: "Detalle",
-    zone: "Zona",
-    estimated: "Estimado",
-    quoteHelp:
-      "Este cálculo orienta la conversación. La cotización final se confirma por WhatsApp con referencia visual.",
-    locationTitle: "Ubicación",
-    address:
-      "Calle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo",
-    locationText:
-      "Ubicado en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel.",
-    hoursTitle: "Horario",
-    hoursWeekdays: "Lunes a sábado",
-    hoursWeekdaysValue: "9:00 – 21:00",
-    hoursSunday: "Domingo",
-    hoursSundayValue: "12:00 – 21:00",
-    reviewsTitle: "Reseñas",
-    reviewsText:
-      "Consulta calificaciones reales, reseñas y ruta directa desde la ficha pública de Mambas.",
-    viewReviews: "Ver reseñas en Google Maps",
-    sourceRating: "Apple Maps: 5 calificaciones, 100% general",
-    sourceVerified:
-      "Fuente publica verificada: Apple Maps / ficha Mambas Tattoo & Cuts",
-    inclusive:
-      "Espacio inclusivo, LGBTQ+ friendly y pet friendly.",
-    loyaltySummary:
-      "Acumula beneficios, prioridad y recompensas exclusivas.",
-    memberBlack: "acceso prioritario",
-    memberGold: "descuentos y recompensas",
-    memberRitual: "beneficios VIP",
-    contact: "Contacto directo",
-    map: "Abrir mapa",
-    depositTitle: "Anticipo",
-    depositKicker: "RESERVA TU CITA",
-    depositText:
-      "Para reservar una cita de tatuaje se requiere un anticipo mínimo de 500 MXN. Tu pago asegura espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
-    depositButton: "Solicitar anticipo por WhatsApp",
-    depositPaymentButton: "Pagar anticipo",
-    paymentMethods:
-      "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
-    floatingBarber: "Barbería",
-    floatingTattoo: "Tattoo & Piercing",
-  },
-  en: {
-    nav: ["Home", "Barbershop", "Tattoo", "Deposit", "Loyalty", "Location"],
-    heroKicker: "Traditional Mexican barbershop · Ritual tattoo · Piercing",
-    heroText:
-      "Since 2021 in the heart of Playa del Carmen, a few blocks from the Cozumel ferry. COFEPRIS certified.",
-    barberCta: "Book barbershop",
-    tattooCta: "Quote tattoo",
-    aboutTitle: "Who we are",
-    about:
-      "Mambas Tattoo & Cuts brings together traditional Mexican barbering, ritual tattooing and piercing in a clean, focused and professional space.",
-    barberTitle: "Barbershop",
-    barberSlogan: "LOOK FRESH",
-    tattooTitle: "Tattoo & Piercing",
-    tattooSlogan: "FREEWILL",
-    included: "Included",
-    barberNote:
-      "Enjoy a relaxing facial with hot and cold towels at the end of your service.",
-    tattooNote:
-      "Piece pricing depends on detail level, centimeters, style and tattoo placement.",
-    piercingNote:
-      "Services include topical anesthesia if required.",
-    loyaltyTitle: "Registration / Loyalty",
-    loyaltyText:
-      "Benefits for returning clients: special pricing, early merchandise access, birthday discounts and priority event access.",
-    fullName: "Full name",
-    phone: "WhatsApp",
-    birthday: "Birthday",
-    interest: "Main interest",
-    register: "Register",
-    saved: "Registration saved on this device.",
-    quoteTitle: "Tattoo quote",
-    centimeters: "Centimeters",
-    detail: "Detail",
-    zone: "Placement",
-    estimated: "Estimate",
-    quoteHelp:
-      "This estimate guides the conversation. Final pricing is confirmed on WhatsApp with a visual reference.",
-    locationTitle: "Location",
-    address:
-      "Calle 1 Sur corner Av. 25 Sur, Centro, Playa del Carmen, Quintana Roo",
-    locationText:
-      "Located in the heart of Playa del Carmen, a few blocks from the Cozumel ferry.",
-    hoursTitle: "Hours",
-    hoursWeekdays: "Monday to Saturday",
-    hoursWeekdaysValue: "9:00 AM – 9:00 PM",
-    hoursSunday: "Sunday",
-    hoursSundayValue: "12:00 PM – 9:00 PM",
-    reviewsTitle: "Reviews",
-    reviewsText:
-      "The public listing shows real ratings. Google review text requires the official Places API, so this app links to the live source.",
-    viewReviews: "View reviews on Google Maps",
-    sourceRating: "Apple Maps: 5 ratings, 100% overall",
-    sourceVerified:
-      "Verified public source: Apple Maps / Mambas Tattoo & Cuts listing",
-    inclusive:
-      "Inclusive space. We do not discriminate. LGBTQ+ friendly. Pet friendly.",
-    loyaltySummary:
-      "Earn benefits, priority access and exclusive rewards.",
-    memberBlack: "priority access",
-    memberGold: "discounts and rewards",
-    memberRitual: "VIP benefits",
-    contact: "Direct contact",
-    map: "Open map",
-    depositTitle: "Deposit",
-    depositKicker: "BOOK YOUR APPOINTMENT",
-    depositText:
-      "A minimum deposit of 500 MXN is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
-    depositButton: "Request deposit by WhatsApp",
-    depositPaymentButton: "Pay deposit",
-    paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
-    floatingBarber: "Barbershop",
-    floatingTattoo: "Tattoo & Piercing",
-  },
-};
-
-const barberServices = [
-  ["Corte de cabello", "Haircut", "320 MXN", "20 USD"],
-  ["Ritual de barba", "Beard ritual", "290 MXN", "18 USD"],
-  ["Delineado general", "General line-up", "210 MXN", "13 USD"],
-  ["Cejas o bigote", "Eyebrows or mustache", "150 MXN", "10 USD"],
-  ["Facial + vapor", "Facial + steam", "230 MXN", "14 USD"],
-  ["Servicio VIP", "VIP service", "900 MXN", "57 USD"],
-  ["Global / mechas", "Full color / highlights", "1800 MXN", "112 USD"],
-  ["Trenzas desde", "Braids from", "1000 MXN", "63 USD"],
-];
-
-const tattooPrices = [
-  ["Precio mínimo", "Minimum price", "1600 MXN", "100 USD"],
-  ["Sesión 4-5 hrs aprox.", "4-5 hr session", "6500 MXN", "400 USD"],
-  ["Piercing facial", "Facial piercing", "550 MXN", "35 USD"],
-  ["Piercing genital", "Genital piercing", "1000 MXN", "65 USD"],
-];
-
-type Review = {
-  name: string;
-  initials: string;
-  stars: number;
-  localGuide: boolean;
-  time: Record<Language, string>;
-  text: string;
-};
-
-const reviews: Review[] = [
-  {
-    name: "Lorena Rosas",
-    initials: "LR",
-    stars: 5,
-    localGuide: true,
-    time: { es: "Hace un año", en: "A year ago" },
-    text: "Super recomendado, ya me he tatuado ahí varias veces y todo súper bien. También los servicios de barbería excelentes.",
-  },
-  {
-    name: "Iván Castellón",
-    initials: "IC",
-    stars: 5,
-    localGuide: false,
-    time: { es: "Hace un año", en: "A year ago" },
-    text: "A todos mis amigos y conocidos les recomiendo rayarse ahí. Recuerdo que solo iba por un tatuaje y ya llevo 10, y no cambio ese estudio para nada. Qué buen trabajo, y la persona encargada increíble.",
-  },
-  {
-    name: "Javier Monroy",
-    initials: "JM",
-    stars: 5,
-    localGuide: true,
-    time: { es: "Hace 3 años", en: "3 years ago" },
-    text: "El lugar siempre se encuentra limpio y fresco, las personas que trabajan ahí son super amables y atentos, te ayudan con cualquier duda sobre el corte o tatuaje que deseas. Excelentes personas y un servicio increíble.",
-  },
-  {
-    name: "Marlon Benítez",
-    initials: "MB",
-    stars: 5,
-    localGuide: false,
-    time: { es: "Hace un año", en: "A year ago" },
-    text: "Quedé muy feliz con mis tatuajes ❤️ La calidad del trabajo es excelente, con un ambiente cómodo y servicio muy ameno ✨ No puedo esperar para regresar.",
-  },
-  {
-    name: "Didiel Estrella",
-    initials: "DE",
-    stars: 5,
-    localGuide: false,
-    time: { es: "Hace un año", en: "A year ago" },
-    text: "Muy buenos. La chica Karen es excelente 😍 amé mi tatuaje 😍 Muy limpio y todo higiénico con las herramientas.",
-  },
-  {
-    name: "Alex Pérez",
-    initials: "AP",
-    stars: 5,
-    localGuide: false,
-    time: { es: "Hace 4 años", en: "4 years ago" },
-    text: "¡Definitivamente el mejor lugar de Playa para tener el mejor look! Atendido por la mismísima Yam, quien es una experta y cada corte de cabello lo convierte en una obra de arte.",
-  },
-];
-
-const contacts = {
-  barber: {
-    phone: "529843675261",
-    display: "+52 984 367 5261",
-    instagram: "Instagram",
-    url: "https://www.instagram.com/mambas_barberia.pdc/",
-  },
-  tattoo: {
-    phone: "529841820414",
-    display: "+52 984 182 0414",
-    instagram: "Instagram",
-    url: "https://www.instagram.com/mambas.tattoocuts/",
-  },
-};
-
-const googleMapsUrl =
-  "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
-const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
-const barberBookingUrl = "https://calendar.app.google/N2Vq9L7HwybvPXZW8";
-
-const barberGallery: GalleryItem[] = [
-  {
-    src: "/gallery/barber/barber11.png",
-    label: { es: "Ritual de navaja", en: "Razor ritual" },
-    alt: {
-      es: "Barbero de Mambas realizando servicio con navaja en barbería",
-      en: "Mambas barber performing a razor service inside the barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/videos/video1.jpg",
-    video: "/gallery/barber/videos/video1.mp4",
-    label: { es: "Corte en vivo", en: "Live cut" },
-    alt: {
-      es: "Video de corte de cabello en Mambas Barbería",
-      en: "Haircut video at Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/barber12.png",
-    label: { es: "Navaja clásica", en: "Classic razor" },
-    alt: {
-      es: "Detalle de navaja para servicio de barbería en Mambas",
-      en: "Close-up of a razor blade for barbershop service at Mambas",
-    },
-  },
-  {
-    src: "/gallery/barber/barber14.png",
-    label: { es: "Barbería en acción", en: "Barbershop in action" },
-    alt: {
-      es: "Barbero de Mambas trabajando con guantes y navaja",
-      en: "Mambas barber working with gloves and razor",
-    },
-  },
-  {
-    src: "/gallery/barber/videos/video2.jpg",
-    video: "/gallery/barber/videos/video2.mp4",
-    label: { es: "Fade en vivo", en: "Live fade" },
-    alt: {
-      es: "Video de fade en Mambas Barbería",
-      en: "Fade haircut video at Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/barber15.png",
-    label: { es: "Perfilado", en: "Line-up" },
-    alt: {
-      es: "Servicio de perfilado y corte con navaja en Mambas Barbería",
-      en: "Line-up and razor haircut service at Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/barber16.png",
-    label: { es: "Barbera Mambas", en: "Mambas barber" },
-    alt: {
-      es: "Barbera de Mambas posando en estación de trabajo",
-      en: "Mambas barber posing at her workstation",
-    },
-  },
-  {
-    src: "/gallery/barber/IMG_3034.jpg",
-    label: { es: "Corte con diseño", en: "Designed cut" },
-    alt: {
-      es: "Corte infantil con fade y diseño de líneas en Mambas Barbería",
-      en: "Kids fade haircut with line design at Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/IMG_3036.jpg",
-    label: { es: "Trenzas + fade", en: "Braids + fade" },
-    alt: {
-      es: "Corte fade con trenzas y barba perfilada de Mambas Barbería",
-      en: "Fade haircut with braids and shaped beard by Mambas Barbershop",
-    },
-  },
-  {
-    src: "/gallery/barber/IMG_3037.jpg",
-    label: { es: "Fade clásico", en: "Classic fade" },
-    alt: {
-      es: "Corte fade clásico con barba en la barbería Mambas",
-      en: "Classic fade haircut with beard at Mambas Barbershop",
-    },
-  },
-];
-
-const tattooGallery: GalleryItem[] = [
-  {
-    src: "/gallery/tattoo/tnew1.jpg",
-    label: { es: "Pieza en muslo", en: "Thigh piece" },
-    alt: {
-      es: "Tatuaje detallado de figura egipcia en el muslo por Mambas Tattoo",
-      en: "Detailed Egyptian figure thigh tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/videos/video1.jpg",
-    video: "/gallery/tattoo/videos/video1.mp4",
-    label: { es: "Blackout en vivo", en: "Blackout in progress" },
-    alt: {
-      es: "Video de manga blackwork sólida realizada por Mambas Tattoo",
-      en: "Video of a solid blackwork sleeve by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tnew2.jpg",
-    label: { es: "Ojo de Horus", en: "Eye of Horus" },
-    alt: {
-      es: "Tatuaje de Ojo de Horus en antebrazo por Mambas Tattoo",
-      en: "Eye of Horus forearm tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tnew3.jpg",
-    label: { es: "Lettering cuello", en: "Neck lettering" },
-    alt: {
-      es: "Tatuaje de lettering en el cuello por Mambas Tattoo",
-      en: "Neck lettering tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/videos/video2.jpg",
-    video: "/gallery/tattoo/videos/video2.mp4",
-    label: { es: "Pieza floral en vivo", en: "Floral piece in progress" },
-    alt: {
-      es: "Video de tatuaje floral en la espalda por Mambas Tattoo",
-      en: "Video of a floral back tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tnew4.jpg",
-    label: { es: "Koi en costillas", en: "Koi on ribs" },
-    alt: {
-      es: "Tatuaje de koi en las costillas por Mambas Tattoo",
-      en: "Koi rib tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tnew5.jpg",
-    label: { es: "Escorpión", en: "Scorpion" },
-    alt: {
-      es: "Tatuaje de escorpión en el costado por Mambas Tattoo",
-      en: "Scorpion side tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tnew6.jpg",
-    label: { es: "Plumas blackwork", en: "Blackwork feathers" },
-    alt: {
-      es: "Tatuaje blackwork de plumas por Mambas Tattoo",
-      en: "Blackwork feather tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje1.png",
-    label: { es: "Blackwork pantera", en: "Blackwork panther" },
-    alt: {
-      es: "Tatuaje blackwork de pantera en pecho hecho por Mambas Tattoo",
-      en: "Blackwork panther chest tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje2.png",
-    label: { es: "Pieza de pecho", en: "Chest piece" },
-    alt: {
-      es: "Tatuaje de pecho con serpiente y cráneo realizado por Mambas Tattoo",
-      en: "Chest tattoo with snake and skull by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje3.jpg",
-    label: { es: "Lettering cuello", en: "Neck lettering" },
-    alt: {
-      es: "Tatuaje de lettering en cuello realizado por Mambas Tattoo",
-      en: "Neck lettering tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje4.png",
-    label: { es: "Blackwork hombro", en: "Shoulder blackwork" },
-    alt: {
-      es: "Tatuaje blackwork de hombro con diseño abstracto orgánico realizado por Mambas Tattoo",
-      en: "Shoulder blackwork tattoo with organic abstract design by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje6.png",
-    label: { es: "Pieza ilustrativa", en: "Illustrative piece" },
-    alt: {
-      es: "Tatuaje ilustrativo en brazo con sombreado negro realizado por Mambas Tattoo",
-      en: "Illustrative arm tattoo with black shading by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje7.png",
-    label: { es: "Manga dragón", en: "Dragon sleeve" },
-    alt: {
-      es: "Tatuaje de manga con dragón y sombreado negro realizado por Mambas Tattoo",
-      en: "Dragon sleeve tattoo with black shading by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuaje8.png",
-    label: { es: "Dragón blackwork", en: "Blackwork dragon" },
-    alt: {
-      es: "Tatuaje blackwork de dragón en brazo realizado por Mambas Tattoo",
-      en: "Blackwork dragon arm tattoo by Mambas Tattoo",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tattoo.jpg",
-    label: { es: "Proceso tattoo", en: "Tattoo process" },
-    alt: {
-      es: "Detalle de máquina de tatuar trabajando durante una sesión en Mambas",
-      en: "Close-up of a tattoo machine working during a session at Mambas",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuador11.png",
-    label: { es: "Sesión Mambas", en: "Mambas session" },
-    alt: {
-      es: "Tatuador de Mambas trabajando en una pieza durante sesión",
-      en: "Mambas tattoo artist working on a piece during a session",
-    },
-  },
-  {
-    src: "/gallery/tattoo/tatuador2.jpg",
-    label: { es: "Tattoo ritual", en: "Tattoo ritual" },
-    alt: {
-      es: "Artista de Mambas tatuando brazo en el estudio",
-      en: "Mambas artist tattooing an arm inside the studio",
-    },
-  },
-  {
-    src: "/gallery/tattoo/piercing/piercing11.png",
-    label: { es: "Septum + labret", en: "Septum + labret" },
-    alt: {
-      es: "Piercing septum y labret con joyería plateada realizado por Mambas",
-      en: "Septum and labret piercing with silver jewelry by Mambas",
-    },
-  },
-  {
-    src: "/gallery/tattoo/piercing/piercing2.png",
-    label: { es: "Septum dorado", en: "Gold septum" },
-    alt: {
-      es: "Piercing septum con joyería dorada realizado por Mambas",
-      en: "Septum piercing with gold jewelry by Mambas",
-    },
-  },
-  {
-    src: "/gallery/tattoo/piercing/piercing3.png",
-    label: { es: "Nostril", en: "Nostril" },
-    alt: {
-      es: "Piercing nostril con joyería discreta realizado por Mambas",
-      en: "Nostril piercing with minimal jewelry by Mambas",
-    },
-  },
-  {
-    src: "/gallery/tattoo/piercing/piercing4.png",
-    label: { es: "Labret vertical", en: "Vertical labret" },
-    alt: {
-      es: "Piercing labret vertical con joyería plateada realizado por Mambas",
-      en: "Vertical labret piercing with silver jewelry by Mambas",
-    },
-  },
-  {
-    src: "/gallery/tattoo/piercing/piercing5.png",
-    label: { es: "Septum", en: "Septum" },
-    alt: {
-      es: "Piercing septum con joyería plateada realizado por Mambas",
-      en: "Septum piercing with silver jewelry by Mambas",
-    },
-  },
-];
+import {
+  type Language,
+  type ServiceMode,
+  type GalleryItem,
+  copy,
+  barberServices,
+  tattooPrices,
+  reviews,
+  contacts,
+  googleMapsUrl,
+  depositPaymentUrl,
+  barberBookingUrl,
+  barberGallery,
+  tattooGallery,
+} from "./data";
 
 export default function Home() {
   const [language, setLanguage] = useState<Language>("es");
@@ -547,6 +31,8 @@ export default function Home() {
   const [zone, setZone] = useState(1);
   const [copied, setCopied] = useState(false);
   const [floatingOpen, setFloatingOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("inicio");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const walletAddress = "0x620D311425385e60743a2e9f3cE0e476E07cdCA1";
   const t = copy[language];
 
@@ -559,14 +45,17 @@ export default function Home() {
 
   async function handleRegister(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
     const form = event.currentTarget;
     const formData = new FormData(form);
+
+    const day = formData.get("birthdayDay");
+    const month = formData.get("birthdayMonth");
+    const birthday = day && month ? `2000-${month}-${day}` : null;
 
     const payload = {
       name: formData.get("name"),
       phone: formData.get("phone"),
-      birthday: formData.get("birthday"),
+      birthday,
       interest: formData.get("interest"),
       company: formData.get("company"), // honeypot, must stay empty
     };
@@ -602,13 +91,14 @@ export default function Home() {
   }
 
   function scrollTo(id: string) {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setActiveSection(id);
+    setMobileMenuOpen(false);
+    window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   return (
     <main className="min-h-screen bg-[#050505] text-white">
       <IntroOverlay />
-      <ScrollReveal />
       <header className="fixed left-0 right-0 top-0 z-50 border-b border-[#d6ad4a]/20 bg-black/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <button
@@ -635,579 +125,683 @@ export default function Home() {
                 <button
                   key={id}
                   onClick={() => scrollTo(id)}
-                  className="text-[11px] font-semibold uppercase tracking-[0.22em] text-zinc-300 transition hover:text-[#d6ad4a]"
+                  className={`text-[11px] font-semibold uppercase tracking-[0.22em] transition ${
+                    activeSection === id
+                      ? "text-[#d6ad4a] border-b border-[#d6ad4a]/50 pb-0.5"
+                      : "text-zinc-300 hover:text-[#d6ad4a]"
+                  }`}
                 >
                   {t.nav[index]}
                 </button>
               ),
             )}
           </nav>
-          <button
-            onClick={() => setLanguage(language === "es" ? "en" : "es")}
-            className="border border-[#d6ad4a] px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
-          >
-            {language === "es" ? "EN" : "ES"}
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLanguage(language === "es" ? "en" : "es")}
+              className="border border-[#d6ad4a] px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] text-[#d6ad4a] transition hover:bg-[#d6ad4a] hover:text-black"
+            >
+              {language === "es" ? "EN" : "ES"}
+            </button>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={language === "es" ? "Abrir menú" : "Open menu"}
+              className="text-[#d6ad4a] p-2 hover:bg-[#d6ad4a]/10 focus:outline-none lg:hidden"
+            >
+              {mobileMenuOpen ? (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
-      <section
-        id="inicio"
-        aria-labelledby="hero-heading"
-        className="relative flex min-h-[92vh] items-center overflow-hidden border-b border-[#d6ad4a]/20 px-4 pt-24 sm:px-6"
-      >
-        <Image
-          src="/gallery/mbs3.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="absolute inset-0 object-cover opacity-55"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,5,5,0.96)_0%,rgba(5,5,5,0.78)_42%,rgba(5,5,5,0.42)_100%),linear-gradient(180deg,rgba(5,5,5,0.45)_0%,rgba(5,5,5,0.1)_45%,rgba(5,5,5,0.88)_100%)]" />
-        <div className="hero-texture absolute inset-0 opacity-55 mix-blend-screen" />
-        <div className="mx-auto grid w-full max-w-7xl items-center gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr]">
-          <div className="relative z-10">
-            <p className="mb-5 text-xs font-bold uppercase tracking-[0.32em] text-[#d6ad4a]">
-              {t.heroKicker}
-            </p>
-            <h1
-              id="hero-heading"
-              className="max-w-4xl text-5xl font-black uppercase leading-[0.92] tracking-normal sm:text-7xl lg:text-8xl"
-            >
-              Mambas Tattoo & Cuts
-            </h1>
-            <p className="mt-6 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg">
-              {t.heroText}
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={barberBookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gold"
-              >
-                {t.barberCta}
-              </a>
-              <button
-                onClick={() => scrollTo("tattoo")}
-                className="btn-outline"
-              >
-                {t.tattooCta}
-              </button>
-            </div>
-          </div>
-          <div className="relative z-10 mx-auto flex w-full max-w-md justify-center lg:max-w-none">
-            <Image
-              src="/logo.png"
-              alt="Mambas Tattoo & Cuts logo"
-              width={320}
-              height={320}
-              priority
-              className="w-full max-w-xs object-contain"
-            />
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="quienes-somos"
-        className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6"
-      >
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <p className="section-kicker">MAMBAS · 2021</p>
-            <h2 className="section-title">{t.aboutTitle}</h2>
-          </div>
-          <div className="space-y-5 text-lg leading-8 text-zinc-300">
-            <p>{t.about}</p>
-            <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_28px_80px_rgba(0,0,0,0.48)] sm:min-h-[340px]">
-              <Image
-                src="/gallery/mbs3.jpg"
-                alt={
-                  language === "es"
-                    ? "Fachada nocturna de Mambas Tattoo & Cuts en Playa del Carmen"
-                    : "Mambas Tattoo & Cuts storefront at night in Playa del Carmen"
-                }
-                fill
-                sizes="(max-width: 1024px) 100vw, 760px"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.5)),linear-gradient(90deg,rgba(0,0,0,0.42),transparent_55%)]" />
-              <div className="absolute bottom-5 left-5 right-5">
-                <p className="text-xs font-black uppercase tracking-[0.26em] text-[#d6ad4a]">
-                  Playa del Carmen
-                </p>
-                <p className="mt-2 max-w-md text-2xl font-black uppercase leading-none text-white sm:text-4xl">
-                  Mambas Tattoo & Cuts
-                </p>
-              </div>
-            </div>
-            <p className="discreet">{t.inclusive}</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="barberia" className="service-section">
-        <SectionHeader title={t.barberTitle} slogan={t.barberSlogan} />
-        <PriceGrid rows={barberServices} language={language} />
-        <div className="mx-auto mt-12 max-w-7xl">
-          <div className="gallery-shell">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
-                  Galería
-                </p>
-                <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
-                  {language === "es" ? "Barbería" : "Barbershop"}
-                </h3>
-              </div>
-              <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
-                Mambas
-              </p>
-            </div>
-            <Gallery items={barberGallery} language={language} speed={0.5} />
-            <p className="mt-5 text-sm leading-6 text-zinc-400">
-              {language === "es"
-                ? "Cortes de cabello modernos y servicio premium para caballeros."
-                : "Modern haircuts and premium service for gentlemen."}
-            </p>
-          </div>
-        </div>
-        <p className="mx-auto mt-8 max-w-2xl text-center text-sm italic text-zinc-400">
-          {t.barberNote}
-        </p>
-        <ContactStrip kind="barber" language={language} />
-      </section>
-
-      <section id="tattoo" className="service-section bg-[#090909]">
-        <SectionHeader title={t.tattooTitle} slogan={t.tattooSlogan} />
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-          <div>
-            <PriceGrid rows={tattooPrices} language={language} compact />
-            <p className="mt-6 text-sm italic leading-6 text-zinc-400">
-              {t.tattooNote}
-            </p>
-            <p className="mt-2 text-sm italic leading-6 text-zinc-400">
-              {t.piercingNote}
-            </p>
-          </div>
-          <div className="panel">
-            <h3 className="mb-6 text-2xl font-black uppercase tracking-normal text-white">
-              {t.quoteTitle}
-            </h3>
-            <Range
-              label={t.centimeters}
-              value={centimeters}
-              min={3}
-              max={28}
-              onChange={setCentimeters}
-              suffix="cm"
-            />
-            <Range
-              label={t.detail}
-              value={detail}
-              min={1}
-              max={5}
-              onChange={setDetail}
-            />
-            <Range
-              label={t.zone}
-              value={zone}
-              min={1}
-              max={4}
-              onChange={setZone}
-            />
-            <div className="mt-7 border-t border-[#d6ad4a]/20 pt-6">
-              <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
-                {t.estimated}
-              </p>
-              <p className="mt-1 text-4xl font-black text-[#d6ad4a]">
-                {tattooEstimate.toLocaleString("es-MX")} MXN
-              </p>
-              <p className="mt-3 text-sm leading-6 text-zinc-400">
-                {t.quoteHelp}
-              </p>
-              <a
-                href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(`Hola Mambas, quiero cotizar un tattoo de ${centimeters}cm.`)}`}
-                className="btn-gold mt-6 w-full justify-center"
-              >
-                WhatsApp Tattoo
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="mx-auto mt-12 max-w-7xl">
-          <div className="gallery-shell">
-            <div className="mb-6 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
-                  Galería
-                </p>
-                <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
-                  {language === "es" ? "Tattoo & Piercing" : "Tattoo & Piercing"}
-                </h3>
-              </div>
-              <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
-                Mambas
-              </p>
-            </div>
-            <Gallery items={tattooGallery} language={language} speed={0.35} />
-            <p className="mt-5 text-sm leading-6 text-zinc-400">
-              {language === "es"
-                ? "Piezas personalizadas, piercing profesional y procesos cuidados."
-                : "Custom pieces, professional piercing and careful process."}
-            </p>
-          </div>
-        </div>
-        <ContactStrip kind="tattoo" language={language} />
-      </section>
-
-      <section
-        id="anticipo"
-        className="overflow-hidden border-t border-[#d6ad4a]/20 bg-black px-4 py-20 sm:px-6"
-      >
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          <div className="min-w-0">
-            <p className="section-kicker">{t.depositKicker}</p>
-            <h2 className="section-title">{t.depositTitle}</h2>
-            <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
-              {t.depositText}
-            </p>
-            <div className="mt-8 space-y-6">
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <a
-                  href={depositPaymentUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="btn-gold"
-                >
-                  {t.depositPaymentButton}
-                </a>
-                <a
-                  href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
-                    language === "es"
-                      ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden enviar las opciones de pago?"
-                      : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you send me the payment options?",
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="btn-outline"
-                >
-                  {t.depositButton}
-                </a>
-              </div>
-
-              <div className="w-full max-w-full overflow-hidden rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.1),rgba(255,255,255,0.035)),#070707] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg sm:p-5">
-                <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-4">
-                      <Image
-                        src="/base-badge.svg"
-                        alt="Base"
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 rounded-full shadow-md"
-                      />
-                      <div>
-                        <p className="text-xs text-zinc-400">
-                          {language === "es" ? "Red recomendada" : "Preferred network"}
-                        </p>
-                        <p className="text-sm font-semibold text-[#0ea5ff]">
-                          Base
-                        </p>
-                      </div>
-                    </div>
-                    <p className="mt-3 text-sm text-zinc-400">
-                      {language === "es"
-                        ? "Comisiones bajas • Pagos rápidos • Pagos internacionales"
-                        : "Low fees • Fast transactions • International payments"}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-3">
-                      <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
-                        USDT on Base
-                      </span>
-                      <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
-                        ETH on Base
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="w-full min-w-0 flex-shrink-0 sm:w-auto">
-                    <div className="mb-3 text-left sm:text-right">
-                      <p className="text-sm text-zinc-400">
-                        {language === "es" ? "Billetera" : "Wallet"}
-                      </p>
-                      <div className="mt-2 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
-                        <code className="block w-full min-w-0 overflow-hidden break-all rounded border border-[#d6ad4a]/10 bg-[#0b0b0b] px-3 py-2 font-mono text-xs leading-5 text-zinc-200 sm:max-w-[220px] sm:text-sm">
-                          {walletAddress}
-                        </code>
-                        <button
-                          onClick={() => {
-                            navigator.clipboard.writeText(walletAddress);
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                          }}
-                          className="btn-gold w-full justify-center px-3 py-2 text-sm sm:w-auto"
-                        >
-                          {copied
-                            ? language === "es"
-                              ? "Copiado"
-                              : "Copied"
-                            : language === "es"
-                              ? "Copiar"
-                              : "Copy"}
-                        </button>
-                      </div>
-                    </div>
-                    <p className="mt-2 text-xs italic text-zinc-400">
-                      {language === "es"
-                        ? "Red recomendada: Base."
-                        : "Recommended network: Base."}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <p className="mt-8 text-sm italic text-zinc-400">
-              {t.paymentMethods}
-            </p>
-          </div>
-          <div className="flex items-center justify-center">
-            <div className="symbol-pulse text-8xl text-[#d6ad4a] drop-shadow-lg">
-              ₿
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
-        id="lealtad"
-        className="border-b border-[#d6ad4a]/20 px-4 py-20 sm:px-6"
-      >
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="section-kicker">MAMBAS CLUB</p>
-            <h2 className="section-title">{t.loyaltyTitle}</h2>
-            <p className="mt-5 max-w-xl leading-7 text-zinc-300">
-              {t.loyaltyText}
-            </p>
-            <p className="mt-3 text-sm text-zinc-400">
-              {t.loyaltySummary}
-            </p>
-          </div>
-          <div className="sm:col-span-1">
-            <form
-              onSubmit={handleRegister}
-              className="panel grid gap-4 sm:grid-cols-2 p-6 rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#030303] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
-            >
-              {/* Honeypot: hidden from users, bots fill it and get rejected */}
-              <input
-                type="text"
-                name="company"
-                tabIndex={-1}
-                autoComplete="off"
-                aria-hidden="true"
-                className="hidden"
-              />
-              <input
-                name="name"
-                required
-                placeholder={t.fullName}
-                className="field sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
-              />
-              <label className="flex min-w-0 flex-col gap-1.5">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
-                  {t.phone}
-                </span>
-                <input
-                  name="phone"
-                  required
-                  placeholder={t.phone}
-                  className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
-                />
-              </label>
-              <label className="flex min-w-0 flex-col gap-1.5">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
-                  {t.birthday}
-                </span>
-                <input
-                  name="birthday"
-                  type="date"
-                  aria-label={t.birthday}
-                  className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
-                />
-              </label>
-              <select
-                name="interest"
-                className="field sm:col-span-2"
-                defaultValue={mode}
-                onChange={(event) => setMode(event.target.value as ServiceMode)}
-              >
-                <option value="barber">{t.barberTitle}</option>
-                <option value="tattoo">{t.tattooTitle}</option>
-              </select>
-              <button className="btn-gold justify-center sm:col-span-2 px-6 py-3 text-sm font-semibold rounded-md shadow-[0_8px_30px_rgba(214,173,74,0.12)] hover:scale-[1.02] transform transition duration-200">
-                {t.register}
-              </button>
-              <p className="text-[11px] leading-5 text-zinc-500 sm:col-span-2">
-                {language === "es"
-                  ? "Al registrarte aceptas nuestro "
-                  : "By registering you accept our "}
-                <a
-                  href="/privacidad"
-                  className="text-[#d6ad4a] hover:underline"
-                >
-                  {language === "es" ? "Aviso de Privacidad" : "Privacy Notice"}
-                </a>
-                .
-              </p>
-              {saved && (
-                <p className="text-sm text-[#d6ad4a] sm:col-span-2">
-                  {t.saved}
-                </p>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-x-0 top-16 z-40 border-b border-[#d6ad4a]/20 bg-black/95 px-6 py-8 backdrop-blur-2xl lg:hidden"
+          >
+            <nav className="flex flex-col gap-6">
+              {["inicio", "barberia", "tattoo", "anticipo", "lealtad", "ubicacion"].map(
+                (id, index) => (
+                  <button
+                    key={id}
+                    onClick={() => scrollTo(id)}
+                    className={`text-left text-sm font-bold uppercase tracking-[0.24em] transition py-2 ${
+                      activeSection === id ? "text-[#d6ad4a]" : "text-zinc-300"
+                    }`}
+                  >
+                    {t.nav[index]}
+                  </button>
+                )
               )}
-            </form>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
-                <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
-                  B
-                </div>
-                <div>
-                  <div className="text-xs text-zinc-400">BLACK MEMBER</div>
-                  <div className="text-sm text-zinc-200">
-                    {t.memberBlack}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeSection}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -15 }}
+          transition={{ duration: 0.35, ease: "easeInOut" }}
+          className="w-full"
+        >
+          {activeSection === "inicio" && (
+            <>
+              <section
+                id="inicio"
+                aria-labelledby="hero-heading"
+                className="relative flex min-h-[92vh] items-center overflow-hidden border-b border-[#d6ad4a]/20 px-4 pt-24 sm:px-6"
+              >
+                <Image
+                  src="/gallery/mbs3.jpg"
+                  alt=""
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="absolute inset-0 object-cover opacity-55"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,5,5,0.96)_0%,rgba(5,5,5,0.78)_42%,rgba(5,5,5,0.42)_100%),linear-gradient(180deg,rgba(5,5,5,0.45)_0%,rgba(5,5,5,0.1)_45%,rgba(5,5,5,0.88)_100%)]" />
+                <div className="hero-texture absolute inset-0 opacity-55 mix-blend-screen" />
+                <div className="mx-auto grid w-full max-w-7xl items-center gap-10 py-12 lg:grid-cols-[1.08fr_0.92fr]">
+                  <div className="relative z-10">
+                    <p className="mb-5 text-xs font-bold uppercase tracking-[0.32em] text-[#d6ad4a]">
+                      {t.heroKicker}
+                    </p>
+                    <h1
+                      id="hero-heading"
+                      className="max-w-4xl text-5xl font-black uppercase leading-[0.92] tracking-normal sm:text-7xl lg:text-8xl"
+                    >
+                      Mambas Tattoo & Cuts
+                    </h1>
+                    <p className="mt-6 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg">
+                      {t.heroText}
+                    </p>
+                    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                      <a
+                        href={barberBookingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-gold"
+                      >
+                        {t.barberCta}
+                      </a>
+                      <button
+                        onClick={() => scrollTo("tattoo")}
+                        className="btn-outline"
+                      >
+                        {t.tattooCta}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="relative z-10 mx-auto flex w-full max-w-md justify-center lg:max-w-none">
+                    <Image
+                      src="/logo.png"
+                      alt="Mambas Tattoo & Cuts logo"
+                      width={320}
+                      height={320}
+                      priority
+                      className="w-full max-w-xs object-contain"
+                    />
                   </div>
                 </div>
-              </div>
+              </section>
 
-              <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
-                <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
-                  G
-                </div>
-                <div>
-                  <div className="text-xs text-zinc-400">GOLD MEMBER</div>
-                  <div className="text-sm text-zinc-200">
-                    {t.memberGold}
+              <section
+                id="quienes-somos"
+                className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6"
+              >
+                <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+                  <div>
+                    <p className="section-kicker">MAMBAS · 2021</p>
+                    <h2 className="section-title">{t.aboutTitle}</h2>
+                  </div>
+                  <div className="space-y-5 text-lg leading-8 text-zinc-300">
+                    <p>{t.about}</p>
+                    <div className="relative min-h-[260px] overflow-hidden rounded-2xl border border-[#d6ad4a]/24 bg-black shadow-[0_28px_80px_rgba(0,0,0,0.48)] sm:min-h-[340px]">
+                      <Image
+                        src="/gallery/mbs3.jpg"
+                        alt={
+                          language === "es"
+                            ? "Fachada nocturna de Mambas Tattoo & Cuts en Playa del Carmen"
+                            : "Mambas Tattoo & Cuts storefront at night in Playa del Carmen"
+                        }
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 760px"
+                        className="object-cover"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.5)),linear-gradient(90deg,rgba(0,0,0,0.42),transparent_55%)]" />
+                      <div className="absolute bottom-5 left-5 right-5">
+                        <p className="text-xs font-black uppercase tracking-[0.26em] text-[#d6ad4a]">
+                          Playa del Carmen
+                        </p>
+                        <p className="mt-2 max-w-md text-2xl font-black uppercase leading-none text-white sm:text-4xl">
+                          Mambas Tattoo & Cuts
+                        </p>
+                      </div>
+                    </div>
+                    <p className="discreet">{t.inclusive}</p>
                   </div>
                 </div>
-              </div>
+              </section>
 
-              <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
-                <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
-                  R
-                </div>
-                <div>
-                  <div className="text-xs text-zinc-400">RITUAL MEMBER</div>
-                  <div className="text-sm text-zinc-200">{t.memberRitual}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="ubicacion" className="px-4 py-20 sm:px-6">
-        <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
-          <div>
-            <p className="section-kicker">PLAYA DEL CARMEN</p>
-            <h2 className="section-title">{t.locationTitle}</h2>
-            <p className="mt-5 text-lg leading-8 text-zinc-300">
-              {t.locationText}
-            </p>
-            <p className="mt-5 text-xl font-bold text-white">{t.address}</p>
-            <div className="mt-6 rounded-xl border border-[#d6ad4a]/20 bg-[#070707] p-5">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-[#d6ad4a]">
-                {t.hoursTitle}
-              </p>
-              <div className="mt-3 flex items-center justify-between gap-4 border-b border-[#d6ad4a]/10 pb-2">
-                <span className="text-sm text-zinc-300">{t.hoursWeekdays}</span>
-                <span className="text-sm font-semibold text-white">
-                  {t.hoursWeekdaysValue}
-                </span>
-              </div>
-              <div className="mt-2 flex items-center justify-between gap-4">
-                <span className="text-sm text-zinc-300">{t.hoursSunday}</span>
-                <span className="text-sm font-semibold text-white">
-                  {t.hoursSundayValue}
-                </span>
-              </div>
-            </div>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-gold"
-              >
-                {t.map}
-              </a>
-              <a
-                href={googleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-outline"
-              >
-                {t.viewReviews}
-              </a>
-            </div>
-          </div>
-          <LocationMapCard language={language} />
-        </div>
-      </section>
-
-      <section className="border-t border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="section-kicker">GOOGLE MAPS · 5.0 ★</p>
-            <h2 className="section-title">{t.reviewsTitle}</h2>
-          </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {reviews.map((review) => (
-              <figure
-                key={review.name}
-                className="flex flex-col rounded-2xl border border-[#d6ad4a]/16 bg-[#070707] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.4)]"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#d6ad4a]/15 text-sm font-bold text-[#d6ad4a]">
-                    {review.initials}
+              <section className="border-t border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
+                <div className="mx-auto max-w-7xl">
+                  <div className="text-center">
+                    <p className="section-kicker">GOOGLE MAPS · 5.0 ★</p>
+                    <h2 className="section-title">{t.reviewsTitle}</h2>
                   </div>
-                  <div className="min-w-0">
-                    <figcaption className="truncate text-sm font-semibold text-white">
-                      {review.name}
-                    </figcaption>
-                    <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">
-                      {review.localGuide ? "Local Guide · " : ""}
-                      {review.time[language]}
+                  <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {reviews.map((review) => (
+                      <figure
+                        key={review.name}
+                        className="flex flex-col rounded-2xl border border-[#d6ad4a]/16 bg-[#070707] p-5 shadow-[0_12px_40px_rgba(0,0,0,0.4)]"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#d6ad4a]/15 text-sm font-bold text-[#d6ad4a]">
+                            {review.initials}
+                          </div>
+                          <div className="min-w-0">
+                            <figcaption className="truncate text-sm font-semibold text-white">
+                              {review.name}
+                            </figcaption>
+                            <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                              {review.localGuide ? "Local Guide · " : ""}
+                              {review.time[language]}
+                            </p>
+                          </div>
+                        </div>
+                        <div
+                          className="mt-3 text-base text-[#d6ad4a]"
+                          aria-label={`${review.stars} / 5`}
+                        >
+                          {"★".repeat(review.stars)}
+                        </div>
+                        <blockquote className="mt-3 text-sm leading-6 text-zinc-300">
+                          {review.text}
+                        </blockquote>
+                      </figure>
+                    ))}
+                    <a
+                      href={googleMapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d6ad4a]/30 bg-[#070707] p-5 text-center transition hover:border-[#d6ad4a]/60 hover:bg-[#0b0b0b]"
+                    >
+                      <span className="text-2xl text-[#d6ad4a]">★★★★★</span>
+                      <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#d6ad4a]">
+                        {t.viewReviews}
+                      </span>
+                    </a>
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
+
+          {activeSection === "barberia" && (
+            <section id="barberia" className="service-section pt-24">
+              <SectionHeader title={t.barberTitle} slogan={t.barberSlogan} />
+              <PriceGrid rows={barberServices} language={language} />
+              <div className="mx-auto mt-12 max-w-7xl">
+                <div className="gallery-shell">
+                  <div className="mb-6 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
+                        Galería
+                      </p>
+                      <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
+                        {language === "es" ? "Barbería" : "Barbershop"}
+                      </h3>
+                    </div>
+                    <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
+                      Mambas
                     </p>
                   </div>
+                  <Gallery items={barberGallery} language={language} speed={0.5} />
+                  <p className="mt-5 text-sm leading-6 text-zinc-400">
+                    {language === "es"
+                      ? "Cortes de cabello modernos y servicio premium para caballeros."
+                      : "Modern haircuts and premium service for gentlemen."}
+                  </p>
                 </div>
-                <div
-                  className="mt-3 text-base text-[#d6ad4a]"
-                  aria-label={`${review.stars} / 5`}
-                >
-                  {"★".repeat(review.stars)}
+              </div>
+              <p className="mx-auto mt-8 max-w-2xl text-center text-sm italic text-zinc-400">
+                {t.barberNote}
+              </p>
+              <ContactStrip kind="barber" language={language} />
+            </section>
+          )}
+
+          {activeSection === "tattoo" && (
+            <section id="tattoo" className="service-section bg-[#090909] pt-24">
+              <SectionHeader title={t.tattooTitle} slogan={t.tattooSlogan} />
+              <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+                <div>
+                  <PriceGrid rows={tattooPrices} language={language} compact />
+                  <p className="mt-6 text-sm italic leading-6 text-zinc-400">
+                    {t.tattooNote}
+                  </p>
+                  <p className="mt-2 text-sm italic leading-6 text-zinc-400">
+                    {t.piercingNote}
+                  </p>
                 </div>
-                <blockquote className="mt-3 text-sm leading-6 text-zinc-300">
-                  {review.text}
-                </blockquote>
-              </figure>
-            ))}
-            <a
-              href={googleMapsUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-[#d6ad4a]/30 bg-[#070707] p-5 text-center transition hover:border-[#d6ad4a]/60 hover:bg-[#0b0b0b]"
+                <div className="panel">
+                  <h3 className="mb-6 text-2xl font-black uppercase tracking-normal text-white">
+                    {t.quoteTitle}
+                  </h3>
+                  <Range
+                    label={t.centimeters}
+                    value={centimeters}
+                    min={3}
+                    max={28}
+                    onChange={setCentimeters}
+                    suffix="cm"
+                  />
+                  <Range
+                    label={t.detail}
+                    value={detail}
+                    min={1}
+                    max={5}
+                    onChange={setDetail}
+                  />
+                  <Range
+                    label={t.zone}
+                    value={zone}
+                    min={1}
+                    max={4}
+                    onChange={setZone}
+                  />
+                  <div className="mt-7 border-t border-[#d6ad4a]/20 pt-6">
+                    <p className="text-xs uppercase tracking-[0.25em] text-zinc-500">
+                      {t.estimated}
+                    </p>
+                    <p className="mt-1 text-4xl font-black text-[#d6ad4a]">
+                      {tattooEstimate.toLocaleString("es-MX")} MXN
+                    </p>
+                    <p className="mt-3 text-sm leading-6 text-zinc-400">
+                      {t.quoteHelp}
+                    </p>
+                    <a
+                      href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(`Hola Mambas, quiero cotizar un tattoo de ${centimeters}cm.`)}`}
+                      className="btn-gold mt-6 w-full justify-center"
+                    >
+                      WhatsApp Tattoo
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div className="mx-auto mt-12 max-w-7xl">
+                <div className="gallery-shell">
+                  <div className="mb-6 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
+                        Galería
+                      </p>
+                      <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
+                        {language === "es" ? "Tattoo & Piercing" : "Tattoo & Piercing"}
+                      </h3>
+                    </div>
+                    <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
+                      Mambas
+                    </p>
+                  </div>
+                  <Gallery items={tattooGallery} language={language} speed={0.35} />
+                  <p className="mt-5 text-sm leading-6 text-zinc-400">
+                    {language === "es"
+                      ? "Piezas personalizadas, piercing profesional y procesos cuidados."
+                      : "Custom pieces, professional piercing and careful process."}
+                  </p>
+                </div>
+              </div>
+              <ContactStrip kind="tattoo" language={language} />
+            </section>
+          )}
+
+          {activeSection === "anticipo" && (
+            <section
+              id="anticipo"
+              className="overflow-hidden border-t border-[#d6ad4a]/20 bg-black px-4 py-24 sm:px-6"
             >
-              <span className="text-2xl text-[#d6ad4a]">★★★★★</span>
-              <span className="text-sm font-bold uppercase tracking-[0.18em] text-[#d6ad4a]">
-                {t.viewReviews}
-              </span>
-            </a>
-          </div>
-        </div>
-      </section>
+              <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+                <div className="min-w-0">
+                  <p className="section-kicker">{t.depositKicker}</p>
+                  <h2 className="section-title">{t.depositTitle}</h2>
+                  <p className="mt-6 max-w-xl leading-8 text-lg text-zinc-300">
+                    {t.depositText}
+                  </p>
+                  <div className="mt-8 space-y-6">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <a
+                        href={depositPaymentUrl}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="btn-gold"
+                      >
+                        {t.depositPaymentButton}
+                      </a>
+                      <a
+                        href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
+                          language === "es"
+                            ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden enviar las opciones de pago?"
+                            : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you send me the payment options?",
+                        )}`}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="btn-outline"
+                      >
+                        {t.depositButton}
+                      </a>
+                    </div>
+
+                    <div className="w-full max-w-full overflow-hidden rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.1),rgba(255,255,255,0.035)),#070707] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg sm:p-5">
+                      <div className="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-4">
+                            <Image
+                              src="/base-badge.svg"
+                              alt="Base"
+                              width={40}
+                              height={40}
+                              className="h-10 w-10 rounded-full shadow-md"
+                            />
+                            <div>
+                              <p className="text-xs text-zinc-400">
+                                {language === "es" ? "Red recomendada" : "Preferred network"}
+                              </p>
+                              <p className="text-sm font-semibold text-[#0ea5ff]">
+                                Base
+                              </p>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-sm text-zinc-400">
+                            {language === "es"
+                              ? "Comisiones bajas • Pagos rápidos • Pagos internacionales"
+                              : "Low fees • Fast transactions • International payments"}
+                          </p>
+                          <div className="mt-4 flex flex-wrap gap-3">
+                            <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
+                              USDT on Base
+                            </span>
+                            <span className="inline-flex items-center gap-2 rounded px-3 py-1 text-sm text-zinc-200 bg-[#0b0b0b] border border-[#d6ad4a]/10">
+                              ETH on Base
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="w-full min-w-0 flex-shrink-0 sm:w-auto">
+                          <div className="mb-3 text-left sm:text-right">
+                            <p className="text-sm text-zinc-400">
+                              {language === "es" ? "Billetera" : "Wallet"}
+                            </p>
+                            <div className="mt-2 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+                              <code className="block w-full min-w-0 overflow-hidden break-all rounded border border-[#d6ad4a]/10 bg-[#0b0b0b] px-3 py-2 font-mono text-xs leading-5 text-zinc-200 sm:max-w-[220px] sm:text-sm">
+                                {walletAddress}
+                              </code>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(walletAddress);
+                                  setCopied(true);
+                                  setTimeout(() => setCopied(false), 2000);
+                                }}
+                                className="btn-gold w-full justify-center px-3 py-2 text-sm sm:w-auto"
+                              >
+                                {copied
+                                  ? language === "es"
+                                    ? "Copiado"
+                                    : "Copied"
+                                  : language === "es"
+                                    ? "Copiar"
+                                    : "Copy"}
+                              </button>
+                            </div>
+                          </div>
+                          <p className="mt-2 text-xs italic text-zinc-400">
+                            {language === "es"
+                              ? "Red recomendada: Base."
+                              : "Recommended network: Base."}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="mt-8 text-sm italic text-zinc-400">
+                    {t.paymentMethods}
+                  </p>
+                </div>
+                <div className="flex items-center justify-center">
+                  <div className="symbol-pulse text-8xl text-[#d6ad4a] drop-shadow-lg">
+                    ₿
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {activeSection === "lealtad" && (
+            <section
+              id="lealtad"
+              className="border-b border-[#d6ad4a]/20 px-4 py-24 sm:px-6"
+            >
+              <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+                <div>
+                  <p className="section-kicker">MAMBAS CLUB</p>
+                  <h2 className="section-title">{t.loyaltyTitle}</h2>
+                  <p className="mt-5 max-w-xl leading-7 text-zinc-300">
+                    {t.loyaltyText}
+                  </p>
+                  <p className="mt-3 text-sm text-zinc-400">
+                    {t.loyaltySummary}
+                  </p>
+                </div>
+                <div className="sm:col-span-1">
+                  <form
+                    onSubmit={handleRegister}
+                    className="panel grid gap-4 sm:grid-cols-2 p-6 rounded-2xl border border-[#d6ad4a]/20 bg-gradient-to-b from-[#070707] to-[#030303] shadow-[0_12px_40px_rgba(0,0,0,0.6)]"
+                  >
+                    <input
+                      type="text"
+                      name="company"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      className="hidden"
+                    />
+                    <input
+                      name="name"
+                      required
+                      placeholder={t.fullName}
+                      className="field sm:col-span-2 focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
+                    />
+                    <label className="flex min-w-0 flex-col gap-1.5">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
+                        {t.phone}
+                      </span>
+                      <input
+                        name="phone"
+                        required
+                        placeholder={t.phone}
+                        className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow"
+                      />
+                    </label>
+                    <div className="flex min-w-0 flex-col gap-1.5">
+                      <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-zinc-400">
+                        {t.birthday}
+                      </span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <select
+                          name="birthdayDay"
+                          className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow py-3 px-2 text-sm text-white"
+                        >
+                          <option value="">{language === "es" ? "Día" : "Day"}</option>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                            <option key={d} value={String(d).padStart(2, "0")}>
+                              {d}
+                            </option>
+                          ))}
+                        </select>
+                        <select
+                          name="birthdayMonth"
+                          className="field focus:outline-none focus:ring-2 focus:ring-[#d6ad4a]/40 transition-shadow py-3 px-2 text-sm text-white"
+                        >
+                          <option value="">{language === "es" ? "Mes" : "Month"}</option>
+                          {[
+                            { value: "01", label: language === "es" ? "Ene" : "Jan" },
+                            { value: "02", label: language === "es" ? "Feb" : "Feb" },
+                            { value: "03", label: language === "es" ? "Mar" : "Mar" },
+                            { value: "04", label: language === "es" ? "Abr" : "Apr" },
+                            { value: "05", label: language === "es" ? "May" : "May" },
+                            { value: "06", label: language === "es" ? "Jun" : "Jun" },
+                            { value: "07", label: language === "es" ? "Jul" : "Jul" },
+                            { value: "08", label: language === "es" ? "Ago" : "Aug" },
+                            { value: "09", label: language === "es" ? "Sep" : "Sep" },
+                            { value: "10", label: language === "es" ? "Oct" : "Oct" },
+                            { value: "11", label: language === "es" ? "Nov" : "Nov" },
+                            { value: "12", label: language === "es" ? "Dic" : "Dec" },
+                          ].map((m) => (
+                            <option key={m.value} value={m.value}>
+                              {m.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                    <select
+                      name="interest"
+                      className="field sm:col-span-2"
+                      defaultValue={mode}
+                      onChange={(event) => setMode(event.target.value as ServiceMode)}
+                    >
+                      <option value="barber">{t.barberTitle}</option>
+                      <option value="tattoo">{t.tattooTitle}</option>
+                    </select>
+                    <button className="btn-gold justify-center sm:col-span-2 px-6 py-3 text-sm font-semibold rounded-md shadow-[0_8px_30px_rgba(214,173,74,0.12)] hover:scale-[1.02] transform transition duration-200">
+                      {t.register}
+                    </button>
+                    <p className="text-[11px] leading-5 text-zinc-500 sm:col-span-2">
+                      {language === "es"
+                        ? "Al registrarte aceptas nuestro "
+                        : "By registering you accept our "}
+                      <a
+                        href="/privacidad"
+                        className="text-[#d6ad4a] hover:underline"
+                      >
+                        {language === "es" ? "Aviso de Privacidad" : "Privacy Notice"}
+                      </a>
+                      .
+                    </p>
+                    {saved && (
+                      <p className="text-sm text-[#d6ad4a] sm:col-span-2">
+                        {t.saved}
+                      </p>
+                    )}
+                  </form>
+
+                  <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                    <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
+                      <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
+                        B
+                      </div>
+                      <div>
+                        <div className="text-xs text-zinc-400">BLACK MEMBER</div>
+                        <div className="text-sm text-zinc-200">
+                          {t.memberBlack}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
+                      <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
+                        G
+                      </div>
+                      <div>
+                        <div className="text-xs text-zinc-400">GOLD MEMBER</div>
+                        <div className="text-sm text-zinc-200">
+                          {t.memberGold}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 rounded-lg border border-[#d6ad4a]/12 bg-[#070707] p-3 hover:translate-y-[-4px] transition-transform duration-200">
+                      <div className="h-10 w-10 rounded-full bg-black/40 flex items-center justify-center text-[#d6ad4a] font-semibold">
+                        R
+                      </div>
+                      <div>
+                        <div className="text-xs text-zinc-400">RITUAL MEMBER</div>
+                        <div className="text-sm text-zinc-200">{t.memberRitual}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {activeSection === "ubicacion" && (
+            <section id="ubicacion" className="px-4 py-24 sm:px-6">
+              <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2">
+                <div>
+                  <p className="section-kicker">PLAYA DEL CARMEN</p>
+                  <h2 className="section-title">{t.locationTitle}</h2>
+                  <p className="mt-5 text-lg leading-8 text-zinc-300">
+                    {t.locationText}
+                  </p>
+                  <p className="mt-5 text-xl font-bold text-white">{t.address}</p>
+                  <div className="mt-6 rounded-xl border border-[#d6ad4a]/20 bg-[#070707] p-5">
+                    <p className="text-xs font-black uppercase tracking-[0.24em] text-[#d6ad4a]">
+                      {t.hoursTitle}
+                    </p>
+                    <div className="mt-3 flex items-center justify-between gap-4 border-b border-[#d6ad4a]/10 pb-2">
+                      <span className="text-sm text-zinc-300">{t.hoursWeekdays}</span>
+                      <span className="text-sm font-semibold text-white">
+                        {t.hoursWeekdaysValue}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex items-center justify-between gap-4">
+                      <span className="text-sm text-zinc-300">{t.hoursSunday}</span>
+                      <span className="text-sm font-semibold text-white">
+                        {t.hoursSundayValue}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                    <a
+                      href={googleMapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn-gold"
+                    >
+                      {t.map}
+                    </a>
+                    <a
+                      href={googleMapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn-outline"
+                    >
+                      {t.viewReviews}
+                    </a>
+                  </div>
+                </div>
+                <LocationMapCard language={language} />
+              </div>
+            </section>
+          )}
+        </motion.div>
+      </AnimatePresence>
 
       <footer
         className="border-t border-[#d6ad4a]/20 px-4 py-10 text-center sm:px-6"
