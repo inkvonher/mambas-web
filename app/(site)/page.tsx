@@ -146,7 +146,7 @@ export default function Home() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={language === "es" ? "Abrir menú" : "Open menu"}
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#d6ad4a]/30 bg-[#070707]/60 text-[#d6ad4a] transition-all duration-300 hover:scale-105 hover:bg-[#d6ad4a]/10 focus:outline-none lg:hidden shadow-[0_0_12px_rgba(214,173,74,0.18)] active:scale-95"
+              className="menu-pulse-button relative flex h-10 w-10 items-center justify-center rounded-full border border-[#d6ad4a]/30 bg-[#070707]/60 text-[#d6ad4a] transition-all duration-300 hover:scale-105 hover:bg-[#d6ad4a]/10 focus:outline-none lg:hidden shadow-[0_0_12px_rgba(214,173,74,0.18)] active:scale-95"
             >
               <div className="flex h-5 w-5 flex-col justify-between items-end">
                 <span

@@ -644,6 +644,31 @@ input[type="date"].field::-webkit-calendar-picker-indicator {
   animation: whatsapp-halo 2.6s ease-out 1.3s infinite;
 }
 
+.menu-pulse-button {
+  animation: whatsapp-button-pulse 2.6s ease-in-out infinite;
+  position: relative;
+}
+
+.menu-pulse-button::before,
+.menu-pulse-button::after {
+  position: absolute;
+  inset: -4px;
+  border: 1px solid rgba(214, 173, 74, 0.44);
+  border-radius: 999px;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu-pulse-button::before {
+  animation: whatsapp-halo 2.6s ease-out infinite;
+}
+
+.menu-pulse-button::after {
+  animation: whatsapp-halo 2.6s ease-out 1.3s infinite;
+}
+
+
 @keyframes whatsapp-button-pulse {
   0%,
   100% {
