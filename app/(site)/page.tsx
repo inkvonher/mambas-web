@@ -308,21 +308,15 @@ export default function Home() {
 
               {/* Video Art & Motion Section */}
               <section className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
-                <div className="mx-auto max-w-4xl text-center">
-                  <p className="section-kicker">MAMBAS · ART & MOTION</p>
-                  <h2 className="section-title mb-8">
-                    {language === "es" ? "Arte & Estilo" : "Art & Style"}
-                  </h2>
-                  <div className="relative mx-auto max-w-2xl overflow-hidden rounded-2xl border border-[#d6ad4a]/30 bg-[#050505] shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-                    <video
-                      src="/animacion/gemini_generated_video_ED4DFDF0.MP4"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      className="w-full h-auto object-cover rounded-xl"
-                    />
-                  </div>
+                <div className="relative mx-auto max-w-2xl overflow-hidden bg-[#050505]">
+                  <video
+                    src="/animacion/gemini_generated_video_ED4DFDF0.MP4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-auto object-cover"
+                  />
                 </div>
               </section>
 
