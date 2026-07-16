@@ -384,8 +384,9 @@ export default function Home() {
           {activeSection === "barberia" && (
             <section id="barberia" className="service-section pt-24">
               <SectionHeader title={t.barberTitle} slogan={t.barberSlogan} />
-              <PriceGrid rows={barberServices} language={language} />
-              <div className="mx-auto mt-12 max-w-7xl">
+              
+              {/* Gallery at the top */}
+              <div className="mx-auto mt-6 max-w-7xl">
                 <div className="gallery-shell">
                   <div className="mb-6 flex items-center justify-between gap-4">
                     <div>
@@ -408,6 +409,12 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+
+              {/* Price list below the gallery */}
+              <div className="mt-12">
+                <PriceGrid rows={barberServices} language={language} />
+              </div>
+
               <p className="mx-auto mt-8 max-w-2xl text-center text-sm italic text-zinc-400">
                 {t.barberNote}
               </p>
@@ -418,7 +425,34 @@ export default function Home() {
           {activeSection === "tattoo" && (
             <section id="tattoo" className="service-section bg-[#090909] pt-24">
               <SectionHeader title={t.tattooTitle} slogan={t.tattooSlogan} />
-              <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
+              
+              {/* Gallery at the top */}
+              <div className="mx-auto mt-6 max-w-7xl">
+                <div className="gallery-shell">
+                  <div className="mb-6 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
+                        Galería
+                      </p>
+                      <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
+                        {language === "es" ? "Tattoo & Piercing" : "Tattoo & Piercing"}
+                      </h3>
+                    </div>
+                    <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
+                      Mambas
+                    </p>
+                  </div>
+                  <Gallery items={tattooGallery} language={language} speed={0.35} />
+                  <p className="mt-5 text-sm leading-6 text-zinc-400">
+                    {language === "es"
+                      ? "Piezas personalizadas, piercing profesional y procesos cuidados."
+                      : "Custom pieces, professional piercing and careful process."}
+                  </p>
+                </div>
+              </div>
+
+              {/* Price list and cotizador below the gallery */}
+              <div className="mx-auto mt-12 grid max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
                 <div>
                   <PriceGrid rows={tattooPrices} language={language} compact />
                   <p className="mt-6 text-sm italic leading-6 text-zinc-400">
@@ -471,29 +505,6 @@ export default function Home() {
                       WhatsApp Tattoo
                     </a>
                   </div>
-                </div>
-              </div>
-              <div className="mx-auto mt-12 max-w-7xl">
-                <div className="gallery-shell">
-                  <div className="mb-6 flex items-center justify-between gap-4">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.28em] text-[#d6ad4a]">
-                        Galería
-                      </p>
-                      <h3 className="mt-3 text-3xl font-black uppercase tracking-[0.04em] text-white">
-                        {language === "es" ? "Tattoo & Piercing" : "Tattoo & Piercing"}
-                      </h3>
-                    </div>
-                    <p className="text-sm uppercase tracking-[0.2em] text-zinc-500">
-                      Mambas
-                    </p>
-                  </div>
-                  <Gallery items={tattooGallery} language={language} speed={0.35} />
-                  <p className="mt-5 text-sm leading-6 text-zinc-400">
-                    {language === "es"
-                      ? "Piezas personalizadas, piercing profesional y procesos cuidados."
-                      : "Custom pieces, professional piercing and careful process."}
-                  </p>
                 </div>
               </div>
               <ContactStrip kind="tattoo" language={language} />
