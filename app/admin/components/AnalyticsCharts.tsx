@@ -17,11 +17,11 @@ export function StatCard({ label, value }: { label: string; value: string }) {
 
 export function MiniMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[#d6ad4a]/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(214,173,74,0.035)),rgba(0,0,0,0.45)] p-3 shadow-[0_14px_34px_rgba(0,0,0,0.28)]">
-      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
+    <div className="rounded-xl border border-[#d6ad4a]/20 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(214,173,74,0.035)),rgba(0,0,0,0.45)] p-2 sm:p-3 shadow-[0_14px_34px_rgba(0,0,0,0.28)] text-center sm:text-left">
+      <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
         {label}
       </p>
-      <p className="mt-2 text-lg font-black text-[#d6ad4a]">{value}</p>
+      <p className="mt-1.5 text-xs sm:text-lg font-black text-[#d6ad4a] whitespace-nowrap">{value}</p>
     </div>
   );
 }

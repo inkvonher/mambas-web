@@ -41,7 +41,6 @@ import AppointmentCard from "./components/AppointmentCard";
 import DailyScheduleView from "./components/DailyScheduleView";
 import {
   CalendarAppointmentPill,
-  CalendarMobileAppointment,
 } from "./components/CalendarAppointments";
 import {
   StatCard,
@@ -558,7 +557,7 @@ export default function AdminPage() {
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-5 sm:px-6 lg:px-8">
         <header className="sticky top-0 z-30 -mx-4 mb-6 border-b border-[#d6ad4a]/15 bg-[#040404]/86 px-4 py-4 backdrop-blur-xl sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-[#d6ad4a]">
                 Panel privado
@@ -567,32 +566,32 @@ export default function AdminPage() {
                 Mambas Admin
               </h1>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-3 sm:justify-end">
               <button
                 onClick={() =>
                   setTheme((currentTheme) =>
                     currentTheme === "dark" ? "light" : "dark",
                   )
                 }
-                className="min-h-11 shrink-0 rounded-lg border border-[#d6ad4a]/50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
+                className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
               >
                 {theme === "dark" ? "Claro" : "Oscuro"}
               </button>
               <button
                 onClick={() => openCreateAppointment()}
-                className="hidden min-h-11 rounded-lg bg-[#d6ad4a] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] sm:inline-flex sm:items-center"
+                className="hidden min-h-[38px] rounded-lg bg-[#d6ad4a] px-4 py-2 text-[10px] sm:text-xs font-black uppercase tracking-[0.16em] text-black transition duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] sm:inline-flex sm:items-center"
               >
                 Nueva cita
               </button>
               <button
                 onClick={openPasswordModal}
-                className="min-h-11 shrink-0 rounded-lg border border-[#d6ad4a]/50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
+                className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
               >
                 Contraseña
               </button>
               <button
                 onClick={handleLogout}
-                className="min-h-11 shrink-0 rounded-lg border border-[#d6ad4a]/70 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
+                className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/70 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
               >
                 Salir
               </button>
@@ -607,10 +606,10 @@ export default function AdminPage() {
         ) : null}
 
         {/* Navigation Tabs */}
-        <div className="mb-6 flex border-b border-[#d6ad4a]/20">
+        <div className="mb-6 grid grid-cols-3 border-b border-[#d6ad4a]/20">
           <button
             onClick={() => handleTabClick("agenda")}
-            className={`pb-3 px-4 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
+            className={`text-center pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
               activeTab === "agenda"
                 ? "border-[#d6ad4a] text-[#d6ad4a]"
                 : "border-transparent text-zinc-400 hover:text-white"
@@ -620,7 +619,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => handleTabClick("clientes")}
-            className={`pb-3 px-4 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
+            className={`text-center pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
               activeTab === "clientes"
                 ? "border-[#d6ad4a] text-[#d6ad4a]"
                 : "border-transparent text-zinc-400 hover:text-white"
@@ -630,7 +629,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => handleTabClick("analitica")}
-            className={`pb-3 px-4 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 flex items-center gap-1.5 ${
+            className={`text-center pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 flex items-center justify-center gap-1.5 ${
               activeTab === "analitica"
                 ? "border-[#d6ad4a] text-[#d6ad4a]"
                 : "border-transparent text-zinc-400 hover:text-white"
@@ -642,7 +641,7 @@ export default function AdminPage() {
 
         {activeTab === "agenda" && (
           <>
-            <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <StatCard label="Clientes" value={clients.length.toString()} />
               <StatCard label="Citas" value={appointments.length.toString()} />
               <StatCard label="Tattoo" value={tattooAppointments.toString()} />
@@ -707,7 +706,7 @@ export default function AdminPage() {
                   ))}
                 </div>
 
-                <div className="hidden grid-cols-7 gap-1 md:grid">
+                <div className="grid grid-cols-7 gap-1">
                   {calendarDays.map((day) => {
                     const dayAppointments = appointmentsByDate[day.key] || [];
                     const selected = selectedCalendarDate === day.key;
@@ -717,9 +716,8 @@ export default function AdminPage() {
                         key={day.key}
                         onClick={() => {
                           setSelectedCalendarDate(day.key);
-                          openCreateAppointment(day.key);
                         }}
-                        className={`min-h-32 rounded-lg border p-2 text-left transition duration-200 hover:-translate-y-0.5 hover:border-[#d6ad4a]/50 ${
+                        className={`min-h-[52px] md:min-h-32 rounded-lg border p-1 md:p-2 text-left transition duration-200 hover:-translate-y-0.5 hover:border-[#d6ad4a]/50 flex flex-col justify-between md:justify-start ${
                           selected
                             ? "border-[#d6ad4a] bg-[#d6ad4a]/10 shadow-[0_18px_44px_rgba(214,173,74,0.12)]"
                             : day.currentMonth
@@ -727,11 +725,10 @@ export default function AdminPage() {
                               : "border-white/5 bg-white/[0.02] text-zinc-600"
                         }`}
                       >
-                        <div className="mb-2 flex items-center justify-between">
+                        {/* Desktop cell header */}
+                        <div className="hidden md:flex items-center justify-between w-full">
                           <span
-                            className={`text-xs font-bold ${
-                              day.today ? "text-[#d6ad4a]" : "text-zinc-400"
-                            }`}
+                            className="text-xs font-bold text-zinc-400"
                           >
                             {day.label}
                           </span>
@@ -741,7 +738,25 @@ export default function AdminPage() {
                             </span>
                           ) : null}
                         </div>
-                        <div className="space-y-1">
+
+                        {/* Mobile cell content (centered day number + dot underneath) */}
+                        <div className="md:hidden flex flex-col items-center justify-center w-full h-full gap-0.5">
+                          <span
+                            className={`text-xs font-bold ${
+                              day.today ? "text-[#d6ad4a] underline decoration-2 underline-offset-4" : "text-zinc-400"
+                            }`}
+                          >
+                            {day.label}
+                          </span>
+                          {dayAppointments.length ? (
+                            <span className="w-1 h-1 rounded-full bg-[#d6ad4a] shrink-0 animate-pulse" />
+                          ) : (
+                            <div className="w-1 h-1 shrink-0" />
+                          )}
+                        </div>
+
+                        {/* Desktop cell body */}
+                        <div className="hidden md:block space-y-1 mt-2 w-full">
                           {dayAppointments.slice(0, 2).map((appointment) => (
                             <CalendarAppointmentPill
                               key={appointment.id}
@@ -758,65 +773,6 @@ export default function AdminPage() {
                       </button>
                     );
                   })}
-                </div>
-
-                <div className="space-y-3 md:hidden">
-                  {calendarDays
-                    .filter((day) => day.currentMonth)
-                    .map((day) => {
-                      const dayAppointments = appointmentsByDate[day.key] || [];
-                      const selected = selectedCalendarDate === day.key;
-
-                      return (
-                        <button
-                          key={day.key}
-                          onClick={() => {
-                            setSelectedCalendarDate(day.key);
-                            openCreateAppointment(day.key);
-                          }}
-                          className={`w-full rounded-xl border p-4 text-left transition duration-200 ${
-                            selected
-                              ? "border-[#d6ad4a] bg-[#d6ad4a]/10"
-                              : "border-[#d6ad4a]/12 bg-black/45"
-                          }`}
-                        >
-                          <div className="mb-3 flex items-center justify-between gap-3">
-                            <div>
-                              <p
-                                className={`text-sm font-black uppercase ${
-                                  day.today ? "text-[#d6ad4a]" : "text-white"
-                                }`}
-                              >
-                                {formatDate(day.key)}
-                              </p>
-                              <p className="mt-1 text-xs uppercase tracking-[0.18em] text-zinc-500">
-                                {dayAppointments.length} citas
-                              </p>
-                            </div>
-                            {day.today ? (
-                              <span className="rounded-full bg-[#d6ad4a] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-black">
-                                Hoy
-                              </span>
-                            ) : null}
-                          </div>
-                          {dayAppointments.length ? (
-                            <div className="space-y-2">
-                              {dayAppointments.map((appointment) => (
-                                <CalendarMobileAppointment
-                                  key={appointment.id}
-                                  appointment={appointment}
-                                  onEdit={openEditAppointment}
-                                />
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-zinc-500">
-                              Sin citas programadas.
-                            </p>
-                          )}
-                        </button>
-                      );
-                    })}
                 </div>
               </Panel>
 
@@ -1110,7 +1066,7 @@ export default function AdminPage() {
                       Ingresos totales proyectados y facturados (cubre anticipo y costo total del servicio).
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:min-w-[430px]">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:min-w-[430px]">
                     <MiniMetric
                       label="Este mes"
                       value={`${analytics.currentMonthRevenue.toLocaleString(
