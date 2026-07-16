@@ -146,17 +146,25 @@ export default function Home() {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={language === "es" ? "Abrir menú" : "Open menu"}
-              className="text-[#d6ad4a] p-2 hover:bg-[#d6ad4a]/10 focus:outline-none lg:hidden"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#d6ad4a]/30 bg-[#070707]/60 text-[#d6ad4a] transition-all duration-300 hover:scale-105 hover:bg-[#d6ad4a]/10 focus:outline-none lg:hidden shadow-[0_0_12px_rgba(214,173,74,0.18)] active:scale-95"
             >
-              {mobileMenuOpen ? (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
+              <div className="flex h-5 w-5 flex-col justify-between items-end">
+                <span
+                  className={`h-0.5 rounded-full bg-gradient-to-r from-[#d6ad4a] to-[#f3d27a] shadow-[0_0_6px_#d6ad4a] transition-all duration-300 ${
+                    mobileMenuOpen ? "w-5 translate-y-[9px] rotate-45" : "w-5"
+                  }`}
+                />
+                <span
+                  className={`h-0.5 rounded-full bg-[#d6ad4a] shadow-[0_0_4px_#d6ad4a] transition-all duration-300 ${
+                    mobileMenuOpen ? "w-0 opacity-0" : "w-3"
+                  }`}
+                />
+                <span
+                  className={`h-0.5 rounded-full bg-gradient-to-r from-[#d6ad4a] to-[#f3d27a] shadow-[0_0_6px_#d6ad4a] transition-all duration-300 ${
+                    mobileMenuOpen ? "w-5 -translate-y-[9px] -rotate-45" : "w-4"
+                  }`}
+                />
+              </div>
             </button>
           </div>
         </div>
