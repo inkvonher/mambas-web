@@ -306,7 +306,28 @@ export default function Home() {
                 </div>
               </section>
 
-              <section className="border-t border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
+              {/* Video Art & Motion Section */}
+              <section className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
+                <div className="mx-auto max-w-4xl text-center">
+                  <p className="section-kicker">MAMBAS · ART & MOTION</p>
+                  <h2 className="section-title mb-8">
+                    {language === "es" ? "Arte & Estilo" : "Art & Style"}
+                  </h2>
+                  <div className="relative mx-auto max-w-2xl overflow-hidden rounded-2xl border border-[#d6ad4a]/30 bg-transparent shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                    <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#d6ad4a]/20 via-[#f7dda0]/10 to-[#d6ad4a]/20 opacity-35 blur-2xl pointer-events-none" />
+                    <video
+                      src="/animacion/gemini_generated_video_ED4DFDF0.MP4"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="relative z-10 w-full h-auto object-cover rounded-xl"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              <section className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
                 <div className="mx-auto max-w-7xl">
                   <div className="text-center">
                     <p className="section-kicker">GOOGLE MAPS · 5.0 ★</p>
