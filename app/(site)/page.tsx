@@ -866,8 +866,8 @@ export default function Home() {
         >
           <span className="block text-[10px] uppercase tracking-[0.18em]">
             {language === "es"
-              ? "Diseñado con conciencia"
-              : "Designed with conscience"}
+              ? "Diseño consciente. Tecnología con propósito"
+              : "Conscious design. Purposeful technology"}
           </span>
           <span className="mt-1 block text-[11px] tracking-[0.1em] text-[#d6ad4a]/80">
             www.freewillstudiotech.com
