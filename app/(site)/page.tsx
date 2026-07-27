@@ -310,7 +310,7 @@ export default function Home() {
               <section className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
                 <div className="relative mx-auto max-w-2xl overflow-hidden bg-[#050505]">
                   <video
-                    src="/animacion/gemini_generated_video_ED4DFDF0.MP4"
+                    src="/animacion/animacion.mp4"
                     autoPlay
                     loop
                     muted
