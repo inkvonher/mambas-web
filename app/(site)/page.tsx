@@ -36,6 +36,29 @@ export default function Home() {
   const walletAddress = "0x620D311425385e60743a2e9f3cE0e476E07cdCA1";
   const t = copy[language];
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoFading, setIsVideoFading] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleTimeUpdate = () => {
+      if (video.duration) {
+        if (video.currentTime > video.duration - 0.4) {
+          setIsVideoFading(true);
+        } else {
+          setIsVideoFading(false);
+        }
+      }
+    };
+
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    return () => {
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }, []);
+
   const tattooEstimate = useMemo(() => {
     const extraCentimeters = Math.max(centimeters - 10, 0);
     const calculated =
@@ -310,13 +333,18 @@ export default function Home() {
               <section className="border-b border-[#d6ad4a]/20 px-4 py-16 sm:px-6">
                 <div className="relative mx-auto max-w-2xl overflow-hidden bg-[#050505]">
                   <video
+                    ref={videoRef}
                     src="/animacion/animacion.mp4"
                     autoPlay
                     loop
                     muted
                     playsInline
-                    className="w-full h-auto object-cover"
+                    className={`w-full h-auto object-cover transition-opacity duration-300 ${
+                      isVideoFading ? "opacity-0" : "opacity-100"
+                    }`}
                   />
+                  {/* Gradiente para difuminar los bordes con el color de fondo (#050505) */}
+                  <div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(to_bottom,#050505_0%,transparent_15%,transparent_85%,#050505_100%),linear-gradient(to_right,#050505_0%,transparent_15%,transparent_85%,#050505_100%)]" />
                 </div>
               </section>
 
