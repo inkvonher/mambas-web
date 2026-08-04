@@ -14,8 +14,19 @@ const TZ_OFFSET = "-05:00";
 const WHATSAPP_PHONE = "+5219843675261";
 const CALLMEBOT_APIKEY = "8604341";
 
-// Calendario donde caen las RESERVAS EN LÍNEA (tu horario de citas de Google).
-const BOOKING_CAL_ID = "clandestinobeer9@gmail.com";
+// === CONFIGURA AQUÍ TODOS LOS CALENDARIOS QUE DESEAS ASOCIAR ===
+// Puedes agregar tantos calendarios como quieras. El sistema los leerá y los fusionará 
+// en la web clasificando las citas de forma automática según su categoría ('tattoo' o 'barber').
+const BOOKING_CALENDARS = [
+  {
+    id: "clandestinobeer9@gmail.com", // Calendario principal (Barbería)
+    category: "barber"
+  },
+  {
+    id: "mambastattoo@gmail.com",     // Calendario secundario (Tatuajes / Piercings)
+    category: "tattoo"
+  }
+];
 // ======================
 
 function syncCalendar() {
@@ -44,7 +55,7 @@ function authHeaders() {
   return { Authorization: "Bearer " + SYNC_SECRET };
 }
 
-// 1) Citas creadas en el panel admin -> eventos en Google Calendar
+// 1) Citas creadas en el panel admin -> eventos en Google Calendar correspondiente
 function pushAdminToGoogle() {
   const res = UrlFetchApp.fetch(SITE + "/api/sync/pending", {
     headers: authHeaders(),
@@ -55,7 +66,6 @@ function pushAdminToGoogle() {
     return;
   }
   const list = JSON.parse(res.getContentText()).appointments || [];
-  const cal = CalendarApp.getDefaultCalendar();
 
   list.forEach(function (a) {
     var t = a.appointment_time || "00:00";
@@ -69,9 +79,26 @@ function pushAdminToGoogle() {
       "Tel: " + (a.client_phone || "-") + "\n" +
       (a.notes || "");
 
+    // Buscar calendario correspondiente por categoría
+    var targetCalId = null;
+    for (var i = 0; i < BOOKING_CALENDARS.length; i++) {
+      if (BOOKING_CALENDARS[i].category === a.category) {
+        targetCalId = BOOKING_CALENDARS[i].id;
+        break;
+      }
+    }
+
+    var cal = null;
+    if (targetCalId) {
+      cal = CalendarApp.getCalendarById(targetCalId);
+    }
+    if (!cal) {
+      cal = CalendarApp.getDefaultCalendar(); // Fallback al default
+    }
+
     const ev = cal.createEvent(title, start, end, { description: desc });
     ev.setTag("mambasSource", "admin"); // evita reimportarla y el aviso doble
-
+ 
     UrlFetchApp.fetch(SITE + "/api/sync/mark", {
       method: "post",
       contentType: "application/json",
@@ -83,9 +110,6 @@ function pushAdminToGoogle() {
     sendWhatsApp(ev, "🗓️ *Nueva cita (panel) - Mambas*");
   });
 }
-
-// Calendarios donde pueden caer las reservas en línea.
-const BOOKING_CALENDARS = [BOOKING_CAL_ID, "mambastattoo@gmail.com"];
 
 // 2) Reservas nuevas en Google Calendar -> citas en el panel admin (+ WhatsApp)
 function importGoogleToAdmin() {
@@ -100,11 +124,14 @@ function importGoogleToAdmin() {
   const from = new Date(now - 24 * 60 * 60 * 1000);
   const to = new Date(now + 120 * 24 * 60 * 60 * 1000);
 
-  BOOKING_CALENDARS.forEach(function (calId) {
-    const cal = CalendarApp.getCalendarById(calId);
-    if (!cal) return;
+  BOOKING_CALENDARS.forEach(function (calConf) {
+    const cal = CalendarApp.getCalendarById(calConf.id);
+    if (!cal) {
+      Logger.log("No se pudo cargar el calendario con ID: " + calConf.id);
+      return;
+    }
     const events = cal.getEvents(from, to);
-    Logger.log("Calendario " + calId + ": " + events.length + " eventos");
+    Logger.log("Calendario " + calConf.id + ": " + events.length + " eventos");
 
     events.forEach(function (ev) {
       if (ev.getDateCreated().getTime() <= last) return;   // ya revisado
@@ -119,7 +146,7 @@ function importGoogleToAdmin() {
         client_name: title,
         client_phone: "",
         service: title,
-        category: "barber",
+        category: calConf.category,                         // Clasificar dinámicamente
         appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
         appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
         notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
