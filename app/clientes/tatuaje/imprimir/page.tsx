@@ -118,17 +118,28 @@ function PrintPageContent() {
       <div className="max-w-[800px] mx-auto bg-white p-8 sm:p-12 border border-gray-300 rounded shadow-sm relative print:border-none print:shadow-none print:p-0 print:m-0">
         
         {/* Header */}
-        <div className="flex justify-between items-start border-b-2 border-black pb-4 mb-5">
-          <div className="text-left">
-            <h1 className="font-serif font-bold text-[20pt] uppercase tracking-wider leading-none mb-1">
-              Mambas Tattoo & Cuts
-            </h1>
-            <p className="text-[9pt] text-gray-600">Estudio Profesional de Tatuajes, Perforaciones y Micropigmentación</p>
-            <p className="text-[9pt] text-gray-600">Playa del Carmen, Quintana Roo, México</p>
+        <div className="flex justify-between items-center border-b-2 border-black pb-4 mb-5">
+          <div className="flex items-center gap-4">
+            <img 
+              src="/logo.png" 
+              alt="Mambas Tattoo Logo" 
+              className="h-16 w-auto object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <div className="text-left">
+              <h1 className="font-serif font-bold text-[18pt] uppercase tracking-wider leading-none mb-1">
+                Mambas Tattoo & Cuts
+              </h1>
+              <p className="text-[8.5pt] text-gray-600">Estudio Profesional de Tatuajes, Perforaciones y Micropigmentación</p>
+              <p className="text-[8.5pt] text-gray-600">Playa del Carmen, Quintana Roo, México</p>
+            </div>
           </div>
-          <div className="border border-black p-1.5 px-3 text-center font-bold text-[9pt] uppercase tracking-wider bg-gray-50">
+          <div className="border border-black p-1.5 px-3 text-center font-bold text-[8.5pt] uppercase tracking-wider bg-gray-50">
             Cumplimiento COFEPRIS<br />
-            <span className="text-[7.5pt] font-light normal-case">Regulación Sanitaria</span>
+            <span className="text-[7pt] font-light normal-case">Regulación Sanitaria</span><br />
+            <span className="text-[6.5pt] font-mono block mt-0.5">Tarj: 33/TT0467/2024</span>
           </div>
         </div>
 
@@ -260,7 +271,9 @@ function PrintPageContent() {
             </div>
             <div className="border-t border-black w-full pt-2">
               <div className="text-[9pt] font-bold uppercase">Firma del Artista / Responsable</div>
-              <div className="text-[8pt] text-gray-500">Mambas Tattoo & Cuts</div>
+              <div className="text-[8.5pt] text-gray-800">Karen Muñoz González</div>
+              <div className="text-[7.5pt] text-gray-500 font-mono">Reg: 33/TT0467/2024</div>
+              <div className="text-[7pt] text-gray-400">Mambas Tattoo & Cuts</div>
             </div>
           </div>
         </div>

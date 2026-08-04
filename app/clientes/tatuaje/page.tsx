@@ -311,7 +311,15 @@ export default function TatuajePage() {
       <div className="max-w-[650px] mx-auto bg-white rounded-3xl overflow-hidden shadow-xl border border-[#C5A059]/20">
         
         {/* Header */}
-        <div className="bg-[#0D2A22] py-8 text-center border-b-[3px] border-[#C5A059] relative">
+        <div className="bg-[#0D2A22] py-8 px-4 text-center border-b-[3px] border-[#C5A059] relative flex flex-col items-center justify-center">
+          <img 
+            src="/logo.png" 
+            alt="Mambas Tattoo Logo" 
+            className="h-16 w-auto mb-3 object-contain filter brightness-110"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
           <h1 className="font-serif text-[#C5A059] text-2xl sm:text-3xl tracking-[3px] uppercase font-bold mb-1">
             Mambas Tattoo
           </h1>
@@ -546,6 +554,11 @@ export default function TatuajePage() {
             </a>
           </div>
         )}
+      </div>
+
+      {/* Tarjeta de Control Sanitario COFEPRIS */}
+      <div className="text-center text-[10px] text-[#55605C] mt-5 max-w-[600px] mx-auto uppercase tracking-wider font-semibold opacity-85">
+        Tarjeta de Control Sanitario COFEPRIS: 33/TT0467/2024 | Tatuador Autorizado: Karen Muñoz González
       </div>
 
       {/* Pantalla de Carga */}

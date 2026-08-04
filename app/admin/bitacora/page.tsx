@@ -83,7 +83,15 @@ export default function BitacoraPage() {
       <div className="max-w-[600px] mx-auto bg-[#0A0A0A] rounded-2xl overflow-hidden shadow-2xl border border-[#d6ad4a]/20">
         
         {/* Header */}
-        <div className="bg-[#050505] py-7 text-center border-b-[3px] border-[#d6ad4a]">
+        <div className="bg-[#050505] py-7 px-4 text-center border-b-[3px] border-[#d6ad4a] flex flex-col items-center justify-center">
+          <img 
+            src="/logo.png" 
+            alt="Mambas Tattoo Logo" 
+            className="h-14 w-auto mb-2 object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
           <h1 className="font-serif text-[#d6ad4a] text-xl sm:text-2xl tracking-[3px] uppercase font-bold mb-1">
             Mambas Tattoo
           </h1>
@@ -260,6 +268,11 @@ export default function BitacoraPage() {
           </form>
 
         </div>
+      </div>
+
+      {/* Tarjeta de Control Sanitario COFEPRIS */}
+      <div className="text-center text-[10px] text-white/50 mt-5 max-w-[600px] mx-auto uppercase tracking-wider font-semibold opacity-80">
+        Tarjeta de Control Sanitario COFEPRIS: 33/TT0467/2024 | Responsable Sanitario: Karen Muñoz González
       </div>
 
       {/* Loader Overlay */}

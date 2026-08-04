@@ -181,13 +181,26 @@ export default function ReporteBitacoraPage() {
         
         {/* Header */}
         <div className="bg-[#050505] p-6 sm:p-8 border-b-2 border-[#d6ad4a]/20 flex flex-col sm:flex-row justify-between sm:items-center gap-5 print-header">
-          <div className="text-left">
-            <h1 className="font-serif text-[#d6ad4a] text-xl sm:text-2xl font-bold tracking-[2px] uppercase">
-              Mambas Tattoo & Cuts
-            </h1>
-            <p className="text-white/70 text-xs sm:text-sm font-light uppercase tracking-[1px] mt-0.5 print:text-gray-600">
-              Libro de Registro Diario y Bitácora Sanitaria (COFEPRIS)
-            </p>
+          <div className="flex items-center gap-4 text-left">
+            <img 
+              src="/logo.png" 
+              alt="Mambas Tattoo Logo" 
+              className="h-14 w-auto object-contain filter grayscale brightness-125"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <div>
+              <h1 className="font-serif text-[#d6ad4a] text-xl sm:text-2xl font-bold tracking-[2px] uppercase">
+                Mambas Tattoo & Cuts
+              </h1>
+              <p className="text-white/70 text-xs sm:text-sm font-light uppercase tracking-[1px] mt-0.5 print:text-gray-600">
+                Libro de Registro Diario y Bitácora Sanitaria (COFEPRIS)
+              </p>
+              <p className="text-[10px] text-white/50 font-mono tracking-wider mt-0.5 print:text-gray-600">
+                Tarjeta Sanitaria: 33/TT0467/2024 | Tatuador Karen Muñoz González
+              </p>
+            </div>
           </div>
           
           <div className="flex gap-3 no-print">
