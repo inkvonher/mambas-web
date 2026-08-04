@@ -11,7 +11,8 @@ const TIMEZONE = "America/Cancun";                // Cancún/Playa = UTC-5 todo 
 const TZ_OFFSET = "-05:00";
 
 // Avisos por WhatsApp (CallMeBot)
-const WHATSAPP_PHONE = "+5219843675261";
+const BARBER_PHONE = "+5219843675261";            // Celular de la Barbería
+const TATTOO_PHONE = "+5219841820414";            // Celular de Recepción / Tattoo
 const CALLMEBOT_APIKEY = "8604341";
 
 // === CONFIGURA AQUÍ TODOS LOS CALENDARIOS QUE DESEAS ASOCIAR ===
@@ -107,7 +108,7 @@ function pushAdminToGoogle() {
       muteHttpExceptions: true,
     });
 
-    sendWhatsApp(ev, "🗓️ *Nueva cita (panel) - Mambas*");
+    sendWhatsApp(ev, "🗓️ *Nueva cita (panel) - Mambas*", a.category);
   });
 }
 
@@ -163,7 +164,7 @@ function importGoogleToAdmin() {
       Logger.log("from-google (" + title + "): " + res.getResponseCode() + " " + res.getContentText());
       if (res.getResponseCode() === 200) {
         const j = JSON.parse(res.getContentText());
-        if (!j.skipped) sendWhatsApp(ev);
+        if (!j.skipped) sendWhatsApp(ev, null, calConf.category);
       }
     });
   });
@@ -171,7 +172,7 @@ function importGoogleToAdmin() {
   props.setProperty("lastCheck", String(now));
 }
 
-function sendWhatsApp(ev, header) {
+function sendWhatsApp(ev, header, category) {
   const fecha = Utilities.formatDate(ev.getStartTime(), TIMEZONE, "dd/MM/yyyy HH:mm");
   const desc = (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim();
 
@@ -180,14 +181,17 @@ function sendWhatsApp(ev, header) {
   msg += "Fecha: " + fecha + "\n";
   if (desc) msg += "Detalle: " + desc.substring(0, 250);
 
+  // Elegir número de destino dinámicamente según la categoría de la cita
+  const targetPhone = (category === "tattoo") ? TATTOO_PHONE : BARBER_PHONE;
+
   const url =
     "https://api.callmebot.com/whatsapp.php?phone=" +
-    encodeURIComponent(WHATSAPP_PHONE) +
+    encodeURIComponent(targetPhone) +
     "&text=" + encodeURIComponent(msg) +
     "&apikey=" + encodeURIComponent(CALLMEBOT_APIKEY);
 
   const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-  Logger.log("CallMeBot: " + resp.getContentText());
+  Logger.log("CallMeBot (" + targetPhone + "): " + resp.getContentText());
   Utilities.sleep(8000); // espacia los mensajes para no saturar CallMeBot (API gratis)
 }
 
