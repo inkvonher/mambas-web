@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "../lib/supabase";
 
 import {
@@ -583,6 +584,12 @@ export default function AdminPage() {
               >
                 Nueva cita
               </button>
+              <Link
+                href="/admin/bitacora"
+                className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] inline-flex items-center"
+              >
+                Bitácora
+              </Link>
               <button
                 onClick={openPasswordModal}
                 className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
@@ -699,8 +706,8 @@ export default function AdminPage() {
                 </p>
 
                 <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-zinc-500">
-                  {["D", "L", "M", "M", "J", "V", "S"].map((day) => (
-                    <div key={day} className="py-2">
+                  {["D", "L", "M", "M", "J", "V", "S"].map((day, index) => (
+                    <div key={index} className="py-2">
                       {day}
                     </div>
                   ))}

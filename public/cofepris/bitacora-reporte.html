@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Libro de Registro Sanitario - Reporte Oficial COFEPRIS</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-light: #F8F9FA;
+      --primary-green: #0D2A22;
+      --secondary-green: #153E32;
+      --gold: #C5A059;
+      --gold-dark: #A6803B;
+      --text-dark: #1F2937;
+      --text-muted: #4B5563;
+      --white: #FFFFFF;
+      --border-color: #E5E7EB;
+      --row-hover: #F9FAFB;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.5;
+      padding: 30px 20px;
+    }
+
+    .dashboard-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(13, 42, 34, 0.05);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    /* Top Control Bar */
+    .dashboard-header {
+      background-color: var(--primary-green);
+      padding: 25px 30px;
+      color: var(--white);
+      border-bottom: 3px solid var(--gold);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    @media (min-width: 768px) {
+      .dashboard-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+
+    .brand-title h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .brand-title p {
+      font-size: 0.85rem;
+      opacity: 0.85;
+      font-weight: 300;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-gold {
+      background-color: var(--gold);
+      color: var(--primary-green);
+      border: none;
+    }
+
+    .btn-gold:hover {
+      background-color: #DDC086;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1.5px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Filter & Search Section */
+    .filter-section {
+      background: var(--white);
+      padding: 20px 30px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    @media (min-width: 600px) {
+      .filter-section {
+        flex-direction: row;
+        align-items: center;
+      }
+    }
+
+    .search-box {
+      flex-grow: 1;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15);
+    }
+
+    .filter-dropdown {
+      min-width: 180px;
+    }
+
+    .filter-dropdown select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      background-color: var(--white);
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .filter-dropdown select:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    /* Table Container */
+    .table-container {
+      overflow-x: auto;
+      padding: 0;
+    }
+
+    table.report-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    table.report-table th {
+      background-color: #F3F4F6;
+      color: var(--primary-green);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: 14px 20px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    table.report-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-dark);
+      font-size: 0.9rem;
+    }
+
+    table.report-table tbody tr {
+      transition: background-color 0.15s ease;
+    }
+
+    table.report-table tbody tr:hover {
+      background-color: var(--row-hover);
+    }
+
+    /* Badges */
+    .badge-service {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-tatuaje {
+      background-color: #E0F2FE;
+      color: #0369A1;
+    }
+
+    .badge-perforacion {
+      background-color: #FEF3C7;
+      color: #B45309;
+    }
+
+    .badge-micropigmentacion {
+      background-color: #F3E8FF;
+      color: #7E22CE;
+    }
+
+    .folio-col {
+      font-weight: 700;
+      color: var(--gold-dark);
+      font-family: monospace;
+      font-size: 1rem;
+    }
+
+    /* Loading Spinner Inside Table */
+    .table-loading {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--text-muted);
+    }
+
+    .table-loading .spinner {
+      display: inline-block;
+      width: 35px;
+      height: 35px;
+      border: 4.5px solid rgba(13, 42, 34, 0.1);
+      border-top: 4.5px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+
+    .table-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    /* Legal disclaimer */
+    .dashboard-footer {
+      padding: 20px 30px;
+      background-color: #F9FAFB;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: justify;
+    }
+
+    /* ESTILOS DE IMPRESIÓN OFICIAL EN HORIZONTAL */
+    @media print {
+      @page {
+        size: landscape; /* Fuerza el formato horizontal */
+        margin: 1cm;
+      }
+
+      body {
+        background-color: #FFFFFF;
+        padding: 0;
+        color: #000000;
+        font-size: 8.5pt;
+      }
+
+      .dashboard-wrapper {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+
+      .dashboard-header {
+        background-color: #FFFFFF !important;
+        color: #000000 !important;
+        border-bottom: 2px solid #000000;
+        padding: 10px 0;
+      }
+
+      .brand-title h1 {
+        color: #000000 !important;
+        font-size: 16pt !important;
+      }
+
+      .brand-title p {
+        color: #555555 !important;
+      }
+
+      .header-actions, .filter-section, .dashboard-footer {
+        display: none !important; /* Ocultar controles y avisos extra en papel */
+      }
+
+      table.report-table th {
+        background-color: #E5E7EB !important;
+        color: #000000 !important;
+        border-bottom: 2px solid #000000 !important;
+        font-size: 7.5pt;
+        padding: 6px 10px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      table.report-table td {
+        padding: 6px 10px;
+        border-bottom: 1px solid #000000 !important;
+        font-size: 8pt;
+      }
+
+      .badge-service {
+        background: transparent !important;
+        color: #000000 !important;
+        border: 1px solid #000000;
+        padding: 2px 6px;
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-wrapper">
+    
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+      <div class="brand-title">
+        <h1>Mambas Tattoo & Cuts</h1>
+        <p>Libro de Registro Diario y Bitácora Sanitaria (COFEPRIS)</p>
+      </div>
+      
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="fetchData()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+          </svg>
+          Recargar Datos
+        </button>
+        <button class="btn btn-gold" onclick="window.print()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Imprimir Bitácora
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="filter-section">
+      <!-- Search -->
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Buscar por cliente, artista o lote..." oninput="applyFilters()">
+      </div>
+      
+      <!-- Service Type Dropdown Filter -->
+      <div class="filter-dropdown">
+        <select id="service-filter" onchange="applyFilters()">
+          <option value="">Todos los servicios</option>
+          <option value="Tatuaje">Tatuajes</option>
+          <option value="Perforación">Perforaciones</option>
+          <option value="Micropigmentación">Micropigmentación</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+      
+      <!-- Loader -->
+      <div id="table-loading-el" class="table-loading">
+        <div class="spinner"></div>
+        <p>Descargando registros oficiales desde Google Sheets...</p>
+      </div>
+
+      <!-- Empty state -->
+      <div id="table-empty-el" class="table-empty" style="display: none;">
+        <p>No se encontraron registros de servicios sanitarios en esta bitácora.</p>
+      </div>
+
+      <!-- Table element -->
+      <table class="report-table" id="report-table-el" style="display: none;">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Folio</th>
+            <th style="width: 110px;">Fecha Serv.</th>
+            <th>Cliente</th>
+            <th style="width: 70px; text-align: center;">Edad</th>
+            <th>Servicio</th>
+            <th>Artista</th>
+            <th>Lote Agujas / Cartuchos</th>
+            <th>Marca y Lote Tintas / Joyería</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Rows dynamically injected -->
+        </tbody>
+      </table>
+
+    </div>
+
+    <!-- Legal note at bottom -->
+    <div class="dashboard-footer">
+      <strong>INSPECCIÓN Y ARCHIVO SANITARIO:</strong> Esta bitácora digital constituye el Libro de Registro Oficial exigido por el Reglamento de la Ley General de Salud en materia de control sanitario de establecimientos que realicen tatuajes, micropigmentaciones y perforaciones en México. Cada fila representa un folio único consecutivo. La veracidad de los lotes de agujas, tintas y esterilización es responsabilidad de los artistas prestadores del servicio. Este documento debe conservarse para auditorías sanitarias de COFEPRIS por al menos dos años.
+    </div>
+
+  </div>
+
+  <script>
+    // URL de Google Apps Script. 
+    // REEMPLAZAR CON TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec';
+
+    let allRecords = [];
+
+    // Cargar datos automáticamente al abrir
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchData();
+    });
+
+    // Función para obtener los datos de la Hoja de Cálculo mediante GET
+    function fetchData() {
+      const loader = document.getElementById('table-loading-el');
+      const table = document.getElementById('report-table-el');
+      const emptyState = document.getElementById('table-empty-el');
+      
+      loader.style.display = 'block';
+      table.style.display = 'none';
+      emptyState.style.display = 'none';
+
+      // Petición GET con parámetro sheet=bitacora
+      fetch(`${SCRIPT_URL}?sheet=bitacora`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error al conectar con el servidor de Sheets.');
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Guardar datos en memoria y ordenar cronológicamente por fecha de servicio
+          // (Se asume que data viene ya en orden, pero podemos ordenarla)
+          allRecords = data;
+          
+          loader.style.display = 'none';
+          if (allRecords.length === 0) {
+            emptyState.style.display = 'block';
+          } else {
+            renderTable(allRecords);
+            table.style.display = 'table';
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching logs:', error);
+          loader.innerHTML = `
+            <div style="color: #9E3E3E; font-weight: bold;">✕ Error al cargar la bitácora</div>
+            <p style="font-size: 0.85rem; margin-top: 5px;">Asegúrese de haber configurado el ID correcto del script y habilitado el acceso público.</p>
+          `;
+        });
+    }
+
+    // Renderizado dinámico de la tabla
+    function renderTable(records) {
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      records.forEach((record, index) => {
+        const row = document.createElement('tr');
+        
+        // Formatear Folio con ceros a la izquierda (ej. 0001)
+        const folio = String(record.id || (index + 1)).padStart(4, '0');
+        
+        // Sanitizar y mapear campos
+        const fecha = formatDateString(record.fecha_servicio || record.fecha_registro || '--');
+        const cliente = record.cliente_nombre || record.nombre || '--';
+        const edad = record.cliente_edad || record.edad || '--';
+        const servicio = record.tipo_servicio || record.servicio || '--';
+        const artista = record.artista_nombre || record.artista || '--';
+        const loteAgujas = record.lote_agujas || '--';
+        const loteTintas = record.lote_tintas || '--';
+
+        // Determinar badge para servicio
+        let serviceClass = 'badge-tatuaje';
+        if (servicio.toLowerCase().includes('perforac') || servicio.toLowerCase().includes('pierc')) {
+          serviceClass = 'badge-perforacion';
+        } else if (servicio.toLowerCase().includes('micro')) {
+          serviceClass = 'badge-micropigmentacion';
+        }
+
+        row.innerHTML = `
+          <td class="folio-col">${folio}</td>
+          <td><strong>${fecha}</strong></td>
+          <td>${cliente}</td>
+          <td style="text-align: center;">${edad}</td>
+          <td><span class="badge-service ${serviceClass}">${servicio}</span></td>
+          <td>${artista}</td>
+          <td style="font-family: monospace; font-size: 0.85rem;">${loteAgujas}</td>
+          <td style="font-size: 0.85rem;">${loteTintas}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    // Formateador simple de fecha
+    function formatDateString(str) {
+      if (!str || str === '--') return '--';
+      // Si viene completo tipo AAAA-MM-DD
+      if (str.includes('-')) {
+        const parts = str.split('T')[0].split('-');
+        if (parts.length === 3) {
+          return `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/AAAA
+        }
+      }
+      return str;
+    }
+
+    // Filtrado de búsquedas
+    function applyFilters() {
+      const query = document.getElementById('search-input').value.toLowerCase();
+      const serviceVal = document.getElementById('service-filter').value;
+      const table = document.getElementById('report-table-el');
+      const emptyState = document.getElementById('table-empty-el');
+
+      const filtered = allRecords.filter(record => {
+        // Filtrar por texto
+        const matchQuery = 
+          (record.cliente_nombre && record.cliente_nombre.toLowerCase().includes(query)) ||
+          (record.artista_nombre && record.artista_nombre.toLowerCase().includes(query)) ||
+          (record.lote_agujas && record.lote_agujas.toLowerCase().includes(query)) ||
+          (record.lote_tintas && record.lote_tintas.toLowerCase().includes(query));
+
+        // Filtrar por dropdown de servicio
+        let matchService = true;
+        if (serviceVal) {
+          const sName = record.tipo_servicio || record.servicio || '';
+          matchService = sName.toLowerCase() === serviceVal.toLowerCase();
+        }
+
+        return matchQuery && matchService;
+      });
+
+      if (filtered.length === 0) {
+        table.style.display = 'none';
+        emptyState.style.display = 'block';
+      } else {
+        emptyState.style.display = 'none';
+        renderTable(filtered);
+        table.style.display = 'table';
+      }
+    }
+  </script>
+</body>
+</html>

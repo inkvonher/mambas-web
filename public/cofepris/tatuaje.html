@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuestionario de Salud y Consentimiento - Mambas Tattoo</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-cream: #FAF7F2;
+      --primary-green: #0D2A22;
+      --secondary-green: #153E32;
+      --gold: #C5A059;
+      --gold-light: #DDC086;
+      --gold-dark: #A6803B;
+      --text-dark: #1E2522;
+      --text-muted: #55605C;
+      --white: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --border-color: rgba(197, 160, 89, 0.2);
+      --red-alert: #9E3E3E;
+      --green-success: #2C6E49;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 20px 10px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 650px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(13, 42, 34, 0.08);
+      border: 1px solid var(--border-color);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    /* Header */
+    .header {
+      background-color: var(--primary-green);
+      padding: 40px 20px;
+      text-align: center;
+      position: relative;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--gold-light);
+    }
+
+    .logo-text {
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      font-size: 2rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 5px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .subtitle {
+      color: var(--bg-cream);
+      font-size: 0.9rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* Form Content */
+    .form-content {
+      padding: 30px 25px;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      color: var(--primary-green);
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      font-weight: 600;
+    }
+
+    /* Form Groups */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 35px;
+    }
+
+    @media (min-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary-green);
+      margin-bottom: 6px;
+    }
+
+    .form-group input, .form-group select {
+      padding: 12px 16px;
+      border: 1.5px solid rgba(13, 42, 34, 0.15);
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15);
+      background-color: var(--white);
+    }
+
+    /* Questions section */
+    .question-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 35px;
+    }
+
+    .question-card {
+      background: var(--bg-cream);
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(13, 42, 34, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .question-card:hover {
+      box-shadow: 0 4px 12px rgba(13, 42, 34, 0.04);
+      border-color: rgba(197, 160, 89, 0.3);
+    }
+
+    .question-text {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .btn-toggle-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-toggle {
+      padding: 12px;
+      border: 1.5px solid rgba(13, 42, 34, 0.2);
+      border-radius: 8px;
+      background: var(--white);
+      color: var(--text-dark);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-toggle:hover {
+      background-color: rgba(13, 42, 34, 0.03);
+    }
+
+    /* Active States */
+    .btn-toggle.active-si {
+      background-color: var(--red-alert);
+      color: var(--white);
+      border-color: var(--red-alert);
+      box-shadow: 0 4px 10px rgba(158, 62, 62, 0.3);
+    }
+
+    .btn-toggle.active-no {
+      background-color: var(--primary-green);
+      color: var(--white);
+      border-color: var(--primary-green);
+      box-shadow: 0 4px 10px rgba(13, 42, 34, 0.3);
+    }
+
+    /* Notes Area */
+    .notes-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 35px;
+    }
+
+    .notes-group label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--primary-green);
+      margin-bottom: 6px;
+    }
+
+    .notes-group textarea {
+      padding: 12px;
+      border: 1.5px solid rgba(13, 42, 34, 0.15);
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: var(--bg-cream);
+      resize: vertical;
+      min-height: 80px;
+      transition: all 0.3s ease;
+    }
+
+    .notes-group textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      background-color: var(--white);
+    }
+
+    /* Signature Section */
+    .signature-container {
+      margin-bottom: 35px;
+    }
+
+    .signature-pad-wrapper {
+      border: 1.5px solid rgba(197, 160, 89, 0.4);
+      background: var(--white);
+      border-radius: 12px;
+      position: relative;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .signature-canvas {
+      display: block;
+      width: 100%;
+      height: 180px;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .signature-controls {
+      display: flex;
+      justify-content: flex-end;
+      padding: 8px 12px;
+      background-color: rgba(197, 160, 89, 0.05);
+      border-top: 1px solid var(--border-color);
+    }
+
+    .btn-clear {
+      background: none;
+      border: none;
+      color: var(--red-alert);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 4px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-clear:hover {
+      opacity: 0.8;
+    }
+
+    /* Consent Terms */
+    .consent-text {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background-color: rgba(197, 160, 89, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 30px;
+      text-align: justify;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      color: var(--white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(197, 160, 89, 0.45);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    /* Loader */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(13, 42, 34, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: var(--white);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top: 5px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    /* Success Screen */
+    .success-container {
+      display: none;
+      text-align: center;
+      padding: 50px 25px;
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .success-icon {
+      font-size: 4rem;
+      color: var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .success-title {
+      font-family: 'Cinzel', serif;
+      color: var(--primary-green);
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+
+    .success-text {
+      color: var(--text-muted);
+      margin-bottom: 35px;
+      font-size: 1rem;
+    }
+
+    .btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--green-success);
+      color: var(--white);
+      padding: 18px 30px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 15px rgba(44, 110, 73, 0.3);
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    .btn-whatsapp:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(44, 110, 73, 0.45);
+    }
+
+    .btn-whatsapp svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(44, 110, 73, 0.6); }
+      70% { box-shadow: 0 0 0 15px rgba(44, 110, 73, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(44, 110, 73, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="main-card">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-text">Mambas Tattoo</div>
+      <div class="subtitle">Consentimiento & Cuestionario Sanitario</div>
+    </div>
+
+    <!-- Intake Form -->
+    <form id="intake-form" class="form-content" onsubmit="submitForm(event)">
+      
+      <!-- Seccion 1: Datos Generales -->
+      <h2 class="section-title">Datos Personales</h2>
+      
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="nombre">Nombre Completo (como en identificación)</label>
+          <input type="text" id="nombre" name="nombre" required placeholder="Ej. Juan Pérez López">
+        </div>
+
+        <div class="form-group">
+          <label for="fecha_nacimiento">Fecha de Nacimiento</label>
+          <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+        </div>
+
+        <div class="form-group">
+          <label>Edad Calculada</label>
+          <div id="edad-display" style="padding: 12px; font-weight: bold; font-size: 1.1rem; color: var(--primary-green);">-- años</div>
+          <input type="hidden" id="edad" name="edad">
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono (WhatsApp)</label>
+          <input type="tel" id="telefono" name="telefono" required placeholder="10 dígitos">
+        </div>
+
+        <div class="form-group">
+          <label for="correo">Correo Electrónico</label>
+          <input type="email" id="correo" name="correo" required placeholder="correo@ejemplo.com">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="identificacion">Identificación Oficial (INE / Pasaporte)</label>
+          <input type="text" id="identificacion" name="identificacion" required placeholder="Clave de Elector o No. Pasaporte">
+        </div>
+      </div>
+
+      <!-- Seccion 2: Cuestionario Medico -->
+      <h2 class="section-title">Cuestionario Médico (COFEPRIS)</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
+        Por tu seguridad y cumplimiento sanitario, selecciona honestamente si padeces o has experimentado alguna de las siguientes situaciones:
+      </p>
+
+      <div class="question-list">
+        <!-- Q1 -->
+        <div class="question-card">
+          <div class="question-text">1. ¿Padece de hemofilia, problemas de coagulación o cicatrización difícil?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q1', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q1', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q1" name="hemofilia" required>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-card">
+          <div class="question-text">2. ¿Padece diabetes o problemas de glucemia?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q2', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q2', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q2" name="diabetes" required>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-card">
+          <div class="question-text">3. ¿Tiene alergias a medicamentos, tintas, metales, látex o anestésicos?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q3', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q3', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q3" name="alergias" required>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-card">
+          <div class="question-text">4. ¿Sufre de afecciones cardíacas, problemas de presión arterial o usa marcapasos?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q4', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q4', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q4" name="cardiacas" required>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-card">
+          <div class="question-text">5. ¿Padece epilepsia, convulsiones o desmayos recurrentes?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q5', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q5', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q5" name="epilepsia" required>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-card">
+          <div class="question-text">6. ¿Tiene alguna afección activa en la piel (eccema, psoriasis, queloides) en la zona del servicio?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q6', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q6', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q6" name="afeccion_piel" required>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question-card" id="card-embarazo">
+          <div class="question-text">7. En caso de mujeres, ¿se encuentra embarazada o en periodo de lactancia?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q7', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q7', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q7" name="embarazo" value="NO">
+        </div>
+
+        <!-- Q8 -->
+        <div class="question-card">
+          <div class="question-text">8. ¿Padece o ha padecido hepatitis (A, B, C o D), VIH u otra enfermedad de transmisión sanguínea?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q8', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q8', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q8" name="hepatitis_vih" required>
+        </div>
+
+        <!-- Q9 -->
+        <div class="question-card">
+          <div class="question-text">9. ¿Ha consumido alcohol, anticoagulantes (como aspirinas) o estupefacientes en las últimas 24 horas?</div>
+          <div class="btn-toggle-group">
+            <button type="button" class="btn-toggle" onclick="setAnswer('q9', 'SI', this)">SÍ</button>
+            <button type="button" class="btn-toggle" onclick="setAnswer('q9', 'NO', this)">NO</button>
+          </div>
+          <input type="hidden" id="q9" name="alcohol_drogas" required>
+        </div>
+      </div>
+
+      <!-- Detalles adicionales -->
+      <div class="notes-group">
+        <label for="detalles_medicos">Detalles de Afecciones (si contestó SÍ a alguna pregunta):</label>
+        <textarea id="detalles_medicos" name="detalles_medicos" placeholder="Especificar medicamentos, alergias o condiciones marcadas como SÍ..."></textarea>
+      </div>
+
+      <!-- Seccion 3: Firma y Consentimiento -->
+      <h2 class="section-title">Consentimiento y Deslinde</h2>
+      
+      <div class="consent-text">
+        Declaro bajo protesta de decir verdad que los datos proporcionados en este cuestionario son totalmente verídicos y que no he omitido información médica alguna. Entiendo que los procedimientos de tatuajes, micropigmentación y/o perforaciones implican riesgos de infección, reacciones alérgicas o cicatrización no deseada. Deslindo a Mambas Tattoo, a sus directivos y al artista de cualquier responsabilidad civil o penal derivada de reacciones imprevistas o por omitir información de salud relevante en este formulario. Acepto realizarme el procedimiento bajo mi propio consentimiento.
+      </div>
+
+      <div class="signature-container">
+        <label style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; color: var(--primary-green);">Firma Digital (Dibuja sobre el cuadro)</label>
+        <div class="signature-pad-wrapper">
+          <canvas id="signature-canvas" class="signature-canvas"></canvas>
+          <div class="signature-controls">
+            <button type="button" class="btn-clear" onclick="clearSignature()">Limpiar Firma</button>
+          </div>
+        </div>
+        <input type="hidden" id="firma" name="firma_base64" required>
+      </div>
+
+      <button type="submit" class="btn-submit">Enviar Cuestionario</button>
+    </form>
+
+    <!-- Success Screen (Hidden by default) -->
+    <div id="success-screen" class="success-container">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">¡Registro Exitoso!</h2>
+      <p class="success-text">
+        Tus datos sanitarios y deslinde han sido guardados de manera segura en el sistema de cumplimiento de COFEPRIS.
+        <br><br>
+        <strong>Paso Final Obligatorio:</strong> Haz clic en el botón de abajo para enviar tu formato digital a la recepción del estudio mediante WhatsApp para proceder a su impresión y archivo.
+      </p>
+      
+      <a href="#" id="whatsapp-link" target="_blank" class="btn-whatsapp">
+        <svg viewBox="0 0 24 24">
+          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.968C16.574 1.97 14.101.943 11.997.943c-5.44 0-9.866 4.372-9.87 9.802 0 1.73.46 3.42 1.332 4.926l-.995 3.63 3.731-.969c1.514.823 3.013 1.258 4.791 1.258zm11.367-7.251c-.26-.13-1.534-.759-1.771-.845-.237-.086-.41-.13-.582.13-.172.26-.668.845-.819 1.018-.151.172-.301.194-.56.064-.26-.13-1.097-.404-2.09-1.29-.77-.687-1.29-1.536-1.44-1.796-.15-.26-.016-.4.113-.53.117-.118.26-.301.39-.452.13-.15.173-.258.26-.43.085-.172.043-.323-.022-.452-.064-.13-.582-1.402-.797-1.921-.21-.504-.417-.435-.582-.443-.15-.007-.323-.008-.495-.008-.172 0-.452.064-.688.323-.236.258-.903.885-.903 2.158s.925 2.502 1.054 2.675c.13.172 1.82 2.78 4.41 3.896.615.265 1.096.423 1.472.542.618.196 1.18.169 1.624.1.496-.076 1.534-.627 1.75-.1233.215-.607.215-1.12.162-1.205-.054-.086-.194-.13-.453-.26z"/>
+        </svg>
+        Enviar a Recepción
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <h3 style="font-size: 1.2rem; font-weight: 500;">Guardando en base de datos de COFEPRIS...</h3>
+    <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 5px;">Por favor, no cierres esta ventana.</p>
+  </div>
+
+  <script>
+    // URL de Google Apps Script. 
+    // REEMPLAZAR CON TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec';
+    
+    // Teléfono de recepción del estudio para enviar WhatsApp (Formato internacional, sin signos. Ej. 521984XXXXXXX)
+    const RECEPCION_WHATSAPP = '5219841820414'; 
+
+    // Calculo automático de edad
+    const dobInput = document.getElementById('fecha_nacimiento');
+    const ageDisplay = document.getElementById('edad-display');
+    const ageInput = document.getElementById('edad');
+
+    dobInput.addEventListener('change', () => {
+      const dobVal = dobInput.value;
+      if (!dobVal) return;
+      
+      const dob = new Date(dobVal);
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      
+      if (age < 0) age = 0;
+      
+      ageDisplay.textContent = age + " años";
+      ageInput.value = age;
+      
+      // Ocultar sección de embarazo si no es mujer (u opcional) o si la edad/condición no aplica,
+      // pero por sanidad COFEPRIS pide mantener el registro. Lo dejamos visible.
+    });
+
+    // Toggle de respuestas de botones médicos
+    function setAnswer(questionId, value, buttonEl) {
+      // Guardar el valor en el input hidden correspondiente
+      const hiddenInput = document.getElementById(questionId);
+      hiddenInput.value = value;
+      
+      // Quitar clases activas de los hermanos en el grupo
+      const parent = buttonEl.parentElement;
+      const buttons = parent.querySelectorAll('.btn-toggle');
+      buttons.forEach(btn => {
+        btn.classList.remove('active-si');
+        btn.classList.remove('active-no');
+      });
+      
+      // Añadir la clase activa correspondiente
+      if (value === 'SI') {
+        buttonEl.classList.add('active-si');
+      } else {
+        buttonEl.classList.add('active-no');
+      }
+    }
+
+    // Canvas de Firma Digital
+    const canvas = document.getElementById('signature-canvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let signatureIsEmpty = true;
+
+    // Ajustar resolución interna del canvas para evitar estiramientos
+    function resizeCanvas() {
+      // Tomamos el ancho contenedor para definir resolución física
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = 180;
+      
+      // Dibujar línea guía de firma sutil
+      clearCanvasUI();
+    }
+
+    function clearCanvasUI() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#D1C7BD';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(30, canvas.height - 40);
+      ctx.lineTo(canvas.width - 30, canvas.height - 40);
+      ctx.stroke();
+      ctx.setLineDash([]); // Reset
+      signatureIsEmpty = true;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('load', () => {
+      resizeCanvas();
+    });
+
+    // Eventos Mouse
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('mouseleave', stopDrawing);
+
+    // Eventos Touch para móviles
+    canvas.addEventListener('touchstart', startDrawingTouch);
+    canvas.addEventListener('touchmove', drawTouch);
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function getMousePos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function getTouchPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.touches[0].clientX - rect.left,
+        y: e.touches[0].clientY - rect.top
+      };
+    }
+
+    function startDrawing(e) {
+      isDrawing = true;
+      const pos = getMousePos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#0D2A22'; // Color principal
+      signatureIsEmpty = false;
+    }
+
+    function startDrawingTouch(e) {
+      isDrawing = true;
+      e.preventDefault();
+      const pos = getTouchPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#0D2A22';
+      signatureIsEmpty = false;
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const pos = getMousePos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function drawTouch(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getTouchPos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.stroke();
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+    }
+
+    function clearSignature() {
+      clearCanvasUI();
+      document.getElementById('firma').value = '';
+    }
+
+    // Función para achicar el canvas al exportar y evitar URL demasiado larga en WhatsApp
+    function getCompressedSignatureBase64() {
+      if (signatureIsEmpty) return '';
+      
+      // Crear un canvas temporal más pequeño (ej. 200x80)
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCanvas.width = 200;
+      tempCanvas.height = 80;
+      
+      // Fondo blanco plano
+      tempCtx.fillStyle = '#FFFFFF';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      
+      // Dibujar la firma escalada en el canvas pequeño
+      tempCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 200, 80);
+      
+      // Exportar en formato JPEG con calidad comprimida (ej. 0.6)
+      // Esto hace que el base64 sea sumamente corto (< 1.5 KB)
+      return tempCanvas.toDataURL('image/jpeg', 0.6);
+    }
+
+    // Validación y Envío de Formulario
+    function submitForm(event) {
+      event.preventDefault();
+
+      // Validar que se hayan respondido todas las preguntas
+      const requiredQuestions = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9'];
+      for (let qId of requiredQuestions) {
+        if (!document.getElementById(qId).value) {
+          alert('Por favor, responda todas las preguntas médicas del cuestionario.');
+          document.getElementById(qId).parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+      }
+
+      // Validar firma
+      if (signatureIsEmpty) {
+        alert('Por favor, dibuje su firma digital para otorgar el consentimiento.');
+        document.getElementById('signature-canvas').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Obtener firma comprimida
+      const signatureDataUrl = getCompressedSignatureBase64();
+      document.getElementById('firma').value = signatureDataUrl;
+
+      // Mostrar Cargador
+      const loader = document.getElementById('loader');
+      loader.style.display = 'flex';
+
+      // Estructurar el JSON
+      const formData = new FormData(event.target);
+      const dataObject = {
+        form_type: 'cuestionario'
+      };
+      
+      formData.forEach((value, key) => {
+        dataObject[key] = value;
+      });
+
+      // Crear URL de impresión dinámica basada en la ubicación actual
+      const pathArray = window.location.pathname.split('/');
+      pathArray[pathArray.length - 1] = 'registro-imprimir.html';
+      const printPagePath = pathArray.join('/');
+      const printBaseUrl = window.location.origin + printPagePath;
+
+      // Serializar datos para la URL de impresión
+      const printQueryParams = new URLSearchParams();
+      for (let key in dataObject) {
+        // Excluir form_type de la URL de impresión
+        if (key !== 'form_type' && key !== 'firma_base64') {
+          printQueryParams.append(key, dataObject[key]);
+        }
+      }
+      // Añadir la firma comprimida de forma segura
+      printQueryParams.append('firma', signatureDataUrl);
+      
+      const fullPrintUrl = printBaseUrl + '?' + printQueryParams.toString();
+
+      // Enviar por fetch en modo no-cors de texto plano para evitar bloqueos preflight CORS en Apps Script
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors', // Permite que se envíe con éxito a GAS sin errores preflight de CORS
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify(dataObject)
+      })
+      .then(response => {
+        // Al usar no-cors, la respuesta es opaca, por lo que asumimos éxito si no hay error
+        setTimeout(() => {
+          loader.style.display = 'none';
+          
+          // Ocultar formulario
+          document.getElementById('intake-form').style.display = 'none';
+          // Cambiar cabecera para éxito
+          document.querySelector('.header').style.backgroundColor = 'var(--primary-green)';
+          
+          // Mostrar pantalla de éxito
+          const successScreen = document.getElementById('success-screen');
+          successScreen.style.display = 'block';
+
+          // Construir mensaje de WhatsApp
+          const clientName = dataObject['nombre'];
+          const waMessage = `¡Hola! Acabo de completar mi Cuestionario de Salud y Consentimiento Informado para mi sesión. Aquí está el enlace oficial para impresión (COFEPRIS):\n\n${fullPrintUrl}`;
+          
+          const waLink = document.getElementById('whatsapp-link');
+          waLink.href = `https://api.whatsapp.com/send?phone=${RECEPCION_WHATSAPP}&text=${encodeURIComponent(waMessage)}`;
+          
+          // Hacer scroll al inicio
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 1500);
+      })
+      .catch(error => {
+        console.error('Error al guardar datos:', error);
+        loader.style.display = 'none';
+        alert('Ocurrió un error al procesar el cuestionario. Por favor, avisa a recepción para llenarlo de forma física.');
+      });
+    }
+  </script>
+</body>
+</html>

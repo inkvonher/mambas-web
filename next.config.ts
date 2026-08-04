@@ -9,14 +9,16 @@ try {
   supabaseOrigin = "";
 }
 
+const isDev = process.env.NODE_ENV !== "production";
+
 const contentSecurityPolicy = [
   "default-src 'self'",
   // Next.js injects inline bootstrap scripts; 'unsafe-inline' is required without a nonce setup.
-  "script-src 'self' 'unsafe-inline'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  `connect-src 'self' ${supabaseOrigin} https://api.mapbox.com https://events.mapbox.com`.trim(),
+  `connect-src 'self' ${supabaseOrigin} https://api.mapbox.com https://events.mapbox.com https://script.google.com https://script.googleusercontent.com`.trim(),
   "worker-src 'self' blob:",
   "child-src blob:",
   "frame-src https://www.google.com https://maps.google.com",

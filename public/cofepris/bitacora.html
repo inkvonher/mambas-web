@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bitácora de Registro Sanitario - Mambas Tattoo</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-cream: #FAF7F2;
+      --primary-green: #0D2A22;
+      --secondary-green: #153E32;
+      --gold: #C5A059;
+      --gold-light: #DDC086;
+      --gold-dark: #A6803B;
+      --text-dark: #1E2522;
+      --text-muted: #55605C;
+      --white: #FFFFFF;
+      --card-bg: #FFFFFF;
+      --border-color: rgba(197, 160, 89, 0.2);
+      --green-success: #2C6E49;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      line-height: 1.6;
+      padding: 40px 15px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(13, 42, 34, 0.08);
+      border: 1px solid var(--border-color);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    /* Header */
+    .header {
+      background-color: var(--primary-green);
+      padding: 35px 20px;
+      text-align: center;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .logo-text {
+      font-family: 'Cinzel', serif;
+      color: var(--gold);
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      color: var(--bg-cream);
+      font-size: 0.85rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    /* Form Content */
+    .form-content {
+      padding: 30px 25px;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      color: var(--primary-green);
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Navigation Links for Admin */
+    .admin-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+      font-size: 0.85rem;
+    }
+
+    .admin-nav a {
+      color: var(--gold-dark);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .admin-nav a:hover {
+      color: var(--primary-green);
+    }
+
+    /* Form Layout */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    @media (min-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .full-width {
+        grid-column: span 2;
+      }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary-green);
+      margin-bottom: 6px;
+    }
+
+    .form-group input, .form-group select {
+      padding: 12px 16px;
+      border: 1.5px solid rgba(13, 42, 34, 0.15);
+      border-radius: 8px;
+      font-size: 1rem;
+      background-color: var(--bg-cream);
+      color: var(--text-dark);
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.15);
+      background-color: var(--white);
+    }
+
+    /* Help text */
+    .help-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+      color: var(--white);
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(13, 42, 34, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(13, 42, 34, 0.3);
+      background: linear-gradient(135deg, var(--secondary-green), var(--primary-green));
+    }
+
+    /* Loader Overlay */
+    .loader-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(13, 42, 34, 0.85);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: var(--white);
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top: 5px solid var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    /* Alert Banner success */
+    .alert-success {
+      display: none;
+      background-color: rgba(44, 110, 73, 0.1);
+      border: 1px solid var(--green-success);
+      color: var(--green-success);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 600;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-text">Mambas Tattoo</div>
+      <div class="subtitle">Bitácora Sanitaria Digital (COFEPRIS)</div>
+    </div>
+
+    <!-- Form content -->
+    <div class="form-content">
+      
+      <!-- Admin Nav Links -->
+      <div class="admin-nav">
+        <a href="bitacora-reporte.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Ver Reporte/Libro Completo
+        </a>
+        <a href="tatuaje.html" target="_blank">
+          Abrir Cuestionario Cliente →
+        </a>
+      </div>
+
+      <!-- Success Alert Banner -->
+      <div class="alert-success" id="success-alert">
+        ¡Servicio registrado con éxito en la Bitácora Sanitaria!
+      </div>
+
+      <form id="bitacora-form" onsubmit="submitBitacora(event)">
+        <h2 class="section-title">Registro de Servicio</h2>
+
+        <div class="form-grid">
+          
+          <!-- Fecha Servicio -->
+          <div class="form-group">
+            <label for="fecha_servicio">Fecha del Servicio</label>
+            <input type="date" id="fecha_servicio" name="fecha_servicio" required>
+          </div>
+
+          <!-- Tipo Servicio -->
+          <div class="form-group">
+            <label for="tipo_servicio">Tipo de Servicio</label>
+            <select id="tipo_servicio" name="tipo_servicio" required>
+              <option value="">Seleccione...</option>
+              <option value="Tatuaje">Tatuaje</option>
+              <option value="Perforación">Perforación</option>
+              <option value="Micropigmentación">Micropigmentación</option>
+            </select>
+          </div>
+
+          <!-- Nombre Cliente -->
+          <div class="form-group full-width">
+            <label for="cliente_nombre">Nombre del Cliente</label>
+            <input type="text" id="cliente_nombre" name="cliente_nombre" placeholder="Nombre completo" required>
+          </div>
+
+          <!-- Edad Cliente -->
+          <div class="form-group">
+            <label for="cliente_edad">Edad del Cliente</label>
+            <input type="number" id="cliente_edad" name="cliente_edad" min="1" max="120" required>
+          </div>
+
+          <!-- Nombre Artista -->
+          <div class="form-group">
+            <label for="artista_nombre">Nombre del Artista</label>
+            <input type="text" id="artista_nombre" name="artista_nombre" placeholder="Tatuador / Perforador" required>
+          </div>
+
+          <!-- Agujas Lote -->
+          <div class="form-group full-width">
+            <label for="lote_agujas">Lote de Agujas / Cartuchos</label>
+            <input type="text" id="lote_agujas" name="lote_agujas" placeholder="Ej. L-38492026-X" required>
+            <div class="help-text">Especifica el número de lote impreso en el empaque esterilizado individual.</div>
+          </div>
+
+          <!-- Tintas Marca/Lote -->
+          <div class="form-group full-width">
+            <label for="lote_tintas">Marca y Lote de Tintas / Joyería</label>
+            <input type="text" id="lote_tintas" name="lote_tintas" placeholder="Ej. Dynamic Black - Lote #938292" required>
+            <div class="help-text">Especificar marca y número de lote de los pigmentos o pieza de joyería esterilizada.</div>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-submit">Registrar en Bitácora</button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Loader Overlay -->
+  <div class="loader-overlay" id="loader">
+    <div class="spinner"></div>
+    <h3 style="font-size: 1.1rem; font-weight: 500;">Enviando datos al registro de sanidad...</h3>
+  </div>
+
+  <script>
+    // URL de Google Apps Script. 
+    // REEMPLAZAR CON TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec';
+
+    // Establecer fecha por defecto (hoy) al cargar la página
+    window.addEventListener('DOMContentLoaded', () => {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('fecha_servicio').value = today;
+    });
+
+    function submitBitacora(event) {
+      event.preventDefault();
+
+      const loader = document.getElementById('loader');
+      const successAlert = document.getElementById('success-alert');
+      
+      loader.style.display = 'flex';
+      successAlert.style.display = 'none';
+
+      // Capturar datos del formulario
+      const formData = new FormData(event.target);
+      const dataObject = {
+        form_type: 'bitacora'
+      };
+
+      formData.forEach((value, key) => {
+        dataObject[key] = value;
+      });
+
+      // Hacer POST a Apps Script con no-cors para evitar errores preflight de CORS
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify(dataObject)
+      })
+      .then(response => {
+        // Simular respuesta exitosa (el modo no-cors no permite leer la respuesta de Apps Script)
+        setTimeout(() => {
+          loader.style.display = 'none';
+          
+          // Mostrar banner de éxito
+          successAlert.style.display = 'block';
+          
+          // Limpiar formulario (excepto fecha y tipo servicio para comodidad)
+          document.getElementById('cliente_nombre').value = '';
+          document.getElementById('cliente_edad').value = '';
+          document.getElementById('artista_nombre').value = '';
+          document.getElementById('lote_agujas').value = '';
+          document.getElementById('lote_tintas').value = '';
+          
+          // Desplazar hacia arriba para ver el banner
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+          // Ocultar banner de éxito en 6 segundos
+          setTimeout(() => {
+            successAlert.style.display = 'none';
+          }, 6000);
+        }, 1200);
+      })
+      .catch(error => {
+        console.error('Error al enviar bitácora:', error);
+        loader.style.display = 'none';
+        alert('Ocurrió un error de red al intentar registrar los datos en Google Sheets.');
+      });
+    }
+  </script>
+</body>
+</html>
