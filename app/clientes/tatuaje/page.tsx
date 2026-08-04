@@ -262,47 +262,65 @@ export default function TatuajePage() {
       firma_base64: signatureDataUrl,
     };
 
-    // Crear la URL de impresión basada en el origen actual
+    // Generar URL de impresión por defecto (URL larga con todos los datos codificados)
     const printBaseUrl = window.location.origin + "/clientes/tatuaje/imprimir";
     const printQueryParams = new URLSearchParams();
-    
-    // Meter todos los datos necesarios para renderizar el formato impreso
     Object.entries(dataObject).forEach(([k, v]) => {
       if (k !== "form_type" && k !== "firma_base64") {
         printQueryParams.append(k, v);
       }
     });
     printQueryParams.append("firma", signatureDataUrl);
-    
-    const fullPrintUrl = printBaseUrl + "?" + printQueryParams.toString();
+    const fallbackUrl = printBaseUrl + "?" + printQueryParams.toString();
 
     try {
-      // Mandamos en no-cors de texto plano para evitar preflight
-      await fetch(SCRIPT_URL, {
+      // Intentar guardar con CORS habilitado para leer el ID retornado por Google Sheets
+      const response = await fetch(SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: {
-          "Content-Type": "text/plain",
+          "Content-Type": "text/plain", // Simple request (evita preflight OPTIONS)
         },
         body: JSON.stringify(dataObject),
       });
 
-      // Como no-cors da respuesta opaca, asumimos éxito
-      setTimeout(() => {
-        setLoading(false);
-        setSubmitted(true);
-        
-        // Crear mensaje y link de WhatsApp
-        const waMessage = `¡Hola! Acabo de completar mi Cuestionario de Salud y Consentimiento Informado para mi sesión. Aquí está el enlace oficial para impresión (COFEPRIS):\n\n${fullPrintUrl}`;
-        setWhatsappUrl(`https://api.whatsapp.com/send?phone=${RECEPCION_WHATSAPP}&text=${encodeURIComponent(waMessage)}`);
-        
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 1500);
+      const resData = await response.json();
+      let finalPrintUrl = fallbackUrl;
+      
+      if (resData && resData.status === "success" && resData.id) {
+        finalPrintUrl = `${printBaseUrl}?id=${resData.id}`;
+      }
+
+      setLoading(false);
+      setSubmitted(true);
+
+      const waMessage = `¡Hola! Acabo de completar mi Cuestionario de Salud y Consentimiento Informado para mi sesión. Aquí está el enlace oficial para impresión (COFEPRIS):\n\n${finalPrintUrl}`;
+      setWhatsappUrl(`https://api.whatsapp.com/send?phone=${RECEPCION_WHATSAPP}&text=${encodeURIComponent(waMessage)}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
 
     } catch (err) {
-      console.error(err);
+      console.warn("CORS bloqueó lectura directa o falló conexión, reintentando en modo seguro no-cors:", err);
+      
+      // Fallback: Asegurar guardado en Sheets usando no-cors
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          body: JSON.stringify(dataObject),
+        });
+      } catch (fallbackErr) {
+        console.error("Error crítico de red al guardar:", fallbackErr);
+      }
+
+      // Usar URL larga como fallback para impresión
       setLoading(false);
-      alert("Ocurrió un error al procesar el cuestionario. Por favor, llénelo de forma física al llegar al estudio.");
+      setSubmitted(true);
+
+      const waMessage = `¡Hola! Acabo de completar mi Cuestionario de Salud y Consentimiento Informado para mi sesión. Aquí está el enlace oficial para impresión (COFEPRIS):\n\n${fallbackUrl}`;
+      setWhatsappUrl(`https://api.whatsapp.com/send?phone=${RECEPCION_WHATSAPP}&text=${encodeURIComponent(waMessage)}`);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 

@@ -102,9 +102,13 @@ function doPost(e) {
     // Insertar la fila al final
     sheet.appendRow(newRow);
 
+    // Obtener el ID de la fila insertada (última fila de datos)
+    var insertedId = sheet.getLastRow() - 1; // Fila 1 es cabeceras, por lo que Fila 2 es id=1
+
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
       message: "Registro guardado correctamente en la pestaña " + sheetName,
+      id: insertedId,
       sheet: sheetName
     }))
     .setMimeType(ContentService.MimeType.JSON);
@@ -142,17 +146,40 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
     }
 
-    // Obtener todos los valores (incluyendo cabeceras)
+    // Obtener los encabezados (fila 1)
+    var headers = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
+
+    // Verificar si se consulta un ID específico para optimizar la velocidad y reducir datos
+    var idParam = e.parameter.id;
+    if (idParam) {
+      var targetRow = parseInt(idParam) + 1; // ID 1 corresponde a Fila 2
+      if (targetRow > 1 && targetRow <= lastRow) {
+        var rowValues = sheet.getRange(targetRow, 1, 1, lastColumn).getValues()[0];
+        var record = { id: parseInt(idParam) };
+        for (var j = 0; j < headers.length; j++) {
+          var val = rowValues[j];
+          if (val instanceof Date) {
+            val = Utilities.formatDate(val, "GMT-6", "dd/MM/yyyy HH:mm:ss");
+          }
+          record[headers[j]] = val;
+        }
+        return ContentService.createTextOutput(JSON.stringify(record))
+        .setMimeType(ContentService.MimeType.JSON);
+      } else {
+        return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "ID no encontrado" }))
+        .setMimeType(ContentService.MimeType.JSON);
+      }
+    }
+
+    // Si no hay ID, devolver toda la lista (comportamiento original)
     var values = sheet.getRange(1, 1, lastRow, lastColumn).getValues();
-    var headers = values[0];
     var list = [];
 
     for (var i = 1; i < values.length; i++) {
       var row = values[i];
-      var record = { id: i }; // ID interno incremental
+      var record = { id: i };
       for (var j = 0; j < headers.length; j++) {
         var val = row[j];
-        // Formatear fechas a string local
         if (val instanceof Date) {
           val = Utilities.formatDate(val, "GMT-6", "dd/MM/yyyy HH:mm:ss");
         }
