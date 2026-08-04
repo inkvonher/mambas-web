@@ -15,14 +15,23 @@ export async function GET(request: Request) {
     );
   }
 
-  const { data, error } = await supabaseServer
+  const { searchParams } = new URL(request.url);
+  const categoryParam = searchParams.get("category");
+
+  let query = supabaseServer
     .from("appointments")
     .select(
       "id, client_name, client_phone, service, category, appointment_date, appointment_time, notes, status",
     )
     .eq("source", "admin")
     .is("gcal_event_id", null)
-    .neq("status", "cancelled")
+    .neq("status", "cancelled");
+
+  if (categoryParam === "tattoo" || categoryParam === "barber") {
+    query = query.eq("category", categoryParam);
+  }
+
+  const { data, error } = await query
     .order("appointment_date", { ascending: true })
     .limit(50);
 

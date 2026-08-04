@@ -58,7 +58,8 @@ function authHeaders() {
 
 // 1) Citas creadas en el panel admin -> eventos en Google Calendar correspondiente
 function pushAdminToGoogle() {
-  const res = UrlFetchApp.fetch(SITE + "/api/sync/pending", {
+  const category = BOOKING_CALENDARS[0].category;
+  const res = UrlFetchApp.fetch(SITE + "/api/sync/pending?category=" + category, {
     headers: authHeaders(),
     muteHttpExceptions: true,
   });
