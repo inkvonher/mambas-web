@@ -24,7 +24,7 @@ const BOOKING_CALENDARS = [
     category: "barber"
   },
   {
-    id: "mambastattoo@gmail.com",     // Calendario secundario (Tatuajes / Piercings)
+    id: "vonynegocios@gmail.com",     // Calendario secundario (Tatuajes / Piercings)
     category: "tattoo"
   }
 ];
