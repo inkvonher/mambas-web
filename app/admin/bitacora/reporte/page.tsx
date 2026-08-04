@@ -176,6 +176,16 @@ export default function ReporteBitacoraPage() {
         }
       ` }} />
 
+      {/* Back Button */}
+      <div className="max-w-[1200px] mx-auto mb-6 flex justify-start no-print">
+        <Link 
+          href="/admin" 
+          className="text-xs uppercase tracking-wider font-bold text-[#d6ad4a] hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          ← Volver al Panel
+        </Link>
+      </div>
+
       <div className="max-w-[1200px] mx-auto bg-[#0A0A0A] rounded-2xl overflow-hidden shadow-2xl border border-[#d6ad4a]/15 print-wrapper">
         
         {/* Header */}

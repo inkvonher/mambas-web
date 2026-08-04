@@ -85,8 +85,19 @@ export default function BitacoraPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white py-12 px-4 font-sans antialiased">
-      <div className="max-w-[600px] mx-auto bg-[#0A0A0A] rounded-2xl overflow-hidden shadow-2xl border border-[#d6ad4a]/20">
+    <div className="min-h-screen bg-[#050505] text-white py-12 px-4 font-sans antialiased flex flex-col items-center justify-center">
+      
+      {/* Back Button */}
+      <div className="w-full max-w-[600px] mb-6 flex justify-start">
+        <Link 
+          href="/admin" 
+          className="text-xs uppercase tracking-wider font-bold text-[#d6ad4a] hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          ← Volver al Panel
+        </Link>
+      </div>
+
+      <div className="w-full max-w-[600px] bg-[#0A0A0A] rounded-2xl overflow-hidden shadow-2xl border border-[#d6ad4a]/20">
         
         {/* Header */}
         <div className="bg-[#050505] py-7 px-4 text-center border-b-[3px] border-[#d6ad4a] flex flex-col items-center justify-center">
