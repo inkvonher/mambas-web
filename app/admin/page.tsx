@@ -99,6 +99,135 @@ export default function AdminPage() {
 
   const OWNER_PASSWORD = process.env.NEXT_PUBLIC_OWNER_PASSWORD || "owner2026";
 
+  // Ventas States
+  const [sales, setSales] = useState<any[]>([]);
+  const [salesLoading, setSalesLoading] = useState(true);
+  const [salesSubmitting, setSalesSubmitting] = useState(false);
+
+  // Form State
+  const [saleFecha, setSaleFecha] = useState(() => new Date().toISOString().split("T")[0]);
+  const [saleTrabajo, setSaleTrabajo] = useState("TATTOO");
+  const [saleArtista, setSaleArtista] = useState("VONY");
+  const [saleTotal, setSaleTotal] = useState("");
+  const [saleTip, setSaleTip] = useState("");
+  const [salePorcentaje, setSalePorcentaje] = useState("0.50");
+  const [saleCliente, setSaleCliente] = useState("");
+  const [saleContacto, setSaleContacto] = useState("");
+
+  // Filters State
+  const [saleFilterArtist, setSaleFilterArtist] = useState("ALL");
+  const [saleFilterMonth, setSaleFilterMonth] = useState("ALL");
+  const [saleFilterType, setSaleFilterType] = useState("ALL");
+
+  const fetchSales = async () => {
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec";
+    try {
+      setSalesLoading(true);
+      const response = await fetch(`${SCRIPT_URL}?sheet=ventas`);
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        const formatted = data.map((item: any) => ({
+          id: item.id,
+          fecha_registro: item.fecha_registro || item.fecha || "",
+          dia: parseInt(item.dia) || 1,
+          trabajo: String(item.trabajo || "").toUpperCase(),
+          artista: String(item.artista || "").toUpperCase(),
+          total: parseFloat(item.total) || 0,
+          tip: parseFloat(item.tip) || 0,
+          porcentaje: parseFloat(item.porcentaje) || 0.50,
+          nombre_cliente: item.nombre_cliente || item.cliente || "",
+          contacto_cliente: item.contacto_cliente || item.contacto || "",
+          comision_artista: parseFloat(item.comision_artista) || 0,
+          neto_estudio: parseFloat(item.neto_estudio) || 0,
+        }));
+
+        const sorted = formatted.sort((a, b) => {
+          const parseDate = (dStr: string) => {
+            if (!dStr) return 0;
+            const parts = dStr.split("/");
+            if (parts.length === 3) {
+              return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0])).getTime();
+            }
+            return 0;
+          };
+          return parseDate(b.fecha_registro) - parseDate(a.fecha_registro);
+        });
+
+        setSales(sorted);
+      }
+    } catch (err) {
+      console.error("Error fetching sales:", err);
+    } finally {
+      setSalesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOwnerUnlocked && activeTab === "analitica") {
+      fetchSales();
+    }
+  }, [isOwnerUnlocked, activeTab]);
+
+  const handleSaleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (salesSubmitting) return;
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec";
+    const totalVal = parseFloat(saleTotal) || 0;
+    const tipVal = parseFloat(saleTip) || 0;
+    const percentageVal = parseFloat(salePorcentaje) || 0.50;
+
+    const comision_artista = totalVal * (1 - percentageVal);
+    const neto_estudio = totalVal * percentageVal;
+
+    const dateParts = saleFecha.split("-");
+    const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+    const diaNum = parseInt(dateParts[2]) || 1;
+
+    const payload = {
+      fecha_registro: formattedDate,
+      dia: diaNum,
+      trabajo: saleTrabajo.trim().toUpperCase(),
+      artista: saleArtista.trim().toUpperCase(),
+      total: totalVal,
+      tip: tipVal,
+      porcentaje: percentageVal,
+      nombre_cliente: saleCliente.trim(),
+      contacto_cliente: saleContacto.trim(),
+      comision_artista,
+      neto_estudio,
+      form_type: "ventas",
+    };
+
+    try {
+      setSalesSubmitting(true);
+      const response = await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const resData = await response.json();
+      if (resData.status === "success") {
+        alert("¡Venta registrada con éxito!");
+        setSaleTotal("");
+        setSaleTip("");
+        setSaleCliente("");
+        setSaleContacto("");
+        fetchSales();
+      } else {
+        alert("Error al guardar: " + resData.message);
+      }
+    } catch (err) {
+      console.error("Error saving sale:", err);
+      alert("Error al guardar la venta.");
+    } finally {
+      setSalesSubmitting(false);
+    }
+  };
+
   function handleTabClick(tab: "agenda" | "clientes" | "analitica") {
     if (tab === "analitica") {
       if (isOwnerUnlocked) {
@@ -547,6 +676,48 @@ export default function AdminPage() {
     [appointments],
   );
 
+  // Ventas Calculations
+  const filteredSales = sales.filter((item) => {
+    if (saleFilterArtist !== "ALL" && item.artista.toUpperCase() !== saleFilterArtist.toUpperCase()) {
+      return false;
+    }
+    if (saleFilterType !== "ALL" && item.trabajo.toUpperCase() !== saleFilterType.toUpperCase()) {
+      return false;
+    }
+    if (saleFilterMonth !== "ALL") {
+      const parts = item.fecha_registro.split("/");
+      if (parts.length === 3) {
+        if (parseInt(parts[1]).toString() !== saleFilterMonth) return false;
+      } else {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  const totalBruto = filteredSales.reduce((acc, item) => acc + item.total, 0);
+  const totalTips = filteredSales.reduce((acc, item) => acc + item.tip, 0);
+  const totalComisiones = filteredSales.reduce((acc, item) => acc + item.comision_artista, 0);
+  const totalEstudio = filteredSales.reduce((acc, item) => acc + item.neto_estudio, 0);
+
+  const uniqueArtists = Array.from(new Set(sales.map((item) => item.artista))).filter(Boolean);
+  const uniqueTypes = Array.from(new Set(sales.map((item) => item.trabajo))).filter(Boolean);
+
+  const monthsMap = [
+    { label: "Enero", val: "1" },
+    { label: "Febrero", val: "2" },
+    { label: "Marzo", val: "3" },
+    { label: "Abril", val: "4" },
+    { label: "Mayo", val: "5" },
+    { label: "Junio", val: "6" },
+    { label: "Julio", val: "7" },
+    { label: "Agosto", val: "8" },
+    { label: "Septiembre", val: "9" },
+    { label: "Octubre", val: "10" },
+    { label: "Noviembre", val: "11" },
+    { label: "Diciembre", val: "12" },
+  ];
+
   return (
     <main
       suppressHydrationWarning
@@ -589,6 +760,12 @@ export default function AdminPage() {
                 className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] inline-flex items-center"
               >
                 Bitácora
+              </Link>
+              <Link
+                href="/admin/ventas"
+                className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] inline-flex items-center"
+              >
+                Ventas
               </Link>
               <button
                 onClick={openPasswordModal}
@@ -1181,6 +1358,296 @@ export default function AdminPage() {
                   </div>
                 </div>
               </Panel>
+            </section>
+
+            {/* Divider */}
+            <div className="my-10 border-t border-zinc-800" />
+
+            {/* Ventas & Analytics Section */}
+            <div className="mb-6">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
+                Sheets Database
+              </p>
+              <h2 className="mt-2 text-2xl font-black uppercase text-white">
+                Bitácora Analítica de Ventas y Comisiones
+              </h2>
+              <p className="mt-2 text-sm text-zinc-400">
+                Sincronización directa con Google Sheets para registro diario de tatuajes y piercings.
+              </p>
+            </div>
+
+            {/* Sales Dashboard Cards */}
+            <section className="mb-6 grid gap-4 grid-cols-2 xl:grid-cols-4">
+              <div className="rounded-xl border border-zinc-800 bg-[#080808]/40 p-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">Ingreso Bruto</span>
+                <p className="text-lg sm:text-xl font-bold tracking-tight text-white mt-1">
+                  ${totalBruto.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
+                </p>
+              </div>
+              <div className="rounded-xl border border-[#d6ad4a]/30 bg-[#080808]/40 p-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#d6ad4a]">Neto Estudio</span>
+                <p className="text-lg sm:text-xl font-bold tracking-tight text-[#d6ad4a] mt-1">
+                  ${totalEstudio.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
+                </p>
+              </div>
+              <div className="rounded-xl border border-zinc-800 bg-[#080808]/40 p-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">Comisión Tatuadores</span>
+                <p className="text-lg sm:text-xl font-bold tracking-tight text-white mt-1">
+                  ${totalComisiones.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
+                </p>
+              </div>
+              <div className="rounded-xl border border-zinc-800 bg-[#080808]/40 p-4">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/50">Total Propinas</span>
+                <p className="text-lg sm:text-xl font-bold tracking-tight text-emerald-400 mt-1">
+                  ${totalTips.toLocaleString("es-MX", { minimumFractionDigits: 2 })} MXN
+                </p>
+              </div>
+            </section>
+
+            {/* Form and Table Grid */}
+            <section className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr] mb-6">
+              
+              {/* Form Panel */}
+              <Panel>
+                <div className="mb-4">
+                  <h3 className="text-sm font-black uppercase tracking-[0.18em] text-white">
+                    Registrar Nueva Venta
+                  </h3>
+                  <p className="text-xs text-zinc-500 mt-1">Ingresa el servicio para calcular comisiones y reportarlo a Sheets.</p>
+                </div>
+
+                <form onSubmit={handleSaleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Fecha */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Fecha</label>
+                      <input 
+                        type="date"
+                        value={saleFecha}
+                        onChange={(e) => setSaleFecha(e.target.value)}
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                        required
+                      />
+                    </div>
+                    {/* Servicio */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Servicio</label>
+                      <select
+                        value={saleTrabajo}
+                        onChange={(e) => setSaleTrabajo(e.target.value)}
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      >
+                        <option value="TATTOO">TATTOO</option>
+                        <option value="PIERCING">PIERCING</option>
+                        <option value="JOYERÍA">JOYERÍA</option>
+                        <option value="INSUMOS">INSUMOS</option>
+                        <option value="OTROS">OTROS</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Artista */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Artista</label>
+                      <select
+                        value={saleArtista}
+                        onChange={(e) => setSaleArtista(e.target.value)}
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      >
+                        <option value="VONY">VONY</option>
+                        <option value="KAREN">KAREN</option>
+                        <option value="DAVID">DAVID</option>
+                        <option value="STAFF">STAFF</option>
+                        <option value="INVITADO">INVITADO</option>
+                      </select>
+                    </div>
+                    {/* Porcentaje Estudio */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Comisión Estudio</label>
+                      <select
+                        value={salePorcentaje}
+                        onChange={(e) => setSalePorcentaje(e.target.value)}
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      >
+                        <option value="0.50">50% / 50% (0.50)</option>
+                        <option value="0.45">45% / 55% (0.45)</option>
+                        <option value="0.40">40% / 60% (0.40)</option>
+                        <option value="0.30">30% / 70% (0.30)</option>
+                        <option value="1.00">100% Estudio (1.00)</option>
+                        <option value="0.00">100% Artista (0.00)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Total */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Precio Cobrado ($)</label>
+                      <input 
+                        type="number"
+                        value={saleTotal}
+                        onChange={(e) => setSaleTotal(e.target.value)}
+                        placeholder="Ej. 1500"
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                        required
+                        min="0"
+                      />
+                    </div>
+                    {/* Propina */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Propina ($)</label>
+                      <input 
+                        type="number"
+                        value={saleTip}
+                        onChange={(e) => setSaleTip(e.target.value)}
+                        placeholder="Propina (opcional)"
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {/* Cliente */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Cliente</label>
+                      <input 
+                        type="text"
+                        value={saleCliente}
+                        onChange={(e) => setSaleCliente(e.target.value)}
+                        placeholder="Nombre cliente"
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      />
+                    </div>
+                    {/* Contacto */}
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">Contacto</label>
+                      <input 
+                        type="text"
+                        value={saleContacto}
+                        onChange={(e) => setSaleContacto(e.target.value)}
+                        placeholder="Teléfono"
+                        className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Cálculos rápidos */}
+                  {parseFloat(saleTotal) > 0 && (
+                    <div className="bg-[#050505] p-3 rounded-lg border border-zinc-800 text-[11px] space-y-1">
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Estudio ({parseFloat(salePorcentaje)*100}%):</span>
+                        <span className="font-bold text-[#d6ad4a]">${(parseFloat(saleTotal)*parseFloat(salePorcentaje)).toFixed(2)} MXN</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-zinc-500">Artista ({ (1 - parseFloat(salePorcentaje))*100}%):</span>
+                        <span className="font-bold text-white">${(parseFloat(saleTotal)*(1-parseFloat(salePorcentaje))).toFixed(2)} MXN</span>
+                      </div>
+                      {parseFloat(saleTip) > 0 && (
+                        <div className="flex justify-between text-green-400">
+                          <span>Propina:</span>
+                          <span className="font-bold">${parseFloat(saleTip).toFixed(2)} MXN</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={salesSubmitting}
+                    className="w-full py-2.5 bg-[#d6ad4a] hover:bg-[#ebd28a] active:scale-95 text-black font-extrabold text-xs uppercase tracking-wider rounded transition-all disabled:opacity-50"
+                  >
+                    {salesSubmitting ? "Registrando..." : "Registrar en Sheets ➔"}
+                  </button>
+                </form>
+              </Panel>
+
+              {/* Table / List Panel */}
+              <Panel>
+                <div className="mb-4 flex flex-wrap gap-2 items-center justify-between">
+                  <h3 className="text-sm font-black uppercase tracking-[0.18em] text-white">
+                    Historial de Ventas
+                  </h3>
+                  
+                  {/* Quick Filters */}
+                  <div className="flex flex-wrap gap-2">
+                    <select
+                      value={saleFilterArtist}
+                      onChange={(e) => setSaleFilterArtist(e.target.value)}
+                      className="p-1 bg-[#050505] border border-zinc-800 rounded text-[10px] focus:outline-none focus:border-[#d6ad4a] text-white"
+                    >
+                      <option value="ALL">Artistas</option>
+                      {uniqueArtists.map((art) => (
+                        <option key={art} value={art}>{art}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={saleFilterMonth}
+                      onChange={(e) => setSaleFilterMonth(e.target.value)}
+                      className="p-1 bg-[#050505] border border-zinc-800 rounded text-[10px] focus:outline-none focus:border-[#d6ad4a] text-white"
+                    >
+                      <option value="ALL">Meses</option>
+                      {monthsMap.map((m) => (
+                        <option key={m.val} value={m.val}>{m.label}</option>
+                      ))}
+                    </select>
+
+                    <select
+                      value={saleFilterType}
+                      onChange={(e) => setSaleFilterType(e.target.value)}
+                      className="p-1 bg-[#050505] border border-zinc-800 rounded text-[10px] focus:outline-none focus:border-[#d6ad4a] text-white"
+                    >
+                      <option value="ALL">Servicios</option>
+                      {uniqueTypes.map((typ) => (
+                        <option key={typ} value={typ}>{typ}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="overflow-y-auto max-h-[400px] border border-zinc-800 rounded-lg">
+                  {salesLoading ? (
+                    <div className="text-center py-10 text-zinc-500">
+                      <div className="w-5 h-5 border border-zinc-800 border-t-[#d6ad4a] rounded-full animate-spin mx-auto mb-2"></div>
+                      <span className="text-[10px] uppercase tracking-wider">Cargando ventas...</span>
+                    </div>
+                  ) : filteredSales.length === 0 ? (
+                    <p className="text-center py-10 text-xs text-zinc-500">Sin transacciones registradas.</p>
+                  ) : (
+                    <table className="w-full text-left text-[11px]">
+                      <thead>
+                        <tr className="bg-black/55 border-b border-zinc-800 font-bold uppercase text-zinc-500">
+                          <th className="p-2 w-[18%]">Fecha</th>
+                          <th className="p-2 w-[22%]">Servicio / Artista</th>
+                          <th className="p-2 w-[15%]">Bruto</th>
+                          <th className="p-2 w-[20%]">Comisión Art.</th>
+                          <th className="p-2 w-[25%]">Neto Estudio</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-zinc-800/50">
+                        {filteredSales.map((sale, idx) => (
+                          <tr key={sale.id || idx} className="hover:bg-white/[0.01]">
+                            <td className="p-2 font-mono font-medium text-zinc-400">{sale.fecha_registro}</td>
+                            <td className="p-2">
+                              <span className="font-bold text-white block text-ellipsis overflow-hidden whitespace-nowrap max-w-[100px]">{sale.artista}</span>
+                              <span className="text-[9px] text-zinc-500 block">{sale.trabajo}</span>
+                            </td>
+                            <td className="p-2 font-semibold text-white">
+                              ${sale.total.toFixed(0)}
+                              {sale.tip > 0 && <span className="text-[9px] text-emerald-400 block font-normal">+${sale.tip.toFixed(0)} tip</span>}
+                            </td>
+                            <td className="p-2 text-zinc-300">${sale.comision_artista.toFixed(0)}</td>
+                            <td className="p-2 font-black text-[#d6ad4a]">${sale.neto_estudio.toFixed(0)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </Panel>
+
             </section>
           </>
         )}

@@ -44,6 +44,8 @@ function doPost(e) {
     var sheetName = "Cuestionarios";
     if (formType === "bitacora") {
       sheetName = "Bitacora";
+    } else if (formType === "ventas") {
+      sheetName = "Ventas";
     }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -128,6 +130,8 @@ function doGet(e) {
     var sheetName = "Cuestionarios";
     if (sheetParam.toLowerCase() === "bitacora") {
       sheetName = "Bitacora";
+    } else if (sheetParam.toLowerCase() === "ventas") {
+      sheetName = "Ventas";
     }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
