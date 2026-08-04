@@ -137,6 +137,7 @@ function importGoogleToAdmin() {
       if (ev.getDateCreated().getTime() <= last) return;   // ya revisado
       if (ev.getTag("mambasSource") === "admin") return;   // la creamos nosotros
       if (ev.isAllDayEvent()) return;                       // bloque de disponibilidad
+      if (ev.getColor() !== "") return;                     // omitir si tiene un color personalizado (no por defecto)
       const title = (ev.getTitle() || "").trim();
       if (!title) return;                                   // sin título = disponibilidad
 
@@ -188,4 +189,98 @@ function sendWhatsApp(ev, header) {
   const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
   Logger.log("CallMeBot: " + resp.getContentText());
   Utilities.sleep(8000); // espacia los mensajes para no saturar CallMeBot (API gratis)
+}
+
+// Función para importar historial de tatuajes desde Enero 2024 (Solo se ejecuta una vez de forma manual)
+// NOTA: NO envía notificaciones de WhatsApp para evitar bloquear tu cuenta con spam.
+function importHistoryFrom2024() {
+  const from = new Date("2024-01-01T00:00:00-05:00");
+  const to = new Date();
+  
+  // Buscar el calendario de Tattoo
+  var tattooCalConf = null;
+  for (var i = 0; i < BOOKING_CALENDARS.length; i++) {
+    if (BOOKING_CALENDARS[i].category === "tattoo") {
+      tattooCalConf = BOOKING_CALENDARS[i];
+      break;
+    }
+  }
+  
+  if (!tattooCalConf) {
+    Logger.log("No se encontró ningún calendario configurado con la categoría 'tattoo'.");
+    return;
+  }
+  
+  const cal = CalendarApp.getCalendarById(tattooCalConf.id);
+  if (!cal) {
+    Logger.log("No se pudo cargar el calendario de tatuajes: " + tattooCalConf.id);
+    return;
+  }
+  
+  Logger.log("Buscando eventos desde 2024 en el calendario de tatuajes...");
+  const events = cal.getEvents(from, to);
+  Logger.log("Total de eventos encontrados en Google: " + events.length);
+  
+  var importedCount = 0;
+  var skippedCount = 0;
+  
+  events.forEach(function (ev, index) {
+    // 1) Filtrar por color de etiqueta (solo importar los que tienen COLOR POR DEFECTO)
+    // getColor() devuelve "" para el color por defecto del calendario.
+    if (ev.getColor() !== "") {
+      skippedCount++;
+      return;
+    }
+    
+    if (ev.getTag("mambasSource") === "admin") return;
+    if (ev.isAllDayEvent()) return;
+    const title = (ev.getTitle() || "").trim();
+    if (!title) return;
+    
+    const start = ev.getStartTime();
+    const payload = {
+      gcal_event_id: ev.getId(),
+      client_name: title,
+      client_phone: "",
+      service: title,
+      category: "tattoo",
+      appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
+      appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
+      notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
+    };
+    
+    try {
+      const res = UrlFetchApp.fetch(SITE + "/api/sync/from-google", {
+        method: "post",
+        contentType: "application/json",
+        headers: authHeaders(),
+        payload: JSON.stringify(payload),
+        muteHttpExceptions: true,
+      });
+      
+      if (res.getResponseCode() === 200) {
+        const j = JSON.parse(res.getContentText());
+        if (!j.skipped) {
+          importedCount++;
+          Logger.log("[" + importedCount + "] Importado con éxito: " + title + " (" + payload.appointment_date + ")");
+        } else {
+          skippedCount++;
+        }
+      } else {
+        Logger.log("Error al importar " + title + ": " + res.getContentText());
+      }
+    } catch (e) {
+      Logger.log("Error de red con el evento: " + title + ". Detalle: " + e);
+    }
+    
+    // Pequeña pausa cada 10 peticiones para no saturar las cuotas de Google o Vercel
+    if (index % 10 === 0) {
+      Utilities.sleep(150);
+    }
+  });
+  
+  Logger.log("--- PROCESO TERMINADO ---");
+  Logger.log("Total procesados: " + events.length);
+  Logger.log("Nuevos importados: " + importedCount);
+  Logger.log("Omitidos (por tener color personalizado o estar repetidos): " + skippedCount);
 }
