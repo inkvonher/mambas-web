@@ -59,11 +59,11 @@ export default function ReporteBitacoraPage() {
   useEffect(() => {
     const query = searchQuery.toLowerCase();
     const filtered = allRecords.filter(record => {
-      const cliente = (record.cliente_nombre || record.nombre || "").toLowerCase();
-      const artista = (record.artista_nombre || record.artista || "").toLowerCase();
-      const loteAgujas = (record.lote_agujas || "").toLowerCase();
-      const loteTintas = (record.lote_tintas || "").toLowerCase();
-      const servicio = (record.tipo_servicio || record.servicio || "").toLowerCase();
+      const cliente = String(record.cliente_nombre || record.nombre || "").toLowerCase();
+      const artista = String(record.artista_nombre || record.artista || "").toLowerCase();
+      const loteAgujas = String(record.lote_agujas || "").toLowerCase();
+      const loteTintas = String(record.lote_tintas || "").toLowerCase();
+      const servicio = String(record.tipo_servicio || record.servicio || "").toLowerCase();
 
       const matchText = 
         cliente.includes(query) || 
@@ -100,7 +100,7 @@ export default function ReporteBitacoraPage() {
   };
 
   const getServiceBadgeClass = (servicio: string) => {
-    const s = servicio.toLowerCase();
+    const s = String(servicio || "").toLowerCase();
     if (s.includes("perforac") || s.includes("pierc")) {
       return "bg-[#FEF3C7] text-[#B45309] border border-[#B45309]/10";
     }
