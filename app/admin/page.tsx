@@ -761,6 +761,12 @@ export default function AdminPage() {
               >
                 Bitácora
               </Link>
+              <Link
+                href="/admin/ventas"
+                className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)] inline-flex items-center"
+              >
+                Registrar Venta
+              </Link>
               <button
                 onClick={openPasswordModal}
                 className="min-h-[38px] shrink-0 rounded-lg border border-[#d6ad4a]/50 px-2.5 py-1.5 text-[10px] sm:px-4 sm:py-2 sm:text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] transition duration-200 hover:-translate-y-0.5 hover:bg-[#d6ad4a] hover:text-black hover:shadow-[0_18px_44px_rgba(214,173,74,0.22)]"
