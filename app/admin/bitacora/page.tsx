@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-// SCRIPT_URL de Google Apps Script. 
-// REEMPLAZAR CON TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec"; 
+// Endpoint de base de datos
+const PROXY_URL = "/api/sheets-proxy";
 
 export default function BitacoraPage() {
   const [fechaServicio, setFechaServicio] = useState("");
@@ -42,15 +41,22 @@ export default function BitacoraPage() {
     };
 
     try {
-      // Mandamos en no-cors
-      await fetch(SCRIPT_URL, {
+      const response = await fetch(PROXY_URL, {
         method: "POST",
-        mode: "no-cors",
         headers: {
           "Content-Type": "text/plain",
         },
         body: JSON.stringify(dataObject),
       });
+
+      if (!response.ok) {
+        throw new Error("El servidor proxy respondió con error.");
+      }
+
+      const resData = await response.json();
+      if (resData.status !== "success") {
+        throw new Error(resData.message || "Error al registrar en Google Sheets.");
+      }
 
       // Asumimos éxito
       setTimeout(() => {

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec";
+const PROXY_URL = "/api/sheets-proxy";
 
 function PrintPageContent() {
   const searchParams = useSearchParams();
@@ -40,7 +40,7 @@ function PrintPageContent() {
     if (id) {
       setLoading(true);
       setErrorMsg("");
-      fetch(`${SCRIPT_URL}?sheet=cuestionarios&id=${id}`)
+      fetch(`${PROXY_URL}?sheet=cuestionarios&id=${id}`)
         .then((response) => {
           if (!response.ok) throw new Error("Error de red");
           return response.json();

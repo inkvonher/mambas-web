@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-// SCRIPT_URL de Google Apps Script. 
-// REEMPLAZAR CON TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec"; 
+// Endpoint de base de datos
+const PROXY_URL = "/api/sheets-proxy"; 
 
 interface BitacoraRecord {
   id: number;
@@ -36,7 +35,7 @@ export default function ReporteBitacoraPage() {
     setLoading(true);
     setErrorMsg("");
     try {
-      const response = await fetch(`${SCRIPT_URL}?sheet=bitacora`);
+      const response = await fetch(`${PROXY_URL}?sheet=bitacora`);
       if (!response.ok) {
         throw new Error("Error al conectar con la base de datos de Sheets.");
       }

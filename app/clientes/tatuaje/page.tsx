@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// SCRIPT_URL de Google Apps Script. 
-// REEMPLAZAR CON TU URL DE IMPLEMENTACIÓN DE GOOGLE APPS SCRIPT
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec"; 
+// Endpoint de base de datos
+const PROXY_URL = "/api/sheets-proxy"; 
 
 // Teléfono de recepción de Mambas para el WhatsApp
 const RECEPCION_WHATSAPP = "5219841820414"; 
@@ -275,10 +274,10 @@ export default function TatuajePage() {
 
     try {
       // Intentar guardar con CORS habilitado para leer el ID retornado por Google Sheets
-      const response = await fetch(SCRIPT_URL, {
+      const response = await fetch(PROXY_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain", // Simple request (evita preflight OPTIONS)
+          "Content-Type": "text/plain",
         },
         body: JSON.stringify(dataObject),
       });
@@ -302,9 +301,8 @@ export default function TatuajePage() {
       
       // Fallback: Asegurar guardado en Sheets usando no-cors
       try {
-        await fetch(SCRIPT_URL, {
+        await fetch(PROXY_URL, {
           method: "POST",
-          mode: "no-cors",
           headers: {
             "Content-Type": "text/plain",
           },

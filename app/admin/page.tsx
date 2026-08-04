@@ -120,10 +120,10 @@ export default function AdminPage() {
   const [saleFilterType, setSaleFilterType] = useState("ALL");
 
   const fetchSales = async () => {
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec";
+    const PROXY_URL = "/api/sheets-proxy";
     try {
       setSalesLoading(true);
-      const response = await fetch(`${SCRIPT_URL}?sheet=ventas`);
+      const response = await fetch(`${PROXY_URL}?sheet=ventas`);
       const data = await response.json();
       if (Array.isArray(data)) {
         const formatted = data.map((item: any) => ({
@@ -172,7 +172,7 @@ export default function AdminPage() {
     e.preventDefault();
     if (salesSubmitting) return;
 
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec";
+    const PROXY_URL = "/api/sheets-proxy";
     const totalVal = parseFloat(saleTotal) || 0;
     const tipVal = parseFloat(saleTip) || 0;
     const percentageVal = parseFloat(salePorcentaje) || 0.50;
@@ -201,7 +201,7 @@ export default function AdminPage() {
 
     try {
       setSalesSubmitting(true);
-      const response = await fetch(SCRIPT_URL, {
+      const response = await fetch(PROXY_URL, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",

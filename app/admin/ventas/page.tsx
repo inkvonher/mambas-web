@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzRmqcIxfVpta89UlgPPN91qQse8-crJ-_Gvugdf9-1ithLE88ey0XOxzAnoFlhel0/exec";
+const PROXY_URL = "/api/sheets-proxy";
 
 export default function RegisterSalePage() {
   const [fecha, setFecha] = useState(() => new Date().toISOString().split("T")[0]);
@@ -49,7 +49,7 @@ export default function RegisterSalePage() {
 
     try {
       setSubmitting(true);
-      const response = await fetch(SCRIPT_URL, {
+      const response = await fetch(PROXY_URL, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",
