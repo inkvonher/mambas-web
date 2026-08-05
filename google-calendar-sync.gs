@@ -10,10 +10,11 @@ const SYNC_SECRET = "PEGA_AQUI_TU_SYNC_SECRET";   // el mismo que pusiste en Ver
 const TIMEZONE = "America/Cancun";                // Cancún/Playa = UTC-5 todo el año
 const TZ_OFFSET = "-05:00";
 
-// Avisos por WhatsApp (CallMeBot)
+// Celulares para avisos de WhatsApp (CallMeBot)
 const BARBER_PHONE = "+5219843675261";            // Celular de la Barbería
+const BARBER_APIKEY = "8604341";                  // API Key de Barbería
 const TATTOO_PHONE = "+5219841820414";            // Celular de Recepción / Tattoo
-const CALLMEBOT_APIKEY = "8604341";
+const TATTOO_APIKEY = "PEGA_AQUI_TU_API_KEY";     // API Key de Recepción (Tattoo)
 
 // === CONFIGURA AQUÍ TODOS LOS CALENDARIOS QUE DESEAS ASOCIAR ===
 // Puedes agregar tantos calendarios como quieras. El sistema los leerá y los fusionará 
@@ -182,14 +183,15 @@ function sendWhatsApp(ev, header, category) {
   msg += "Fecha: " + fecha + "\n";
   if (desc) msg += "Detalle: " + desc.substring(0, 250);
 
-  // Elegir número de destino dinámicamente según la categoría de la cita
+  // Elegir número de destino y API Key dinámicamente según la categoría de la cita
   const targetPhone = (category === "tattoo") ? TATTOO_PHONE : BARBER_PHONE;
+  const targetApiKey = (category === "tattoo") ? TATTOO_APIKEY : BARBER_APIKEY;
 
   const url =
     "https://api.callmebot.com/whatsapp.php?phone=" +
     encodeURIComponent(targetPhone) +
     "&text=" + encodeURIComponent(msg) +
-    "&apikey=" + encodeURIComponent(CALLMEBOT_APIKEY);
+    "&apikey=" + encodeURIComponent(targetApiKey);
 
   const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
   Logger.log("CallMeBot (" + targetPhone + "): " + resp.getContentText());
