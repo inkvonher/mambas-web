@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Cinzel, Outfit } from "next/font/google";
+import WebMcpProvider from "./components/WebMcpProvider";
 import "./globals.css";
 
 const cinzel = Cinzel({
@@ -132,7 +133,13 @@ export default function RootLayout({
       className={`${cinzel.variable} ${outfit.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
+        <link rel="api-catalog" href="/.well-known/api-catalog" />
+        <link rel="alternate" type="text/markdown" href="/llms.txt" />
+      </head>
       <body className="min-h-full flex flex-col bg-black text-white font-sans">
+        <WebMcpProvider />
         {children}
         <Analytics />
       </body>

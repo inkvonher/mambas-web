@@ -180,6 +180,44 @@ const structuredData = {
         },
       ],
     },
+    {
+      "@type": "FAQPage",
+      "@id": `${siteUrl}/#faq`,
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: "¿Dónde está ubicado el estudio Mambas Tattoo & Cuts en Playa del Carmen?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Estamos ubicados en Calle 1 Sur esquina con Avenida 25 Sur, en el Centro de Playa del Carmen, Quintana Roo, a solo 5 minutos a pie de la terminal marítima del ferry a Cozumel.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Qué servicios ofrece Mambas Tattoo & Cuts?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Ofrecemos tatuajes personalizados (blackwork, fineline, realismo, cover-ups), body piercing con joyería estéril de titanio grado implante (certificados ante COFEPRIS) y barbería tradicional mexicana con ritual de toalla caliente y navaja.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Cómo puedo agendar una cita o cotizar un tatuaje?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Puedes cotizar y agendar directamente por WhatsApp al +52 984 367 5261 enviando tu idea de diseño, medidas aproximadas en centímetros y zona del cuerpo.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Aceptan clientes sin cita previa (walk-ins)?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Sí, aceptamos walk-ins según la disponibilidad del día para cortes, piercings o tatuajes pequeños y medianos. Para proyectos grandes recomendamos agendar con anticipación.",
+          },
+        },
+      ],
+    },
   ],
 };
 

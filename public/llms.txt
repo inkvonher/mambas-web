@@ -1,0 +1,51 @@
+# Mambas Tattoo & Cuts
+
+> Estudio premium de tatuajes personalizados, piercing profesional y barbería tradicional mexicana en el centro de Playa del Carmen, Quintana Roo, México. Certificados oficialmente ante COFEPRIS.
+
+## Información Principal
+- **Nombre:** Mambas Tattoo & Cuts
+- **Ubicación:** Calle 1 Sur esquina Av. 25 Sur, Colonia Centro, C.P. 77710, Playa del Carmen, Quintana Roo, México.
+- **Punto de referencia:** A solo 5 minutos caminando de la 5ta Avenida y de la terminal del ferry a Cozumel.
+- **Teléfonos de contacto / WhatsApp:** [+52 984 367 5261](https://wa.me/529843675261) | [+52 984 182 0414](https://wa.me/529841820414)
+- **Sitio Web Oficial:** https://mambaspdc.com
+- **Instagram:** [@mambas.tattoocuts](https://www.instagram.com/mambas.tattoocuts/) | [@mambas_barberia.pdc](https://www.instagram.com/mambas_barberia.pdc/)
+
+## Horarios de Atención
+- **Lunes a Sábado:** 09:00 - 21:00 (09:00 AM - 09:00 PM)
+- **Domingo:** 12:00 - 21:00 (12:00 PM - 09:00 PM)
+- *Walk-ins bienvenidos; previa cita recomendada para sesiones de tatuaje grandes.*
+
+## Servicios Principales
+
+### 1. Tatuajes Profesionales y Personalizados
+- **Estilos:** Blackwork, Fineline (línea fina), Microrealismo, Realismo en sombras/color, Tradicional / Neotradicional, Lettering, Cobertores (Cover-ups) y Restauración de tatuajes antiguos.
+- **Higiene y Salud:** Estudio certificado ante COFEPRIS. Todo el material punzocortante es nuevo, estéril y 100% desechable de un solo uso. Uso de tintas veganas premium y antisépticos de grado médico.
+- **Diseños exclusivos:** Asesoría personalizada y diseño a medida antes de cada sesión.
+
+### 2. Body Piercing
+- **Zonas:** Lóbulo, hélice, tragus, conch, industrial, septum, nostril, ceja, ombligo, pezón, labio, lengua, microdermales.
+- **Material de joyería:** Titanio grado implante (ASTM F-136) y acero quirúrgico 316L libre de níquel, garantizando biocompatibilidad y rápida cicatrización.
+- **Acompañamiento:** Guía de cuidados posteriores y revisiones de seguimiento incluidas.
+
+### 3. Barbería Tradicional Mexicana
+- **Cortes de Cabello:** Clásicos, fades (desvanecidos altos, medios, bajos), taper fade, cortes a tijera y texturizados modernos.
+- **Ritual de Barba Mambas:** Tratamiento de toalla caliente aromatizada, aceites esenciales pre-afeitado, navaja libre y bálsamo refrescante post-afeitado.
+- **Tratamientos adicionales:** Mascarilla negra purificante de carbón activado, exfoliación facial y perfilado de cejas.
+
+## Preguntas Frecuentes (FAQ)
+
+### ¿Cómo agendar una cita o cotizar un tatuaje?
+Se puede cotizar enviando una referencia, medidas aproximadas en centímetros y zona del cuerpo a través del botón de WhatsApp en la web o escribiendo a [+52 984 367 5261](https://wa.me/529843675261).
+
+### ¿Aceptan tarjetas y pagos en efectivo / dólares?
+Sí, se aceptan pagos en efectivo (pesos mexicanos MXN y dólares estadounidenses USD), tarjetas de débito/crédito y transferencias bancarias (SPEI).
+
+### ¿Dónde están ubicados respecto al ferry de Cozumel?
+El estudio se encuentra a unas 5 cuadras (5 minutos a pie) de la terminal marítima del ferry a Cozumel, en la esquina de Calle 1 Sur con Avenida 25 Sur.
+
+## Enlaces de Descubrimiento de Agentes (AEO / Machine-Readable)
+- [Catálogo API](https://mambaspdc.com/.well-known/api-catalog)
+- [MCP Server Card](https://mambaspdc.com/.well-known/mcp/server-card.json)
+- [Agent Skills Discovery](https://mambaspdc.com/.well-known/agent-skills/index.json)
+- [AI Catalog (ARD)](https://mambaspdc.com/.well-known/ai-catalog.json)
+- [Auth Metadata](https://mambaspdc.com/auth.md)

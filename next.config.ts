@@ -31,6 +31,13 @@ const contentSecurityPolicy = [
   .filter(Boolean)
   .join("; ");
 
+const agentLinkHeader = [
+  '</.well-known/api-catalog>; rel="api-catalog"',
+  '</.well-known/ai-catalog.json>; rel="ai-catalog"',
+  '</llms.txt>; rel="alternate"; type="text/markdown"',
+  '</auth.md>; rel="service-doc"',
+].join(", ");
+
 const securityHeaders = [
   { key: "Content-Security-Policy", value: contentSecurityPolicy },
   {
@@ -45,6 +52,7 @@ const securityHeaders = [
     value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
   },
   { key: "X-DNS-Prefetch-Control", value: "on" },
+  { key: "Link", value: agentLinkHeader },
 ];
 
 const nextConfig: NextConfig = {
@@ -54,6 +62,14 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/.well-known/:path*",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Methods", value: "GET, OPTIONS" },
+          { key: "Access-Control-Allow-Headers", value: "*" },
+        ],
       },
     ];
   },

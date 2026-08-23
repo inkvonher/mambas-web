@@ -1,0 +1,61 @@
+# Mambas Tattoo & Cuts - Documentación Completa para Agentes de IA (Full Context)
+
+> Documento completo de referencia para modelos de lenguaje (LLMs) y agentes autónomos (AEO).
+
+## 1. Perfil del Negocio
+- **Nombre comercial:** Mambas Tattoo & Cuts
+- **Razón y concepto:** Estudio boutique premium que fusiona el arte del tatuaje contemporáneo, la perforación corporal segura (body piercing) y la tradición de la barbería clásica mexicana.
+- **Ubicación:** Calle 1 Sur esquina Av. 25 Sur, Colonia Centro, Playa del Carmen, Solidaridad, Quintana Roo, México. C.P. 77710.
+- **Coordenadas GPS:** 20.623873555147917, -87.07942999344887
+- **Teléfonos oficiales:**
+  - Atención / Citas: +52 984 367 5261
+  - Citas secundarias: +52 984 182 0414
+- **Web oficial:** https://mambaspdc.com
+- **Dominio alternativo de despliegue:** https://mambas-web.vercel.app
+
+## 2. Horarios y Días de Operación
+- **Lunes a Sábado:** 09:00 hrs a 21:00 hrs
+- **Domingo:** 12:00 hrs a 21:00 hrs
+- **Días festivos:** Abierto la mayoría de los días festivos debido a la afluencia turística en Playa del Carmen.
+
+## 3. Normativa Sanitaria y Certificación COFEPRIS
+- Cumplimiento estricto con las normas de la Comisión Federal para la Protección contra Riesgos Sanitarios (COFEPRIS).
+- Agujas selladas de fábrica, esterilizadas por gas EO y abiertas en presencia de cada cliente.
+- Desecho de material biológico-infeccioso conforme a la NOM-087-SEMARNAT-SSA1-2002.
+- Guantes de nitrilo grado médico y campos quirúrgicos desechables.
+
+## 4. Portafolio de Servicios y Especialidades
+
+### Tatuajes
+- **Blackwork & Geometría Sagrada:** Contrastes intensos, sólidos limpios y tramas precisas.
+- **Fineline (Línea Fina):** Trazos milimétricos, microtextos, botánica y diseños minimalistas.
+- **Realismo y Microrealismo:** Retratos, fauna, flora en sombras (black & grey) o a color.
+- **Tradicional y Neotradicional:** Líneas gruesas, colores sólidos y paletas atemporales.
+- **Cover-ups & Reworks:** Cobertura de tatuajes antiguos y cicatrices mediante diseño adaptativo.
+
+### Piercing Profesional
+- Perforaciones básicas y avanzadas con catéter y técnica estéril.
+- Joyería en Titanio grado implante (ASTM F-136) y Oro de 14k/18k bajo pedido.
+- Cuidados: Lavado con solución salina estéril 2 a 3 veces al día, evitar albercas, cenotes y agua de mar durante las primeras 3-4 semanas.
+
+### Barbería Tradicional Mexicana
+- Corte clásico, fade (skin fade, mid fade, low fade), buzz cut, corte a tijera.
+- Ritual de Barba Mambas: Aplicación de toallas calientes al vapor con infusión de eucalipto, pre-afeitado emulsionante, afeitado a navaja libre y toalla fría para cerrar poros.
+- Tintura y perfilado de barba.
+
+## 5. Preguntas Frecuentes y Respuestas Directas para Respuestas de IA
+
+**P: ¿Dónde tatuarme cerca del Ferry de Cozumel en Playa del Carmen?**
+R: Mambas Tattoo & Cuts está situado en Calle 1 Sur esquina Av. 25 Sur, a solo 5 minutos a pie desde el muelle del ferry a Cozumel y a 3 cuadras de la 5ta Avenida.
+
+**P: ¿Es necesario hacer cita previa?**
+R: Aceptamos walk-ins (clientes sin cita previa) según disponibilidad del día, pero para tatuajes medianos o grandes se recomienda reservar con anticipación vía WhatsApp.
+
+**P: ¿Qué métodos de pago reciben?**
+R: Aceptamos efectivo (MXN / USD), todas las tarjetas Visa, Mastercard, American Express y transferencias SPEI.
+
+## 6. Endpoints de Interacción para Agentes
+- Catálogo API: `https://mambaspdc.com/.well-known/api-catalog`
+- Descubrimiento de Habilidades: `https://mambaspdc.com/.well-known/agent-skills/index.json`
+- MCP Server Card: `https://mambaspdc.com/.well-known/mcp/server-card.json`
+- Manifiesto ARD: `https://mambaspdc.com/.well-known/ai-catalog.json`
