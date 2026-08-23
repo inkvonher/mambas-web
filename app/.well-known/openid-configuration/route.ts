@@ -6,20 +6,17 @@ const siteUrl = (process.env.SITE_URL || "https://mambaspdc.com").replace(
 );
 
 export async function GET() {
-  const oauthServerMetadata = {
+  const oidcMetadata = {
     issuer: siteUrl,
     authorization_endpoint: `${siteUrl}/api/auth/authorize`,
     token_endpoint: `${siteUrl}/api/auth/token`,
     jwks_uri: `${siteUrl}/.well-known/jwks.json`,
     registration_endpoint: `${siteUrl}/api/auth/register`,
     revocation_endpoint: `${siteUrl}/api/auth/revoke`,
-    grant_types_supported: [
-      "client_credentials",
-      "urn:ietf:params:oauth:grant-type:token-exchange",
-      "anonymous",
-    ],
-    response_types_supported: ["token"],
-    scopes_supported: ["public:read", "appointments:create"],
+    response_types_supported: ["token", "id_token"],
+    subject_types_supported: ["public"],
+    id_token_signing_alg_values_supported: ["RS256"],
+    scopes_supported: ["openid", "public:read", "appointments:create"],
     token_endpoint_auth_methods_supported: ["none", "client_secret_post"],
     agent_auth: {
       skill: `${siteUrl}/auth.md`,
@@ -43,7 +40,7 @@ export async function GET() {
     },
   };
 
-  return NextResponse.json(oauthServerMetadata, {
+  return NextResponse.json(oidcMetadata, {
     status: 200,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
