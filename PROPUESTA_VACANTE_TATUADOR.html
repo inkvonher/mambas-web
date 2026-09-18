@@ -681,11 +681,11 @@
             </div>
           </div>
 
-          <button type="button" id="pdfBtn" class="btn-primary">
-            📄 Descargar Documento Formal en PDF / Imprimir
+          <button type="button" id="wsBtn" class="btn-whatsapp" style="margin-top: 0; margin-bottom: 0.75rem;">
+            📲 ✍️ Firmar y Enviar al WhatsApp de Mambas
           </button>
-          <button type="button" id="wsBtn" class="btn-whatsapp">
-            📲 Confirmar y Enviar a Mambas por WhatsApp
+          <button type="button" id="pdfBtn" class="btn-primary">
+            📄 Descargar Copia Formal en PDF / Imprimir
           </button>
         </form>
       </div>
@@ -801,6 +801,7 @@
       document.getElementById('signedAlert').style.display = 'none';
     });
 
+    // PDF Export
     document.getElementById('pdfBtn').addEventListener('click', () => {
       const name = document.getElementById('artistName').value.trim();
       if (!name) {
@@ -814,9 +815,11 @@
       }
       
       document.getElementById('signedAlert').style.display = 'block';
+      document.getElementById('signedAlert').textContent = '✓ Documento firmado digitalmente. Generando PDF...';
       window.print();
     });
 
+    // Send to Mambas WhatsApp (529841820414)
     document.getElementById('wsBtn').addEventListener('click', () => {
       const name = document.getElementById('artistName').value.trim();
       const phone = document.getElementById('artistPhone').value.trim();
@@ -824,26 +827,38 @@
       const date = document.getElementById('signDate').value;
 
       if (!name) {
-        alert('Por favor ingresa tu nombre completo.');
+        alert('Por favor ingresa tu nombre completo antes de enviar.');
         document.getElementById('artistName').focus();
         return;
       }
 
+      if (!hasSignature) {
+        alert('Por favor dibuja tu firma digital en el recuadro antes de enviar tu respuesta.');
+        return;
+      }
+
+      document.getElementById('signedAlert').style.display = 'block';
+      document.getElementById('signedAlert').textContent = '✓ Firma digital registrada. Redirigiendo al WhatsApp de Mambas...';
+
       const textLines = [
-        '👋 Hola equipo de Mambas Tattoo & Cuts.',
+        '👋 *Hola equipo de Mambas Tattoo & Cuts,*',
         '',
-        'He revisado y firmado la *Propuesta de Colaboración y Normas del Estudio*.',
+        'He revisado y *firmado digitalmente* la *Propuesta de Colaboración y Normas del Estudio*. Acepto los términos y condiciones.',
         '',
-        '👤 *Artista:* ' + name,
-        '📱 *WhatsApp:* ' + (phone || 'No especificado'),
-        '📸 *Instagram:* ' + (ig || 'No especificado'),
-        '📅 *Fecha:* ' + date,
+        '📋 *DATOS DEL ARTISTA:*',
+        '• *Nombre Completo:* ' + name,
+        '• *WhatsApp:* ' + (phone || 'No especificado'),
+        '• *Instagram:* ' + (ig || 'No especificado'),
+        '• *Fecha de Conformidad:* ' + date,
+        '• *Estado:* Firmado Digitalmente ✓',
         '',
-        'Quedo atento para coordinar la entrevista y sesión demostrativa.'
+        'Quedo atento(a) para coordinar la entrevista presencial y sesión práctica. ¡Muchas gracias!'
       ];
 
       const msg = encodeURIComponent(textLines.join('\n'));
-      window.open('https://api.whatsapp.com/send?text=' + msg, '_blank');
+      const waUrl = 'https://wa.me/529841820414?text=' + msg;
+      
+      window.open(waUrl, '_blank');
     });
   </script>
 </body>
