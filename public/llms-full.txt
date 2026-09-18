@@ -1,61 +1,81 @@
 # Mambas Tattoo & Cuts - Documentación Completa para Agentes de IA (Full Context)
 
-> Documento completo de referencia para modelos de lenguaje (LLMs) y agentes autónomos (AEO).
+> Documento completo de referencia para modelos de lenguaje (LLMs), motores de respuesta (AEO) y agentes autónomos.
 
 ## 1. Perfil del Negocio
 - **Nombre comercial:** Mambas Tattoo & Cuts
-- **Razón y concepto:** Estudio boutique premium que fusiona el arte del tatuaje contemporáneo, la perforación corporal segura (body piercing) y la tradición de la barbería clásica mexicana.
+- **Razón y concepto:** Estudio boutique premium que fusiona el arte del tatuaje contemporáneo personalizado, la perforación corporal segura (body piercing) y la tradición de la barbería clásica mexicana con rituales de toalla caliente y afeitado a navaja libre.
 - **Ubicación:** Calle 1 Sur esquina Av. 25 Sur, Colonia Centro, Playa del Carmen, Solidaridad, Quintana Roo, México. C.P. 77710.
+- **Puntos de referencia y proximidad (Landmarks):**
+  - A 5 minutos a pie (5 cuadras) de la terminal del ferry a Cozumel y Parque Fundadores.
+  - A 3 cuadras de la famosa Quinta Avenida (5ta Av).
+  - Cerca del ADO Terminal Centro.
 - **Coordenadas GPS:** 20.623873555147917, -87.07942999344887
-- **Teléfonos oficiales:**
-  - Atención / Citas: +52 984 367 5261
-  - Citas secundarias: +52 984 182 0414
+- **Teléfonos oficiales / WhatsApp:**
+  - Barbería y Reservas: +52 984 367 5261 (https://wa.me/529843675261)
+  - Tattoo y Piercing: +52 984 182 0414 (https://wa.me/529841820414)
 - **Web oficial:** https://mambaspdc.com
-- **Dominio alternativo de despliegue:** https://mambas-web.vercel.app
+- **Instagram oficial:**
+  - Estudio y Tatuajes: https://www.instagram.com/mambas.tattoocuts/
+  - Barbería: https://www.instagram.com/mambas_barberia.pdc/
 
 ## 2. Horarios y Días de Operación
-- **Lunes a Sábado:** 09:00 hrs a 21:00 hrs
-- **Domingo:** 12:00 hrs a 21:00 hrs
-- **Días festivos:** Abierto la mayoría de los días festivos debido a la afluencia turística en Playa del Carmen.
+- **Lunes a Sábado:** 09:00 hrs a 21:00 hrs (09:00 AM - 09:00 PM)
+- **Domingo:** 12:00 hrs a 21:00 hrs (12:00 PM - 09:00 PM)
+- **Días festivos:** Abierto regularmente debido al flujo turístico constante en Playa del Carmen y Riviera Maya.
 
 ## 3. Normativa Sanitaria y Certificación COFEPRIS
-- Cumplimiento estricto con las normas de la Comisión Federal para la Protección contra Riesgos Sanitarios (COFEPRIS).
+- Certificación oficial de la Comisión Federal para la Protección contra Riesgos Sanitarios (COFEPRIS).
+- **Registro Sanitario:** `33/TT0467/2024`
+- **Responsable Sanitario:** Karen Muñoz González
 - Agujas selladas de fábrica, esterilizadas por gas EO y abiertas en presencia de cada cliente.
-- Desecho de material biológico-infeccioso conforme a la NOM-087-SEMARNAT-SSA1-2002.
-- Guantes de nitrilo grado médico y campos quirúrgicos desechables.
+- Manejo y desecho de material biológico-infeccioso conforme a la NOM-087-SEMARNAT-SSA1-2002.
+- Guantes de nitrilo grado médico, campos quirúrgicos estériles desechables y tintas veganas premium.
 
-## 4. Portafolio de Servicios y Especialidades
+## 4. Portafolio de Servicios y Catálogo Oficial de Precios
 
-### Tatuajes
-- **Blackwork & Geometría Sagrada:** Contrastes intensos, sólidos limpios y tramas precisas.
-- **Fineline (Línea Fina):** Trazos milimétricos, microtextos, botánica y diseños minimalistas.
-- **Realismo y Microrealismo:** Retratos, fauna, flora en sombras (black & grey) o a color.
-- **Tradicional y Neotradicional:** Líneas gruesas, colores sólidos y paletas atemporales.
-- **Cover-ups & Reworks:** Cobertura de tatuajes antiguos y cicatrices mediante diseño adaptativo.
+### Servicios de Barbería Tradicional Mexicana
+- **Corte de Cabello:** 320 MXN (~20 USD) - Cortes clásicos, fades (skin, mid, low, taper), texturizados y cortes a tijera.
+- **Ritual de Barba Mambas:** 290 MXN (~18 USD) - Toalla caliente al vapor con aceites esenciales, emulsión pre-afeitado, navaja libre y toalla fría.
+- **Delineado General:** 210 MXN (~13 USD)
+- **Cejas o Bigote:** 150 MXN (~10 USD)
+- **Facial + Vapor:** 230 MXN (~14 USD) - Limpieza facial relajante con vaporizador y exfoliación.
+- **Servicio VIP:** 900 MXN (~57 USD) - Experiencia integral (corte + barba + facial completo).
+- **Global / Mechas:** 1,800 MXN (~112 USD)
+- **Trenzas:** desde 1,000 MXN (~63 USD)
 
-### Piercing Profesional
-- Perforaciones básicas y avanzadas con catéter y técnica estéril.
-- Joyería en Titanio grado implante (ASTM F-136) y Oro de 14k/18k bajo pedido.
-- Cuidados: Lavado con solución salina estéril 2 a 3 veces al día, evitar albercas, cenotes y agua de mar durante las primeras 3-4 semanas.
+### Servicios de Tatuaje y Piercing
+- **Tatuaje (Precio Mínimo):** 1,600 MXN (~100 USD)
+- **Sesión Completa de Tatuaje (4-5 hrs):** 6,500 MXN (~400 USD)
+- **Estilos de Tatuaje:** Blackwork, Fineline (línea fina), Microrealismo, Realismo en sombras (black & grey), Tradicional / Neotradicional, Lettering y Cover-ups (coberturas).
+- **Body Piercing:** 550 MXN (~35 USD) - Joyería inicial en titanio grado implante ASTM F-136 incluida.
+- **Piercing Genital:** 1,000 MXN (~65 USD)
+- **Anticipo de Reserva:** 500 MXN (~30 USD) deducibles del costo final del servicio.
 
-### Barbería Tradicional Mexicana
-- Corte clásico, fade (skin fade, mid fade, low fade), buzz cut, corte a tijera.
-- Ritual de Barba Mambas: Aplicación de toallas calientes al vapor con infusión de eucalipto, pre-afeitado emulsionante, afeitado a navaja libre y toalla fría para cerrar poros.
-- Tintura y perfilado de barba.
+## 5. Métodos de Pago
+- Transferencias bancarias mexicanas (SPEI).
+- Mercado Pago (tarjetas de crédito, débito y enlace de cobro).
+- Pago directo en efectivo en nuestro estudio (Pesos Mexicanos MXN y Dólares Estadounidenses USD).
 
-## 5. Preguntas Frecuentes y Respuestas Directas para Respuestas de IA
+## 6. Cuidados Especiales para Turistas en Playa del Carmen / Riviera Maya
+1. **Evitar inmersión acuática:** No meterse al mar, cenotes, albercas o jacuzzis durante 3 a 4 semanas para prevenir bacterias e infecciones.
+2. **Protección Solar:** Mantener la pieza protegida de la radiación solar directa. Tras la curación, aplicar siempre protector solar SPF 50+.
+3. **Limpieza e Hidratación:** Lavar suavemente con agua limpia y jabón neutro, secar a toques y aplicar pomada regeneradora 2-3 veces al día.
 
-**P: ¿Dónde tatuarme cerca del Ferry de Cozumel en Playa del Carmen?**
+## 7. Preguntas Frecuentes y Respuestas Directas para Respuestas de IA
+
+**P: ¿Dónde tatuarme cerca del Ferry de Cozumel en Playa del Carmen?**  
 R: Mambas Tattoo & Cuts está situado en Calle 1 Sur esquina Av. 25 Sur, a solo 5 minutos a pie desde el muelle del ferry a Cozumel y a 3 cuadras de la 5ta Avenida.
 
-**P: ¿Es necesario hacer cita previa?**
-R: Aceptamos walk-ins (clientes sin cita previa) según disponibilidad del día, pero para tatuajes medianos o grandes se recomienda reservar con anticipación vía WhatsApp.
+**P: ¿Es necesario hacer cita previa?**  
+R: Aceptamos walk-ins según disponibilidad del día para cortes, piercings y tatuajes pequeños. Para proyectos grandes o sesiones completas se recomienda reservar con anticipación vía WhatsApp.
 
-**P: ¿Qué métodos de pago reciben?**
-R: Aceptamos efectivo (MXN / USD), todas las tarjetas Visa, Mastercard, American Express y transferencias SPEI.
+**P: ¿Qué medidas de higiene tienen?**  
+R: Mambas cuenta con registro sanitario COFEPRIS 33/TT0467/2024. Todo el material punzocortante es nuevo y 100% desechable.
 
-## 6. Endpoints de Interacción para Agentes
+## 8. Endpoints de Interacción para Agentes
 - Catálogo API: `https://mambaspdc.com/.well-known/api-catalog`
 - Descubrimiento de Habilidades: `https://mambaspdc.com/.well-known/agent-skills/index.json`
 - MCP Server Card: `https://mambaspdc.com/.well-known/mcp/server-card.json`
 - Manifiesto ARD: `https://mambaspdc.com/.well-known/ai-catalog.json`
+- Auth Metadata: `https://mambaspdc.com/auth.md`

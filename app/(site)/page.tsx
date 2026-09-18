@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import MapboxMap from "./MapboxMap";
 import IntroOverlay from "./IntroOverlay";
+import StoreSection from "./StoreSection";
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
@@ -143,7 +144,7 @@ export default function Home() {
             aria-label="Primary site navigation"
             className="hidden items-center gap-6 lg:flex"
           >
-            {["inicio", "barberia", "tattoo", "anticipo", "lealtad", "ubicacion"].map(
+            {["inicio", "barberia", "tattoo", "tienda", "anticipo", "lealtad", "ubicacion"].map(
               (id, index) => (
                 <button
                   key={id}
@@ -203,7 +204,7 @@ export default function Home() {
             className="fixed inset-x-0 top-16 z-40 border-b border-[#d6ad4a]/20 bg-black/95 px-6 py-8 backdrop-blur-2xl lg:hidden"
           >
             <nav className="flex flex-col gap-6">
-              {["inicio", "barberia", "tattoo", "anticipo", "lealtad", "ubicacion"].map(
+              {["inicio", "barberia", "tattoo", "tienda", "anticipo", "lealtad", "ubicacion"].map(
                 (id, index) => (
                   <button
                     key={id}
@@ -275,6 +276,12 @@ export default function Home() {
                         className="btn-outline"
                       >
                         {t.tattooCta}
+                      </button>
+                      <button
+                        onClick={() => scrollTo("tienda")}
+                        className="btn-outline border-[#d6ad4a]/60 text-[#d6ad4a] hover:bg-[#d6ad4a]/10"
+                      >
+                        {t.storeCta}
                       </button>
                     </div>
                   </div>
@@ -530,6 +537,10 @@ export default function Home() {
               </div>
               <ContactStrip kind="tattoo" language={language} />
             </section>
+          )}
+
+          {activeSection === "tienda" && (
+            <StoreSection language={language} />
           )}
 
           {activeSection === "anticipo" && (

@@ -16,15 +16,35 @@ export async function GET() {
     <priority>1.0</priority>
     <image:image>
       <image:loc>${siteUrl}/gallery/mbs3.jpg</image:loc>
-      <image:title>Mambas Tattoo &amp; Cuts Playa del Carmen</image:title>
+      <image:title>Mambas Tattoo &amp; Cuts Playa del Carmen - Estudio y Barbería</image:title>
+      <image:caption>Fachada de Mambas Tattoo and Cuts en el centro de Playa del Carmen cerca del ferry a Cozumel</image:caption>
     </image:image>
     <image:image>
       <image:loc>${siteUrl}/gallery/tattoo/tatuaje1.png</image:loc>
-      <image:title>Tatuaje blackwork en Mambas Tattoo</image:title>
+      <image:title>Tatuaje Blackwork de Pantera en Mambas Tattoo Playa del Carmen</image:title>
+      <image:caption>Tatuaje personalizado estilo blackwork realizado en Playa del Carmen</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>${siteUrl}/gallery/tattoo/tnew1.jpg</image:loc>
+      <image:title>Tatuaje detallado en muslo por artista de Mambas Tattoo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>${siteUrl}/gallery/tattoo/tatuaje2.png</image:loc>
+      <image:title>Tatuaje de pecho con serpiente y cráneo por Mambas Tattoo</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>${siteUrl}/gallery/tattoo/piercing/piercing11.png</image:loc>
+      <image:title>Body Piercing profesional con titanio grado implante en Playa del Carmen</image:title>
+      <image:caption>Perforación corporal segura y estéril certificada ante COFEPRIS en Mambas</image:caption>
     </image:image>
     <image:image>
       <image:loc>${siteUrl}/gallery/barber/IMG_3036.jpg</image:loc>
-      <image:title>Barbería Mambas en Playa del Carmen</image:title>
+      <image:title>Barbería tradicional mexicana en Playa del Carmen - Fade y Barba</image:title>
+      <image:caption>Corte de cabello fade con trenzas y perfilado de barba en Mambas Barbería</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>${siteUrl}/gallery/barber/barber11.png</image:loc>
+      <image:title>Ritual de Barba con toalla caliente y navaja libre en Mambas</image:title>
     </image:image>
   </url>
   <url>

@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Endpoint de base de datos
 const PROXY_URL = "/api/sheets-proxy";
 
 export default function BitacoraPage() {
-  const [fechaServicio, setFechaServicio] = useState("");
+  const [fechaServicio, setFechaServicio] = useState(() =>
+    new Date().toISOString().split("T")[0]
+  );
   const [tipoServicio, setTipoServicio] = useState("");
   const [clienteNombre, setClienteNombre] = useState("");
   const [clienteEdad, setClienteEdad] = useState("");
@@ -17,12 +20,6 @@ export default function BitacoraPage() {
 
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-
-  // Fecha por defecto al cargar (hoy)
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    setFechaServicio(today);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,13 +98,12 @@ export default function BitacoraPage() {
         
         {/* Header */}
         <div className="bg-[#050505] py-7 px-4 text-center border-b-[3px] border-[#d6ad4a] flex flex-col items-center justify-center">
-          <img 
+          <Image 
             src="/logo.png" 
             alt="Mambas Tattoo Logo" 
+            width={56}
+            height={56}
             className="h-14 w-auto mb-2 object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
           />
           <h1 className="font-serif text-[#d6ad4a] text-xl sm:text-2xl tracking-[3px] uppercase font-bold mb-1">
             Mambas Tattoo

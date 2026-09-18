@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import NextImage from "next/image";
 
 // Endpoint de base de datos
 const PROXY_URL = "/api/sheets-proxy"; 
@@ -20,10 +21,21 @@ interface QuestionState {
   alcohol_drogas: string;
 }
 
+const clearCanvasUI = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = "#D1C7BD";
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath();
+  ctx.moveTo(30, canvas.height - 40);
+  ctx.lineTo(canvas.width - 30, canvas.height - 40);
+  ctx.stroke();
+  ctx.setLineDash([]); // Reset
+};
+
 export default function TatuajePage() {
   const [nombre, setNombre] = useState("");
   const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [edad, setEdad] = useState<number | "">("");
   const [telefono, setTelefono] = useState("");
   const [correo, setCorreo] = useState("");
   const [identificacion, setIdentificacion] = useState("");
@@ -50,10 +62,11 @@ export default function TatuajePage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSignatureEmpty, setIsSignatureEmpty] = useState(true);
+  const isSignatureEmptyRef = useRef(true);
 
   // Calcular la edad cuando cambia la fecha de nacimiento
-  useEffect(() => {
-    if (!fechaNacimiento) return;
+  const edad = useMemo(() => {
+    if (!fechaNacimiento) return "";
     const dob = new Date(fechaNacimiento);
     const today = new Date();
     let calculatedAge = today.getFullYear() - dob.getFullYear();
@@ -63,10 +76,10 @@ export default function TatuajePage() {
       calculatedAge--;
     }
     
-    setEdad(calculatedAge < 0 ? 0 : calculatedAge);
+    return calculatedAge < 0 ? 0 : calculatedAge;
   }, [fechaNacimiento]);
 
-  // Configurar e inicializar el canvas
+  // Configurar e inicializar el canvas solo una vez al montar
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -81,40 +94,31 @@ export default function TatuajePage() {
     // Dibujar línea guía inicial
     clearCanvasUI(canvas, ctx);
 
-    // Ajustar resolución si cambia el tamaño de pantalla
+    // Ajustar resolución si cambia el tamaño de pantalla sin borrar la firma
     const handleResize = () => {
-      const currentRect = canvas.getBoundingClientRect();
-      // Guardar firma actual antes de redimensionar
-      const tempImage = canvas.toDataURL();
-      
-      canvas.width = currentRect.width;
-      canvas.height = 180;
-      
-      // Volver a dibujar la firma o la línea
-      if (!isSignatureEmpty) {
-        const img = new Image();
-        img.onload = () => ctx.drawImage(img, 0, 0);
+      const currentCanvas = canvasRef.current;
+      if (!currentCanvas) return;
+      const currentCtx = currentCanvas.getContext("2d");
+      if (!currentCtx) return;
+
+      const currentRect = currentCanvas.getBoundingClientRect();
+      if (!isSignatureEmptyRef.current) {
+        const tempImage = currentCanvas.toDataURL();
+        currentCanvas.width = currentRect.width;
+        currentCanvas.height = 180;
+        const img = new window.Image();
+        img.onload = () => currentCtx.drawImage(img, 0, 0);
         img.src = tempImage;
       } else {
-        clearCanvasUI(canvas, ctx);
+        currentCanvas.width = currentRect.width;
+        currentCanvas.height = 180;
+        clearCanvasUI(currentCanvas, currentCtx);
       }
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [isSignatureEmpty]);
-
-  const clearCanvasUI = (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = "#D1C7BD";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 4]);
-    ctx.beginPath();
-    ctx.moveTo(30, canvas.height - 40);
-    ctx.lineTo(canvas.width - 30, canvas.height - 40);
-    ctx.stroke();
-    ctx.setLineDash([]); // Reset
-  };
+  }, []);
 
   const clearSignature = () => {
     const canvas = canvasRef.current;
@@ -123,6 +127,7 @@ export default function TatuajePage() {
     if (!ctx) return;
     clearCanvasUI(canvas, ctx);
     setIsSignatureEmpty(true);
+    isSignatureEmptyRef.current = true;
   };
 
   // Dibujo con Mouse
@@ -140,6 +145,7 @@ export default function TatuajePage() {
     ctx.strokeStyle = "#0D2A22";
     setIsDrawing(true);
     setIsSignatureEmpty(false);
+    isSignatureEmptyRef.current = false;
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -170,6 +176,7 @@ export default function TatuajePage() {
     ctx.strokeStyle = "#0D2A22";
     setIsDrawing(true);
     setIsSignatureEmpty(false);
+    isSignatureEmptyRef.current = false;
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
@@ -192,7 +199,7 @@ export default function TatuajePage() {
   // Compresión de la firma para la URL de WhatsApp
   const getCompressedSignatureBase64 = () => {
     const canvas = canvasRef.current;
-    if (!canvas || isSignatureEmpty) return "";
+    if (!canvas || isSignatureEmptyRef.current) return "";
     
     const tempCanvas = document.createElement("canvas");
     const tempCtx = tempCanvas.getContext("2d");
@@ -230,7 +237,7 @@ export default function TatuajePage() {
     }
 
     // Validar firma
-    if (isSignatureEmpty) {
+    if (isSignatureEmptyRef.current) {
       alert("Por favor, dibuje su firma digital para otorgar el consentimiento.");
       return;
     }
@@ -261,7 +268,7 @@ export default function TatuajePage() {
       firma_base64: signatureDataUrl,
     };
 
-    // Generar URL de impresión por defecto (URL larga con todos los datos codificados)
+    // Generar URL de impresión por defecto (URL con todos los datos codificados)
     const printBaseUrl = window.location.origin + "/clientes/tatuaje/imprimir";
     const printQueryParams = new URLSearchParams();
     Object.entries(dataObject).forEach(([k, v]) => {
@@ -272,21 +279,26 @@ export default function TatuajePage() {
     printQueryParams.append("firma", signatureDataUrl);
     const fallbackUrl = printBaseUrl + "?" + printQueryParams.toString();
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
     try {
-      // Intentar guardar con CORS habilitado para leer el ID retornado por Google Sheets
       const response = await fetch(PROXY_URL, {
         method: "POST",
         headers: {
           "Content-Type": "text/plain",
         },
         body: JSON.stringify(dataObject),
+        signal: controller.signal,
       });
+      clearTimeout(timeoutId);
 
-      const resData = await response.json();
       let finalPrintUrl = fallbackUrl;
-      
-      if (resData && resData.status === "success" && resData.id) {
-        finalPrintUrl = `${printBaseUrl}?id=${resData.id}`;
+      if (response.ok) {
+        const resData = await response.json().catch(() => null);
+        if (resData && resData.status === "success" && resData.id) {
+          finalPrintUrl = `${printBaseUrl}?id=${resData.id}`;
+        }
       }
 
       setLoading(false);
@@ -297,22 +309,10 @@ export default function TatuajePage() {
       window.scrollTo({ top: 0, behavior: "smooth" });
 
     } catch (err) {
-      console.warn("CORS bloqueó lectura directa o falló conexión, reintentando en modo seguro no-cors:", err);
+      clearTimeout(timeoutId);
+      console.warn("Sheets proxy falló o agotó tiempo de espera, usando fallback rápido:", err);
       
-      // Fallback: Asegurar guardado en Sheets usando no-cors
-      try {
-        await fetch(PROXY_URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain",
-          },
-          body: JSON.stringify(dataObject),
-        });
-      } catch (fallbackErr) {
-        console.error("Error crítico de red al guardar:", fallbackErr);
-      }
-
-      // Usar URL larga como fallback para impresión
+      // Pasar inmediatamente al éxito sin bloquear al usuario
       setLoading(false);
       setSubmitted(true);
 
@@ -328,13 +328,12 @@ export default function TatuajePage() {
         
         {/* Header */}
         <div className="bg-[#0D2A22] py-8 px-4 text-center border-b-[3px] border-[#C5A059] relative flex flex-col items-center justify-center">
-          <img 
+          <NextImage 
             src="/logo.png" 
             alt="Mambas Tattoo Logo" 
+            width={64}
+            height={64}
             className="h-16 w-auto mb-3 object-contain filter brightness-110"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
           />
           <h1 className="font-serif text-[#C5A059] text-2xl sm:text-3xl tracking-[3px] uppercase font-bold mb-1">
             Mambas Tattoo

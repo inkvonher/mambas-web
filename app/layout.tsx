@@ -134,6 +134,34 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                function isExtensionError(err, filename) {
+                  var str = (err && (err.message || err.reason || err)) + "";
+                  var file = (filename || "") + "";
+                  return str.toLowerCase().indexOf("metamask") !== -1 ||
+                         str.indexOf("chrome-extension://") !== -1 ||
+                         str.indexOf("moz-extension://") !== -1 ||
+                         file.indexOf("chrome-extension://") !== -1;
+                }
+                window.addEventListener("unhandledrejection", function(e) {
+                  if (isExtensionError(e.reason)) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                  }
+                }, true);
+                window.addEventListener("error", function(e) {
+                  if (isExtensionError(e.error, e.filename)) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                  }
+                }, true);
+              })();
+            `,
+          }}
+        />
         <link rel="ai-catalog" href="/.well-known/ai-catalog.json" />
         <link rel="api-catalog" href="/.well-known/api-catalog" />
         <link rel="alternate" type="text/markdown" href="/llms.txt" />

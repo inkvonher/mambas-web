@@ -23,8 +23,8 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith("/admin")) {
     let response = NextResponse.next({ request });
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL || "").trim();
+    const supabaseAnonKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "").trim();
 
     if (!supabaseUrl || !supabaseAnonKey) {
       return response;

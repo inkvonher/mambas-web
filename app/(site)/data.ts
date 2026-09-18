@@ -8,14 +8,36 @@ export type GalleryItem = {
   video?: string;
 };
 
+export type ProductCategory =
+  | "all"
+  | "aftercare"
+  | "apparel"
+  | "piercing"
+  | "barber"
+  | "cards";
+
+export type Product = {
+  id: string;
+  name: Record<Language, string>;
+  category: ProductCategory;
+  priceMXN: number;
+  priceUSD: number;
+  description: Record<Language, string>;
+  image: string;
+  badge?: Record<Language, string>;
+  sizes?: string[];
+  inStock: boolean;
+};
+
 export const copy = {
   es: {
-    nav: ["Inicio", "Barbería", "Tattoo", "Anticipo", "Lealtad", "Ubicación"],
+    nav: ["Inicio", "Barbería", "Tattoo", "Tienda", "Anticipo", "Lealtad", "Ubicación"],
     heroKicker: "Barbería tradicional mexicana · Tatuaje ritual · Piercing",
     heroText:
       "Desde 2021 en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel. Certificados ante COFEPRIS.",
     barberCta: "Reservar barbería",
     tattooCta: "Cotizar tattoo",
+    storeCta: "Ver tienda",
     aboutTitle: "Quiénes somos",
     about:
       "Mambas Tattoo & Cuts une barbería tradicional mexicana, tatuaje ritual y piercing en un espacio sobrio, cuidado y profesional.",
@@ -23,6 +45,29 @@ export const copy = {
     barberSlogan: "LUCE FRESCO",
     tattooTitle: "Tattoo & Piercing",
     tattooSlogan: "FREEWILL",
+    storeTitle: "Tienda Oficial",
+    storeSlogan: "MAMBAS MERCH & CARE",
+    storeSubtitle:
+      "Cuidado profesional de grado médico para tatuajes y piercings, productos de barbería tradicional y prendas oficiales exclusivas.",
+    allCategories: "Todos",
+    catAftercare: "Aftercare & Cuidado",
+    catApparel: "Ropa & Merch",
+    catPiercing: "Joyería Titanio",
+    catBarber: "Barbería",
+    catCards: "Certificados de Regalo",
+    addToCart: "Agregar al carrito",
+    addedToCart: "¡Agregado!",
+    buyNow: "Comprar directo",
+    cartTitle: "Carrito de Compras",
+    cartEmpty: "Tu carrito está vacío.",
+    cartTotal: "Total estimado",
+    checkoutWhatsApp: "Pedir por WhatsApp",
+    clearCart: "Vaciar carrito",
+    selectSize: "Talla:",
+    memberDiscountNote:
+      "Miembros de Mambas Club (Black, Gold, Ritual) reciben descuentos y beneficios exclusivos.",
+    pickupNote:
+      "Entregas directas en nuestro estudio (Playa del Carmen) o envíos a todo México.",
     included: "Included",
     barberNote:
       "Disfruta de un facial relajante con toallas calientes y frías al finalizar tu servicio.",
@@ -79,17 +124,20 @@ export const copy = {
     depositButton: "Solicitar anticipo por WhatsApp",
     depositPaymentButton: "Pagar anticipo",
     paymentMethods:
-      "Aceptamos pagos con Visa, Mastercard, criptomonedas y efectivo.",
+      "Aceptamos transferencias bancarias SPEI, Mercado Pago y pago directo en efectivo en nuestro estudio.",
+    storePaymentNote:
+      "Formas de pago: Transferencia SPEI • Mercado Pago • Efectivo en tienda",
     floatingBarber: "Barbería",
     floatingTattoo: "Tattoo & Piercing",
   },
   en: {
-    nav: ["Home", "Barbershop", "Tattoo", "Deposit", "Loyalty", "Location"],
+    nav: ["Home", "Barbershop", "Tattoo", "Store", "Deposit", "Loyalty", "Location"],
     heroKicker: "Traditional Mexican barbershop · Ritual tattoo · Piercing",
     heroText:
       "Since 2021 in the heart of Playa del Carmen, a few blocks from the Cozumel ferry. COFEPRIS certified.",
     barberCta: "Book barbershop",
     tattooCta: "Quote tattoo",
+    storeCta: "View store",
     aboutTitle: "Who we are",
     about:
       "Mambas Tattoo & Cuts brings together traditional Mexican barbering, ritual tattooing and piercing in a clean, focused and professional space.",
@@ -97,6 +145,29 @@ export const copy = {
     barberSlogan: "LOOK FRESH",
     tattooTitle: "Tattoo & Piercing",
     tattooSlogan: "FREEWILL",
+    storeTitle: "Official Store",
+    storeSlogan: "MAMBAS MERCH & CARE",
+    storeSubtitle:
+      "Medical-grade tattoo & piercing aftercare, traditional grooming essentials and exclusive official apparel.",
+    allCategories: "All",
+    catAftercare: "Aftercare & Care",
+    catApparel: "Apparel & Merch",
+    catPiercing: "Titanium Jewelry",
+    catBarber: "Barbershop",
+    catCards: "Gift Cards",
+    addToCart: "Add to cart",
+    addedToCart: "Added!",
+    buyNow: "Buy now",
+    cartTitle: "Shopping Cart",
+    cartEmpty: "Your cart is empty.",
+    cartTotal: "Estimated total",
+    checkoutWhatsApp: "Order via WhatsApp",
+    clearCart: "Empty cart",
+    selectSize: "Size:",
+    memberDiscountNote:
+      "Mambas Club members (Black, Gold, Ritual) receive exclusive merchandise perks and discounts.",
+    pickupNote:
+      "In-studio pickup in Playa del Carmen or nationwide shipping across Mexico.",
     included: "Included",
     barberNote:
       "Enjoy a relaxing facial with hot and cold towels at the end of your service.",
@@ -152,7 +223,10 @@ export const copy = {
       "A minimum deposit of 500 MXN is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
     depositButton: "Request deposit by WhatsApp",
     depositPaymentButton: "Pay deposit",
-    paymentMethods: "We accept Visa, Mastercard, cryptocurrencies and cash.",
+    paymentMethods:
+      "We accept SPEI bank transfers, Mercado Pago, and in-person cash payments at our studio.",
+    storePaymentNote:
+      "Payment methods: SPEI Transfer • Mercado Pago • In-studio Cash",
     floatingBarber: "Barbershop",
     floatingTattoo: "Tattoo & Piercing",
   },
@@ -527,5 +601,182 @@ export const tattooGallery: GalleryItem[] = [
       es: "Piercing septum con joyería plateada realizado por Mambas",
       en: "Septum piercing with silver jewelry by Mambas",
     },
+  },
+];
+
+export type CartItem = {
+  product: Product;
+  quantity: number;
+  selectedSize?: string;
+};
+
+export const products: Product[] = [
+  {
+    id: "balsamo-aftercare",
+    name: {
+      es: "Bálsamo Cicatrizante Tattoo Mambas (50g)",
+      en: "Mambas Tattoo Healing Balm (50g)",
+    },
+    category: "aftercare",
+    priceMXN: 220,
+    priceUSD: 14,
+    description: {
+      es: "Fórmula 100% orgánica y vegana con extracto de caléndula, manteca de karité y vitamina E. Regenera e hidrata profundamente la piel recién tatuada sin obstruir los poros.",
+      en: "100% organic & vegan formula infused with calendula extract, shea butter and Vitamin E. Deeply hydrates and heals fresh tattoos without clogging pores.",
+    },
+    image: "/gallery/tattoo/tattoo.jpg",
+    badge: { es: "Bestseller", en: "Bestseller" },
+    inStock: true,
+  },
+  {
+    id: "espuma-antiseptica",
+    name: {
+      es: "Espuma Limpiadora Antiséptica Foam Soap (150ml)",
+      en: "Antiseptic Cleansing Foam Soap (150ml)",
+    },
+    category: "aftercare",
+    priceMXN: 180,
+    priceUSD: 11,
+    description: {
+      es: "Jabón líquido neutro antibacterial en espuma para la higiene diaria de tatuajes y piercings. Alivia la irritación, desinflama y elimina residuos de tinta y exudado.",
+      en: "Gentle antibacterial foaming soap for daily tattoo & piercing care. Soothes redness, reduces inflammation and gently removes plasma and excess ink.",
+    },
+    image: "/gallery/tattoo/tatuador11.png",
+    badge: { es: "Recomendado", en: "Staff Pick" },
+    inStock: true,
+  },
+  {
+    id: "playera-black-gold",
+    name: {
+      es: "Playera Mambas 'Black & Gold' (Edición 2026)",
+      en: "Mambas 'Black & Gold' T-Shirt (2026 Edition)",
+    },
+    category: "apparel",
+    priceMXN: 450,
+    priceUSD: 28,
+    description: {
+      es: "Algodón peinado premium de 240g, corte oversized relajado. Serigrafía dorada de alta densidad con el emblemático cráneo y serpiente de Mambas.",
+      en: "240gsm premium heavyweight combed cotton with a relaxed oversized fit. High-density gold screenprint featuring Mambas signature skull & serpent art.",
+    },
+    image: "/logo.png",
+    badge: { es: "Edición Limitada", en: "Limited Drop" },
+    sizes: ["S", "M", "L", "XL"],
+    inStock: true,
+  },
+  {
+    id: "hoodie-ritual",
+    name: {
+      es: "Hoodie Mambas Ritual Blackwork",
+      en: "Mambas Ritual Blackwork Hoodie",
+    },
+    category: "apparel",
+    priceMXN: 850,
+    priceUSD: 53,
+    description: {
+      es: "Sudadera afelpada pesada con capucha forrada y bolsillo canguro. Arte místico en espalda y tipografía gótica en mangas.",
+      en: "Heavyweight fleece hoodie with lined hood and kangaroo pocket. Mystic backpiece artwork and gothic lettering across the sleeves.",
+    },
+    image: "/logo.png",
+    badge: { es: "Exclusivo", en: "Exclusive" },
+    sizes: ["M", "L", "XL"],
+    inStock: true,
+  },
+  {
+    id: "gorra-snapback",
+    name: {
+      es: "Gorra Snapback Mambas Skull & Snake",
+      en: "Mambas Skull & Snake Snapback Cap",
+    },
+    category: "apparel",
+    priceMXN: 380,
+    priceUSD: 24,
+    description: {
+      es: "Gorra estructurada de 6 paneles con visera plana y broche ajustable. Bordado 3D frontal en hilo dorado metalizado.",
+      en: "Structured 6-panel snapback cap with flat brim and adjustable closure. 3D metallic gold front embroidery.",
+    },
+    image: "/gallery/mbs3.jpg",
+    inStock: true,
+  },
+  {
+    id: "clicker-titanio",
+    name: {
+      es: "Argolla Clicker Titanio ASTM F-136 Grado Implante",
+      en: "Titanium Segment Clicker Ring ASTM F-136",
+    },
+    category: "piercing",
+    priceMXN: 350,
+    priceUSD: 22,
+    description: {
+      es: "Joyería estéril de titanio biocompatible de alta pureza. Mecanismo de cierre clicker suave para septum, hélice, daith o conch. No se despinta ni causa alergias.",
+      en: "Implant-grade biocompatible ASTM F-136 titanium jewelry. Smooth clicker closure ideal for septum, helix, daith or conch piercings. Hypoallergenic.",
+    },
+    image: "/gallery/tattoo/piercing/piercing2.png",
+    badge: { es: "Titanio F-136", en: "Titanium F-136" },
+    inStock: true,
+  },
+  {
+    id: "labret-zirconia",
+    name: {
+      es: "Labret Titanio con Zirconia Cúbica AAA",
+      en: "Titanium Labret with AAA Cubic Zirconia",
+    },
+    category: "piercing",
+    priceMXN: 300,
+    priceUSD: 19,
+    description: {
+      es: "Poste de titanio grado implante con rosca interna y cristal de zirconia brillante con engaste biselado plano. Ideal para lóbulo, tragus o nostril.",
+      en: "Internally threaded implant-grade titanium post with a brilliant bezel-set AAA cubic zirconia. Perfect for lobe, tragus or nostril piercings.",
+    },
+    image: "/gallery/tattoo/piercing/piercing4.png",
+    inStock: true,
+  },
+  {
+    id: "aceite-barba",
+    name: {
+      es: "Aceite para Barba 'Ritual Mambas' (30ml)",
+      en: "Mambas Ritual Beard Oil (30ml)",
+    },
+    category: "barber",
+    priceMXN: 260,
+    priceUSD: 16,
+    description: {
+      es: "Elixir hidratante con aceites de jojoba, argán, cedro y bergamota. Suaviza la barba rebelde, nutre los folículos y deja un aroma amaderado sofisticado.",
+      en: "Nourishing beard elixir with jojoba, argan, cedarwood and bergamot oils. Softens rough beards, hydrates follicles and leaves a refined woody scent.",
+    },
+    image: "/gallery/barber/barber12.png",
+    inStock: true,
+  },
+  {
+    id: "pomada-clay",
+    name: {
+      es: "Pomada Mate para Cabello Mambas Matte Clay (100g)",
+      en: "Mambas Matte Hair Clay (100g)",
+    },
+    category: "barber",
+    priceMXN: 240,
+    priceUSD: 15,
+    description: {
+      es: "Fijación fuerte y flexible con acabado completamente mate sin efecto graso. Base agua que se enjuaga fácilmente sin dejar residuos.",
+      en: "Strong yet pliable hold with a clean, natural matte finish and zero greasy residue. Water-soluble formula washes out effortlessly.",
+    },
+    image: "/gallery/barber/barber15.png",
+    inStock: true,
+  },
+  {
+    id: "gift-card-tattoo",
+    name: {
+      es: "Certificado de Regalo / Gift Card Mambas",
+      en: "Mambas Gift Card / Studio Certificate",
+    },
+    category: "cards",
+    priceMXN: 1000,
+    priceUSD: 60,
+    description: {
+      es: "Certificado digital o físico canjeable por sesiones de tatuaje, perforaciones, cortes o productos del estudio en Playa del Carmen. Válido por 12 meses.",
+      en: "Digital or physical gift certificate redeemable for tattoo sessions, piercings, haircuts or official store products in Playa del Carmen. Valid for 12 months.",
+    },
+    image: "/logo.png",
+    badge: { es: "Regalo Ideal", en: "Ideal Gift" },
+    inStock: true,
   },
 ];

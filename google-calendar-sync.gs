@@ -1,34 +1,21 @@
 /**
- * Mambas — Sincronización Google Calendar <-> Panel Admin (Fase 1: creación)
- * Pegar en script.google.com (misma cuenta del calendario).
+ * Mambas — Sincronización Google Calendar <-> Panel Admin (Barbería)
+ * Pegar en script.google.com (en la cuenta de Google de la barbería).
  * Activador recomendado: función `syncCalendar`, cada 5 minutos.
  */
 
 // === CONFIGURA ESTO ===
 const SITE = "https://mambaspdc.com";
-const SYNC_SECRET = "PEGA_AQUI_TU_SYNC_SECRET";   // el mismo que pusiste en Vercel
+const SYNC_SECRET = "PEGA_AQUI_TU_SYNC_SECRET";   // El mismo que pusiste en Vercel
 const TIMEZONE = "America/Cancun";                // Cancún/Playa = UTC-5 todo el año
 const TZ_OFFSET = "-05:00";
 
-// Celulares para avisos de WhatsApp (CallMeBot)
-const BARBER_PHONE = "+5219843675261";            // Celular de la Barbería
-const BARBER_APIKEY = "8604341";                  // API Key de Barbería
-const TATTOO_PHONE = "+5219841820414";            // Celular de Recepción / Tattoo
-const TATTOO_APIKEY = "PEGA_AQUI_TU_API_KEY";     // API Key de Recepción (Tattoo)
+// === AVISOS POR WHATSAPP (CallMeBot - Barbería) ===
+const WHATSAPP_PHONE = "+5219843675261";
+const WHATSAPP_APIKEY = "8604341";
 
-// === CONFIGURA AQUÍ TODOS LOS CALENDARIOS QUE DESEAS ASOCIAR ===
-// Puedes agregar tantos calendarios como quieras. El sistema los leerá y los fusionará 
-// en la web clasificando las citas de forma automática según su categoría ('tattoo' o 'barber').
-const BOOKING_CALENDARS = [
-  {
-    id: "clandestinobeer9@gmail.com", // Calendario principal (Barbería)
-    category: "barber"
-  },
-  {
-    id: "vonynegocios@gmail.com",     // Calendario secundario (Tatuajes / Piercings)
-    category: "tattoo"
-  }
-];
+// === CALENDARIO DE BARBERÍA ===
+const BARBER_CALENDAR_ID = "clandestinobeer9@gmail.com";
 // ======================
 
 function syncCalendar() {
@@ -41,6 +28,28 @@ function syncCalendar() {
     importGoogleToAdmin();
   } catch (e) {
     Logger.log("Error en importGoogleToAdmin: " + e);
+  }
+}
+
+// Función de PRUEBA DIRECTA para CallMeBot:
+// Selecciona esta función en Google Apps Script y haz clic en "Ejecutar" para comprobar que recibes el WhatsApp.
+function testCallMeBot() {
+  Logger.log("Enviando mensaje de prueba a: " + WHATSAPP_PHONE + " con API Key: " + WHATSAPP_APIKEY);
+  const testMsg = "💈 *Prueba Mambas Barbería*\nSi recibes este mensaje, las notificaciones de CallMeBot están activas y funcionando correctamente.";
+  
+  const url =
+    "https://api.callmebot.com/whatsapp.php?phone=" +
+    encodeURIComponent(WHATSAPP_PHONE) +
+    "&text=" + encodeURIComponent(testMsg) +
+    "&apikey=" + encodeURIComponent(WHATSAPP_APIKEY);
+
+  try {
+    const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    const code = resp.getResponseCode();
+    const body = resp.getContentText();
+    Logger.log("Respuesta CallMeBot [HTTP " + code + "]: " + body);
+  } catch (err) {
+    Logger.log("Error de conexión con CallMeBot: " + err);
   }
 }
 
@@ -57,10 +66,9 @@ function authHeaders() {
   return { Authorization: "Bearer " + SYNC_SECRET };
 }
 
-// 1) Citas creadas en el panel admin -> eventos en Google Calendar correspondiente
+// 1) Citas creadas en el panel admin (Barbería) -> eventos en Google Calendar
 function pushAdminToGoogle() {
-  const category = BOOKING_CALENDARS[0].category;
-  const res = UrlFetchApp.fetch(SITE + "/api/sync/pending?category=" + category, {
+  const res = UrlFetchApp.fetch(SITE + "/api/sync/pending?category=barber", {
     headers: authHeaders(),
     muteHttpExceptions: true,
   });
@@ -75,28 +83,15 @@ function pushAdminToGoogle() {
     if (t.length === 5) t = t + ":00"; // "HH:mm" -> "HH:mm:ss"
     const start = new Date(a.appointment_date + "T" + t + TZ_OFFSET);
     const end = new Date(start.getTime() + 60 * 60 * 1000);
-    const tipo = a.category === "tattoo" ? "Tattoo" : "Barbería";
-    const title = tipo + " · " + (a.client_name || "Cita");
+    const title = "Barbería · " + (a.client_name || "Cita");
     const desc =
       "Cita creada desde el panel admin de Mambas\n" +
       "Tel: " + (a.client_phone || "-") + "\n" +
       (a.notes || "");
 
-    // Buscar calendario correspondiente por categoría
-    var targetCalId = null;
-    for (var i = 0; i < BOOKING_CALENDARS.length; i++) {
-      if (BOOKING_CALENDARS[i].category === a.category) {
-        targetCalId = BOOKING_CALENDARS[i].id;
-        break;
-      }
-    }
-
-    var cal = null;
-    if (targetCalId) {
-      cal = CalendarApp.getCalendarById(targetCalId);
-    }
+    let cal = CalendarApp.getCalendarById(BARBER_CALENDAR_ID);
     if (!cal) {
-      cal = CalendarApp.getDefaultCalendar(); // Fallback al default
+      cal = CalendarApp.getDefaultCalendar();
     }
 
     const ev = cal.createEvent(title, start, end, { description: desc });
@@ -110,7 +105,7 @@ function pushAdminToGoogle() {
       muteHttpExceptions: true,
     });
 
-    sendWhatsApp(ev, "🗓️ *Nueva cita (panel) - Mambas*", a.category);
+    sendWhatsApp(ev, "💈 *Nueva cita (panel) - Barbería*");
   });
 }
 
@@ -127,167 +122,81 @@ function importGoogleToAdmin() {
   const from = new Date(now - 24 * 60 * 60 * 1000);
   const to = new Date(now + 120 * 24 * 60 * 60 * 1000);
 
-  BOOKING_CALENDARS.forEach(function (calConf) {
-    const cal = CalendarApp.getCalendarById(calConf.id);
-    if (!cal) {
-      Logger.log("No se pudo cargar el calendario con ID: " + calConf.id);
-      return;
-    }
-    const events = cal.getEvents(from, to);
-    Logger.log("Calendario " + calConf.id + ": " + events.length + " eventos");
-
-    events.forEach(function (ev) {
-      if (ev.getDateCreated().getTime() <= last) return;   // ya revisado
-      if (ev.getTag("mambasSource") === "admin") return;   // la creamos nosotros
-      if (ev.isAllDayEvent()) return;                       // bloque de disponibilidad
-      if (ev.getColor() !== "") return;                     // omitir si tiene un color personalizado (no por defecto)
-      const title = (ev.getTitle() || "").trim();
-      if (!title) return;                                   // sin título = disponibilidad
-
-      const start = ev.getStartTime();
-      const payload = {
-        gcal_event_id: ev.getId(),
-        client_name: title,
-        client_phone: "",
-        service: title,
-        category: calConf.category,                         // Clasificar dinámicamente
-        appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
-        appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
-        notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
-      };
-
-      const res = UrlFetchApp.fetch(SITE + "/api/sync/from-google", {
-        method: "post",
-        contentType: "application/json",
-        headers: authHeaders(),
-        payload: JSON.stringify(payload),
-        muteHttpExceptions: true,
-      });
-      Logger.log("from-google (" + title + "): " + res.getResponseCode() + " " + res.getContentText());
-      if (res.getResponseCode() === 200) {
-        const j = JSON.parse(res.getContentText());
-        if (!j.skipped) sendWhatsApp(ev, null, calConf.category);
-      }
-    });
-  });
-
-  props.setProperty("lastCheck", String(now));
-}
-
-function sendWhatsApp(ev, header, category) {
-  const fecha = Utilities.formatDate(ev.getStartTime(), TIMEZONE, "dd/MM/yyyy HH:mm");
-  const desc = (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim();
-
-  let msg = (header || "🐍 *Nueva reserva - Mambas*") + "\n";
-  msg += "Servicio: " + ev.getTitle() + "\n";
-  msg += "Fecha: " + fecha + "\n";
-  if (desc) msg += "Detalle: " + desc.substring(0, 250);
-
-  // Elegir número de destino y API Key dinámicamente según la categoría de la cita
-  const targetPhone = (category === "tattoo") ? TATTOO_PHONE : BARBER_PHONE;
-  const targetApiKey = (category === "tattoo") ? TATTOO_APIKEY : BARBER_APIKEY;
-
-  const url =
-    "https://api.callmebot.com/whatsapp.php?phone=" +
-    encodeURIComponent(targetPhone) +
-    "&text=" + encodeURIComponent(msg) +
-    "&apikey=" + encodeURIComponent(targetApiKey);
-
-  const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
-  Logger.log("CallMeBot (" + targetPhone + "): " + resp.getContentText());
-  Utilities.sleep(8000); // espacia los mensajes para no saturar CallMeBot (API gratis)
-}
-
-// Función para importar historial de tatuajes desde Enero 2024 (Solo se ejecuta una vez de forma manual)
-// NOTA: NO envía notificaciones de WhatsApp para evitar bloquear tu cuenta con spam.
-function importHistoryFrom2024() {
-  const from = new Date("2024-01-01T00:00:00-05:00");
-  const to = new Date();
-  
-  // Buscar el calendario de Tattoo
-  var tattooCalConf = null;
-  for (var i = 0; i < BOOKING_CALENDARS.length; i++) {
-    if (BOOKING_CALENDARS[i].category === "tattoo") {
-      tattooCalConf = BOOKING_CALENDARS[i];
-      break;
-    }
-  }
-  
-  if (!tattooCalConf) {
-    Logger.log("No se encontró ningún calendario configurado con la categoría 'tattoo'.");
-    return;
-  }
-  
-  const cal = CalendarApp.getCalendarById(tattooCalConf.id);
+  const cal = CalendarApp.getCalendarById(BARBER_CALENDAR_ID) || CalendarApp.getDefaultCalendar();
   if (!cal) {
-    Logger.log("No se pudo cargar el calendario de tatuajes: " + tattooCalConf.id);
+    Logger.log("No se pudo cargar el calendario de barbería: " + BARBER_CALENDAR_ID);
     return;
   }
-  
-  Logger.log("Buscando eventos desde 2024 en el calendario de tatuajes...");
+
   const events = cal.getEvents(from, to);
-  Logger.log("Total de eventos encontrados en Google: " + events.length);
-  
-  var importedCount = 0;
-  var skippedCount = 0;
-  
-  events.forEach(function (ev, index) {
-    // 1) Filtrar por color de etiqueta (solo importar los que tienen COLOR POR DEFECTO)
-    // getColor() devuelve "" para el color por defecto del calendario.
-    if (ev.getColor() !== "") {
-      skippedCount++;
-      return;
-    }
-    
-    if (ev.getTag("mambasSource") === "admin") return;
-    if (ev.isAllDayEvent()) return;
+  Logger.log("Calendario Barbería (" + BARBER_CALENDAR_ID + "): " + events.length + " eventos encontrados");
+
+  events.forEach(function (ev) {
+    if (ev.getDateCreated().getTime() <= last) return;   // ya revisado
+    if (ev.getTag("mambasSource") === "admin") return;   // la creamos nosotros
+    if (ev.isAllDayEvent()) return;                       // bloque de disponibilidad
+    if (ev.getColor() !== "") return;                     // omitir si tiene un color personalizado
     const title = (ev.getTitle() || "").trim();
-    if (!title) return;
-    
+    if (!title) return;                                   // sin título = disponibilidad
+
     const start = ev.getStartTime();
     const payload = {
       gcal_event_id: ev.getId(),
       client_name: title,
       client_phone: "",
       service: title,
-      category: "tattoo",
+      category: "barber",
       appointment_date: Utilities.formatDate(start, TIMEZONE, "yyyy-MM-dd"),
       appointment_time: Utilities.formatDate(start, TIMEZONE, "HH:mm"),
       notes: (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim().substring(0, 500),
     };
-    
-    try {
-      const res = UrlFetchApp.fetch(SITE + "/api/sync/from-google", {
-        method: "post",
-        contentType: "application/json",
-        headers: authHeaders(),
-        payload: JSON.stringify(payload),
-        muteHttpExceptions: true,
-      });
-      
-      if (res.getResponseCode() === 200) {
-        const j = JSON.parse(res.getContentText());
-        if (!j.skipped) {
-          importedCount++;
-          Logger.log("[" + importedCount + "] Importado con éxito: " + title + " (" + payload.appointment_date + ")");
-        } else {
-          skippedCount++;
-        }
-      } else {
-        Logger.log("Error al importar " + title + ": " + res.getContentText());
-      }
-    } catch (e) {
-      Logger.log("Error de red con el evento: " + title + ". Detalle: " + e);
-    }
-    
-    // Pequeña pausa cada 10 peticiones para no saturar las cuotas de Google o Vercel
-    if (index % 10 === 0) {
-      Utilities.sleep(150);
+
+    const res = UrlFetchApp.fetch(SITE + "/api/sync/from-google", {
+      method: "post",
+      contentType: "application/json",
+      headers: authHeaders(),
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true,
+    });
+
+    Logger.log("from-google (" + title + "): " + res.getResponseCode() + " " + res.getContentText());
+    if (res.getResponseCode() === 200) {
+      const j = JSON.parse(res.getContentText());
+      if (!j.skipped) sendWhatsApp(ev, "💈 *Nueva reserva - Barbería*");
     }
   });
-  
-  Logger.log("--- PROCESO TERMINADO ---");
-  Logger.log("Total procesados: " + events.length);
-  Logger.log("Nuevos importados: " + importedCount);
-  Logger.log("Omitidos (por tener color personalizado o estar repetidos): " + skippedCount);
+
+  props.setProperty("lastCheck", String(now));
+}
+
+function sendWhatsApp(ev, header) {
+  if (!WHATSAPP_APIKEY || WHATSAPP_APIKEY === "PEGA_AQUI_TU_API_KEY") {
+    Logger.log("CallMeBot API Key no configurada. Aviso omitido.");
+    return;
+  }
+
+  const fecha = Utilities.formatDate(ev.getStartTime(), TIMEZONE, "dd/MM/yyyy HH:mm");
+  const desc = (ev.getDescription() || "").replace(/<[^>]*>/g, "").trim();
+
+  let msg = (header || "💈 *Nueva cita - Mambas Barbería*") + "\n\n";
+  msg += "✂️ *Servicio:* " + ev.getTitle() + "\n";
+  msg += "📅 *Fecha:* " + fecha + "\n";
+  if (desc) msg += "📝 *Detalle:* " + desc.substring(0, 250);
+
+  const url =
+    "https://api.callmebot.com/whatsapp.php?phone=" +
+    encodeURIComponent(WHATSAPP_PHONE) +
+    "&text=" + encodeURIComponent(msg) +
+    "&apikey=" + encodeURIComponent(WHATSAPP_APIKEY);
+
+  try {
+    const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    const code = resp.getResponseCode();
+    const body = resp.getContentText();
+    Logger.log("CallMeBot (" + WHATSAPP_PHONE + ") [HTTP " + code + "]: " + body);
+  } catch (err) {
+    Logger.log("Error al enviar mensaje por CallMeBot: " + err);
+  }
+
+  Utilities.sleep(4000); // espacia las peticiones para proteger cuota de CallMeBot
 }

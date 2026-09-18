@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 // Endpoint de base de datos
 const PROXY_URL = "/api/sheets-proxy"; 
@@ -24,14 +25,13 @@ interface BitacoraRecord {
 
 export default function ReporteBitacoraPage() {
   const [allRecords, setAllRecords] = useState<BitacoraRecord[]>([]);
-  const [filteredRecords, setFilteredRecords] = useState<BitacoraRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
   
   const [searchQuery, setSearchQuery] = useState("");
   const [serviceFilter, setServiceFilter] = useState("");
 
-  const fetchData = async () => {
+  const reloadData = async () => {
     setLoading(true);
     setErrorMsg("");
     try {
@@ -40,8 +40,7 @@ export default function ReporteBitacoraPage() {
         throw new Error("Error al conectar con la base de datos de Sheets.");
       }
       const data = await response.json();
-      setAllRecords(data);
-      setFilteredRecords(data);
+      setAllRecords(Array.isArray(data) ? data : []);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -51,13 +50,37 @@ export default function ReporteBitacoraPage() {
   };
 
   useEffect(() => {
-    fetchData();
+    let isMounted = true;
+    const loadInitial = async () => {
+      try {
+        const response = await fetch(`${PROXY_URL}?sheet=bitacora`);
+        if (!response.ok) {
+          throw new Error("Error al conectar con la base de datos de Sheets.");
+        }
+        const data = await response.json();
+        if (isMounted) {
+          setAllRecords(Array.isArray(data) ? data : []);
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error(err);
+        if (isMounted) {
+          setErrorMsg("No se pudo descargar la bitácora. Verifique la conexión o el ID del script.");
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadInitial();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Aplicar filtros en tiempo real
-  useEffect(() => {
-    const query = searchQuery.toLowerCase();
-    const filtered = allRecords.filter(record => {
+  const filteredRecords = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    return allRecords.filter(record => {
       const cliente = String(record.cliente_nombre || record.nombre || "").toLowerCase();
       const artista = String(record.artista_nombre || record.artista || "").toLowerCase();
       const loteAgujas = String(record.lote_agujas || "").toLowerCase();
@@ -65,6 +88,7 @@ export default function ReporteBitacoraPage() {
       const servicio = String(record.tipo_servicio || record.servicio || "").toLowerCase();
 
       const matchText = 
+        !query ||
         cliente.includes(query) || 
         artista.includes(query) || 
         loteAgujas.includes(query) || 
@@ -77,8 +101,6 @@ export default function ReporteBitacoraPage() {
 
       return matchText && matchService;
     });
-
-    setFilteredRecords(filtered);
   }, [searchQuery, serviceFilter, allRecords]);
 
   const handlePrint = () => {
@@ -191,13 +213,12 @@ export default function ReporteBitacoraPage() {
         {/* Header */}
         <div className="bg-[#050505] p-6 sm:p-8 border-b-2 border-[#d6ad4a]/20 flex flex-col sm:flex-row justify-between sm:items-center gap-5 print-header">
           <div className="flex items-center gap-4 text-left">
-            <img 
+            <Image 
               src="/logo.png" 
               alt="Mambas Tattoo Logo" 
+              width={56}
+              height={56}
               className="h-14 w-auto object-contain filter grayscale brightness-125"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
             />
             <div>
               <h1 className="font-serif text-[#d6ad4a] text-xl sm:text-2xl font-bold tracking-[2px] uppercase">
@@ -214,7 +235,7 @@ export default function ReporteBitacoraPage() {
           
           <div className="flex gap-3 no-print">
             <button 
-              onClick={fetchData}
+              onClick={reloadData}
               className="px-4 py-2 border border-white/20 hover:border-[#d6ad4a] hover:text-[#d6ad4a] text-xs sm:text-sm font-bold uppercase rounded-lg transition-all flex items-center gap-1.5"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
@@ -273,7 +294,7 @@ export default function ReporteBitacoraPage() {
             <div className="text-center py-16 text-[#9E3E3E] font-medium">
               <p className="mb-2">✕ {errorMsg}</p>
               <button 
-                onClick={fetchData}
+                onClick={reloadData}
                 className="mt-2 text-xs border border-[#9E3E3E] px-3 py-1 rounded hover:bg-[#9E3E3E]/10"
               >
                 Reintentar

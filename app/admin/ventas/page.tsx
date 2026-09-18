@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const PROXY_URL = "/api/sheets-proxy";
 
@@ -99,13 +100,12 @@ export default function RegisterSalePage() {
         
         {/* Header */}
         <div className="bg-[#050505] py-6 px-4 text-center border-b border-[#d6ad4a]/15 flex flex-col items-center justify-center">
-          <img 
+          <Image 
             src="/logo.png" 
             alt="Mambas Tattoo Logo" 
+            width={56}
+            height={56}
             className="h-14 w-auto mb-2 object-contain"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
           />
           <h2 className="font-serif text-[#d6ad4a] text-lg font-bold uppercase tracking-wider">
             Registrar Nueva Venta

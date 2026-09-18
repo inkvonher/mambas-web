@@ -2,118 +2,103 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 const PROXY_URL = "/api/sheets-proxy";
 
 function PrintPageContent() {
   const searchParams = useSearchParams();
+  const id = searchParams.get("id");
 
-  // Campos Básicos
-  const [nombre, setNombre] = useState("");
-  const [fechaNacimiento, setFechaNacimiento] = useState("");
-  const [edad, setEdad] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [correo, setCorreo] = useState("");
-  const [identificacion, setIdentificacion] = useState("");
-  const [fechaRegistro, setFechaRegistro] = useState("");
-  const [detallesMedicos, setDetallesMedicos] = useState("Ninguno especificado.");
-  const [firma, setFirma] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [nombre, setNombre] = useState(() => searchParams.get("nombre") || "");
+  const [fechaNacimiento, setFechaNacimiento] = useState(
+    () => searchParams.get("fecha_nacimiento") || ""
+  );
+  const [edad, setEdad] = useState(() => searchParams.get("edad") || "");
+  const [telefono, setTelefono] = useState(() => searchParams.get("telefono") || "");
+  const [correo, setCorreo] = useState(() => searchParams.get("correo") || "");
+  const [identificacion, setIdentificacion] = useState(
+    () => searchParams.get("identificacion") || ""
+  );
+  const [fechaRegistro, setFechaRegistro] = useState(() => {
+    const fReg = searchParams.get("fecha_registro");
+    if (fReg) return fReg;
+    const d = new Date();
+    const pad = (n: number) => n.toString().padStart(2, "0");
+    return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  });
+  const [detallesMedicos, setDetallesMedicos] = useState(
+    () => searchParams.get("detalles_medicos") || "Ninguno especificado."
+  );
+  const [firma, setFirma] = useState(() => searchParams.get("firma") || "");
+  const [loading, setLoading] = useState(() => Boolean(id));
   const [errorMsg, setErrorMsg] = useState("");
 
   // Preguntas
-  const [questions, setQuestions] = useState({
-    hemofilia: "NO",
-    diabetes: "NO",
-    alergias: "NO",
-    cardiacas: "NO",
-    epilepsia: "NO",
-    afeccion_piel: "NO",
-    embarazo: "NO",
-    hepatitis_vih: "NO",
-    alcohol_drogas: "NO",
-  });
+  const [questions, setQuestions] = useState(() => ({
+    hemofilia: searchParams.get("hemofilia") || "NO",
+    diabetes: searchParams.get("diabetes") || "NO",
+    alergias: searchParams.get("alergias") || "NO",
+    cardiacas: searchParams.get("cardiacas") || "NO",
+    epilepsia: searchParams.get("epilepsia") || "NO",
+    afeccion_piel: searchParams.get("afeccion_piel") || "NO",
+    embarazo: searchParams.get("embarazo") || "NO",
+    hepatitis_vih: searchParams.get("hepatitis_vih") || "NO",
+    alcohol_drogas: searchParams.get("alcohol_drogas") || "NO",
+  }));
 
   useEffect(() => {
-    const id = searchParams.get("id");
+    if (!id) return;
 
-    if (id) {
-      setLoading(true);
-      setErrorMsg("");
-      fetch(`${PROXY_URL}?sheet=cuestionarios&id=${id}`)
-        .then((response) => {
-          if (!response.ok) throw new Error("Error de red");
-          return response.json();
-        })
-        .then((data) => {
-          setLoading(false);
-          if (data && data.status !== "error") {
-            setNombre(data.nombre || "");
-            setFechaNacimiento(data.fecha_nacimiento || "");
-            setEdad(data.edad || "");
-            setTelefono(data.telefono || "");
-            setCorreo(data.correo || "");
-            setIdentificacion(data.identificacion || "");
-            setFechaRegistro(data.fecha_registro || "");
-            setDetallesMedicos(data.detalles_medicos || "Ninguno especificado.");
-            setFirma(data.firma_base64 || "");
-            setQuestions({
-              hemofilia: data.hemofilia || "NO",
-              diabetes: data.diabetes || "NO",
-              alergias: data.alergias || "NO",
-              cardiacas: data.cardiacas || "NO",
-              epilepsia: data.epilepsia || "NO",
-              afeccion_piel: data.afeccion_piel || "NO",
-              embarazo: data.embarazo || "NO",
-              hepatitis_vih: data.hepatitis_vih || "NO",
-              alcohol_drogas: data.alcohol_drogas || "NO",
-            });
-          } else {
-            setErrorMsg("No se encontró el cuestionario con el ID especificado.");
-          }
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
+    let isMounted = true;
+    const loadFromSheets = async () => {
+      try {
+        const response = await fetch(`${PROXY_URL}?sheet=cuestionarios&id=${id}`);
+        if (!response.ok) throw new Error("Error de red");
+        const data = await response.json();
+        if (!isMounted) return;
+
+        if (data && data.status !== "error") {
+          setNombre(data.nombre || "");
+          setFechaNacimiento(data.fecha_nacimiento || "");
+          setEdad(data.edad || "");
+          setTelefono(data.telefono || "");
+          setCorreo(data.correo || "");
+          setIdentificacion(data.identificacion || "");
+          setFechaRegistro(data.fecha_registro || "");
+          setDetallesMedicos(data.detalles_medicos || "Ninguno especificado.");
+          setFirma(data.firma_base64 || "");
+          setQuestions({
+            hemofilia: data.hemofilia || "NO",
+            diabetes: data.diabetes || "NO",
+            alergias: data.alergias || "NO",
+            cardiacas: data.cardiacas || "NO",
+            epilepsia: data.epilepsia || "NO",
+            afeccion_piel: data.afeccion_piel || "NO",
+            embarazo: data.embarazo || "NO",
+            hepatitis_vih: data.hepatitis_vih || "NO",
+            alcohol_drogas: data.alcohol_drogas || "NO",
+          });
+        } else {
+          setErrorMsg("No se encontró el cuestionario con el ID especificado.");
+        }
+      } catch (err) {
+        console.error(err);
+        if (isMounted) {
           setErrorMsg("Error al obtener los datos desde Google Sheets.");
-        });
-    } else {
-      // Fallback: Leer datos directamente desde la URL (comportamiento original)
-      setNombre(searchParams.get("nombre") || "");
-      setFechaNacimiento(searchParams.get("fecha_nacimiento") || "");
-      setEdad(searchParams.get("edad") || "");
-      setTelefono(searchParams.get("telefono") || "");
-      setCorreo(searchParams.get("correo") || "");
-      setIdentificacion(searchParams.get("identificacion") || "");
-      
-      let fReg = searchParams.get("fecha_registro");
-      if (!fReg) {
-        const d = new Date();
-        const pad = (n: number) => n.toString().padStart(2, "0");
-        fReg = `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      setFechaRegistro(fReg);
+    };
 
-      const detalles = searchParams.get("detalles_medicos");
-      if (detalles && detalles.trim() !== "") {
-        setDetallesMedicos(detalles);
-      }
-
-      setFirma(searchParams.get("firma") || "");
-
-      setQuestions({
-        hemofilia: searchParams.get("hemofilia") || "NO",
-        diabetes: searchParams.get("diabetes") || "NO",
-        alergias: searchParams.get("alergias") || "NO",
-        cardiacas: searchParams.get("cardiacas") || "NO",
-        epilepsia: searchParams.get("epilepsia") || "NO",
-        afeccion_piel: searchParams.get("afeccion_piel") || "NO",
-        embarazo: searchParams.get("embarazo") || "NO",
-        hepatitis_vih: searchParams.get("hepatitis_vih") || "NO",
-        alcohol_drogas: searchParams.get("alcohol_drogas") || "NO",
-      });
-    }
-  }, [searchParams]);
+    void loadFromSheets();
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
 
   // Imprimir
   const handlePrint = () => {
@@ -179,13 +164,12 @@ function PrintPageContent() {
             {/* Header */}
             <div className="flex justify-between items-center border-b-2 border-black pb-4 mb-5">
               <div className="flex items-center gap-4">
-                <img 
+                <Image 
                   src="/logo.png" 
                   alt="Mambas Tattoo Logo" 
+                  width={64}
+                  height={64}
                   className="h-16 w-auto object-contain"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
                 />
                 <div className="text-left">
                   <h1 className="font-serif font-bold text-[18pt] uppercase tracking-wider leading-none mb-1">
@@ -313,6 +297,7 @@ function PrintPageContent() {
               <div className="w-[45%] text-center flex flex-col items-center">
                 <div className="h-[70px] flex items-center justify-center -mb-2.5">
                   {firma ? (
+                    /* eslint-disable-next-line @next/next/no-img-element */
                     <img src={firma} alt="Firma Digital" className="max-h-[70px] max-w-full object-contain" />
                   ) : (
                     <span className="text-gray-400 text-[8pt] italic">Sin firma digital</span>

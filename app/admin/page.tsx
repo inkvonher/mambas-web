@@ -51,6 +51,51 @@ import {
   StatusDistribution,
 } from "./components/AnalyticsCharts";
 
+interface SaleRecord {
+  id?: string | number;
+  fecha_registro: string;
+  dia: number;
+  trabajo: string;
+  artista: string;
+  total: number;
+  tip: number;
+  porcentaje: number;
+  nombre_cliente: string;
+  contacto_cliente: string;
+  comision_artista: number;
+  neto_estudio: number;
+}
+
+function parseSalesData(data: unknown): SaleRecord[] {
+  if (!Array.isArray(data)) return [];
+  const formatted: SaleRecord[] = data.map((item: Record<string, unknown>) => ({
+    id: item.id as string | number | undefined,
+    fecha_registro: String(item.fecha_registro || item.fecha || ""),
+    dia: parseInt(String(item.dia)) || 1,
+    trabajo: String(item.trabajo || "").toUpperCase(),
+    artista: String(item.artista || "").toUpperCase(),
+    total: parseFloat(String(item.total)) || 0,
+    tip: parseFloat(String(item.tip)) || 0,
+    porcentaje: parseFloat(String(item.porcentaje)) || 0.50,
+    nombre_cliente: String(item.nombre_cliente || item.cliente || ""),
+    contacto_cliente: String(item.contacto_cliente || item.contacto || ""),
+    comision_artista: parseFloat(String(item.comision_artista)) || 0,
+    neto_estudio: parseFloat(String(item.neto_estudio)) || 0,
+  }));
+
+  return formatted.sort((a, b) => {
+    const parseDate = (dStr: string) => {
+      if (!dStr) return 0;
+      const parts = dStr.split("/");
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0])).getTime();
+      }
+      return 0;
+    };
+    return parseDate(b.fecha_registro) - parseDate(a.fecha_registro);
+  });
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const [clients, setClients] = useState<Client[]>([]);
@@ -100,7 +145,7 @@ export default function AdminPage() {
   const OWNER_PASSWORD = process.env.NEXT_PUBLIC_OWNER_PASSWORD || "owner2026";
 
   // Ventas States
-  const [sales, setSales] = useState<any[]>([]);
+  const [sales, setSales] = useState<SaleRecord[]>([]);
   const [salesLoading, setSalesLoading] = useState(true);
   const [salesSubmitting, setSalesSubmitting] = useState(false);
 
@@ -125,36 +170,7 @@ export default function AdminPage() {
       setSalesLoading(true);
       const response = await fetch(`${PROXY_URL}?sheet=ventas`);
       const data = await response.json();
-      if (Array.isArray(data)) {
-        const formatted = data.map((item: any) => ({
-          id: item.id,
-          fecha_registro: item.fecha_registro || item.fecha || "",
-          dia: parseInt(item.dia) || 1,
-          trabajo: String(item.trabajo || "").toUpperCase(),
-          artista: String(item.artista || "").toUpperCase(),
-          total: parseFloat(item.total) || 0,
-          tip: parseFloat(item.tip) || 0,
-          porcentaje: parseFloat(item.porcentaje) || 0.50,
-          nombre_cliente: item.nombre_cliente || item.cliente || "",
-          contacto_cliente: item.contacto_cliente || item.contacto || "",
-          comision_artista: parseFloat(item.comision_artista) || 0,
-          neto_estudio: parseFloat(item.neto_estudio) || 0,
-        }));
-
-        const sorted = formatted.sort((a, b) => {
-          const parseDate = (dStr: string) => {
-            if (!dStr) return 0;
-            const parts = dStr.split("/");
-            if (parts.length === 3) {
-              return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0])).getTime();
-            }
-            return 0;
-          };
-          return parseDate(b.fecha_registro) - parseDate(a.fecha_registro);
-        });
-
-        setSales(sorted);
-      }
+      setSales(parseSalesData(data));
     } catch (err) {
       console.error("Error fetching sales:", err);
     } finally {
@@ -163,12 +179,31 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    if (isOwnerUnlocked && activeTab === "analitica") {
-      fetchSales();
-    }
+    if (!isOwnerUnlocked || activeTab !== "analitica") return;
+    let isMounted = true;
+    const loadInitialSales = async () => {
+      try {
+        const response = await fetch("/api/sheets-proxy?sheet=ventas");
+        const data = await response.json();
+        if (isMounted) {
+          setSales(parseSalesData(data));
+          setSalesLoading(false);
+        }
+      } catch (err) {
+        console.error("Error fetching initial sales:", err);
+        if (isMounted) {
+          setSalesLoading(false);
+        }
+      }
+    };
+
+    void loadInitialSales();
+    return () => {
+      isMounted = false;
+    };
   }, [isOwnerUnlocked, activeTab]);
 
-  const handleSaleSubmit = async (e: any) => {
+  const handleSaleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (salesSubmitting) return;
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function QrFlyerPage() {
   const handlePrint = () => {
@@ -50,13 +51,12 @@ export default function QrFlyerPage() {
 
         {/* Header Logo */}
         <div className="flex flex-col items-center mt-2">
-          <img 
+          <Image 
             src="/logo.png" 
             alt="Mambas Tattoo Logo" 
+            width={80}
+            height={80}
             className="h-20 w-auto mb-3 object-contain filter brightness-110 print:invert-0 print:filter-none"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none';
-            }}
           />
           <h1 className="font-serif text-[#C5A059] text-2xl sm:text-3xl tracking-[4px] uppercase font-bold print:text-black">
             Mambas Tattoo
@@ -76,9 +76,11 @@ export default function QrFlyerPage() {
 
         {/* QR Code Container */}
         <div className="bg-white p-5 rounded-2xl shadow-lg border-2 border-[#C5A059] my-2 print:border-black print:shadow-none">
-          <img 
+          <Image 
             src="/qr-cuestionario.png" 
             alt="Código QR Cuestionario Mambas" 
+            width={224}
+            height={224}
             className="w-48 h-48 sm:w-56 sm:h-56 object-contain"
           />
         </div>

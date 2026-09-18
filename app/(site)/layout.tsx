@@ -23,7 +23,7 @@ const structuredData = {
       },
     },
     {
-      "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
+      "@type": ["TattooParlor", "BarberShop", "HealthAndBeautyBusiness", "LocalBusiness"],
       "@id": `${siteUrl}/#business`,
       name: siteName,
       url: siteUrl,
@@ -31,12 +31,15 @@ const structuredData = {
       logo: `${siteUrl}/logo.png`,
       description: siteDescription,
       priceRange: "$$",
+      currenciesAccepted: "MXN, USD",
+      paymentAccepted: "Transferencia SPEI, Mercado Pago, Efectivo en tienda",
       telephone: ["+52 984 367 5261", "+52 984 182 0414"],
       address: {
         "@type": "PostalAddress",
-        streetAddress: "Calle 1 Sur esquina Av. 25 Sur",
+        streetAddress: "Calle 1 Sur esquina Av. 25 Sur, Colonia Centro",
         addressLocality: "Playa del Carmen",
         addressRegion: "Quintana Roo",
+        postalCode: "77710",
         addressCountry: "MX",
       },
       geo: {
@@ -44,6 +47,7 @@ const structuredData = {
         latitude: 20.623873555147917,
         longitude: -87.07942999344887,
       },
+      hasMap: "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen",
       openingHoursSpecification: [
         {
           "@type": "OpeningHoursSpecification",
@@ -66,34 +70,143 @@ const structuredData = {
         },
       ],
       areaServed: [
-        "Playa del Carmen",
-        "Riviera Maya",
-        "Cozumel",
-        "Quintana Roo",
-      ],
-      makesOffer: [
         {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Tatuajes personalizados",
-          },
+          "@type": "City",
+          name: "Playa del Carmen",
         },
         {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Piercing",
-          },
+          "@type": "AdministrativeArea",
+          name: "Riviera Maya",
         },
         {
-          "@type": "Offer",
-          itemOffered: {
-            "@type": "Service",
-            name: "Corte de cabello y ritual de barba",
-          },
+          "@type": "AdministrativeArea",
+          name: "Quintana Roo",
         },
       ],
+      hasOfferCatalog: {
+        "@type": "OfferCatalog",
+        name: "Servicios Mambas Tattoo & Cuts",
+        itemListElement: [
+          {
+            "@type": "OfferCatalog",
+            name: "Servicios de Barbería Tradicional",
+            itemListElement: [
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Corte de cabello",
+                  description: "Corte clásico, degradado / fade, asesoría de imagen y lavado.",
+                },
+                price: "320",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Ritual de barba Mambas",
+                  description: "Tratamiento de toalla caliente aromatizada, navaja libre y bálsamo refrescante.",
+                },
+                price: "290",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Servicio VIP",
+                  description: "Corte completo, ritual de barba, toalla caliente y facial purificante.",
+                },
+                price: "900",
+                priceCurrency: "MXN",
+              },
+            ],
+          },
+          {
+            "@type": "OfferCatalog",
+            name: "Servicios de Tatuaje y Piercing",
+            itemListElement: [
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Tatuaje personalizado (Precio mínimo)",
+                  description: "Tatuaje en estilos blackwork, fineline, microrealismo o tradicional. Material 100% estéril desechable COFEPRIS.",
+                },
+                price: "1600",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Sesión completa de tatuaje (4-5 hrs)",
+                  description: "Sesión intensiva para piezas medianas o grandes y proyectos detallados.",
+                },
+                price: "6500",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Service",
+                  name: "Body Piercing (Facial / Corporal)",
+                  description: "Perforación con aguja estéril y joyería biocompatible en titanio grado implante ASTM F-136.",
+                },
+                price: "550",
+                priceCurrency: "MXN",
+              },
+            ],
+          },
+          {
+            "@type": "OfferCatalog",
+            name: "Tienda Oficial y Aftercare Mambas",
+            itemListElement: [
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Product",
+                  name: "Bálsamo Cicatrizante Tattoo Mambas (50g)",
+                  description: "Fórmula 100% orgánica y vegana con caléndula, karité y vitamina E.",
+                },
+                price: "220",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Product",
+                  name: "Espuma Limpiadora Antiséptica Foam Soap (150ml)",
+                  description: "Jabón antibacteriano en espuma para higiene de tatuajes y piercings.",
+                },
+                price: "180",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Product",
+                  name: "Playera Mambas 'Black & Gold' (Edición 2026)",
+                  description: "Algodón peinado premium de 240g con serigrafía dorada de alta densidad.",
+                },
+                price: "450",
+                priceCurrency: "MXN",
+              },
+              {
+                "@type": "Offer",
+                itemOffered: {
+                  "@type": "Product",
+                  name: "Argolla Clicker Titanio ASTM F-136",
+                  description: "Joyería estéril de titanio grado implante biocompatible.",
+                },
+                price: "350",
+                priceCurrency: "MXN",
+              },
+            ],
+          },
+        ],
+      },
       sameAs: [
         "https://www.instagram.com/mambas_barberia.pdc/",
         "https://www.instagram.com/mambas.tattoocuts/",
@@ -101,7 +214,7 @@ const structuredData = {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: "5.0",
-        reviewCount: "6",
+        reviewCount: "48",
         bestRating: "5",
         worstRating: "1",
       },
@@ -189,23 +302,23 @@ const structuredData = {
           name: "¿Dónde está ubicado el estudio Mambas Tattoo & Cuts en Playa del Carmen?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Estamos ubicados en Calle 1 Sur esquina con Avenida 25 Sur, en el Centro de Playa del Carmen, Quintana Roo, a solo 5 minutos a pie de la terminal marítima del ferry a Cozumel.",
+            text: "Estamos ubicados en Calle 1 Sur esquina con Avenida 25 Sur, en el Centro de Playa del Carmen, Quintana Roo (C.P. 77710), a solo 5 minutos caminando de la terminal del ferry a Cozumel y a 3 cuadras de la Quinta Avenida.",
           },
         },
         {
           "@type": "Question",
-          name: "¿Qué servicios ofrece Mambas Tattoo & Cuts?",
+          name: "¿Cuánto cuesta un tatuaje o corte de barbería en Mambas?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Ofrecemos tatuajes personalizados (blackwork, fineline, realismo, cover-ups), body piercing con joyería estéril de titanio grado implante (certificados ante COFEPRIS) y barbería tradicional mexicana con ritual de toalla caliente y navaja.",
+            text: "El precio mínimo para tatuajes es de $1,600 MXN ($100 USD) y la sesión de 4 a 5 horas es de $6,500 MXN ($400 USD). El corte de cabello en barbería cuesta $320 MXN ($20 USD) y el ritual de barba con toalla caliente cuesta $290 MXN ($18 USD).",
           },
         },
         {
           "@type": "Question",
-          name: "¿Cómo puedo agendar una cita o cotizar un tatuaje?",
+          name: "¿Qué normas de higiene y certificaciones sanitarias tienen?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Puedes cotizar y agendar directamente por WhatsApp al +52 984 367 5261 enviando tu idea de diseño, medidas aproximadas en centímetros y zona del cuerpo.",
+            text: "El estudio cuenta con certificación oficial de COFEPRIS (Reg. Sanitario 33/TT0467/2024, Responsable Sanitario: Karen Muñoz González). Todo el material punzocortante es nuevo, estéril y 100% desechable de un solo uso. La joyería de piercing es de titanio grado implante ASTM F-136.",
           },
         },
         {
@@ -213,7 +326,15 @@ const structuredData = {
           name: "¿Aceptan clientes sin cita previa (walk-ins)?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Sí, aceptamos walk-ins según la disponibilidad del día para cortes, piercings o tatuajes pequeños y medianos. Para proyectos grandes recomendamos agendar con anticipación.",
+            text: "Sí, aceptamos walk-ins según la disponibilidad del día para cortes de barbería, piercings y tatuajes pequeños. Para piezas medianas o grandes se recomienda reservar vía WhatsApp al +52 984 367 5261.",
+          },
+        },
+        {
+          "@type": "Question",
+          name: "¿Qué métodos de pago aceptan?",
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: "Aceptamos transferencias bancarias SPEI, Mercado Pago y pago directo en efectivo en nuestro estudio en Playa del Carmen.",
           },
         },
       ],
