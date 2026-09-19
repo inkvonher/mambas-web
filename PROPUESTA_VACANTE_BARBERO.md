@@ -1,4 +1,4 @@
-# PROPUESTA DE COLABORACIÓN Y PERFIL DE BARBERO / ESTILISTA
+# PROPUESTA DE COLABORACIÓN Y PERFIL DE BARBERO
 **Mambas Tattoo & Cuts · Playa del Carmen, Quintana Roo**
 
 ---
