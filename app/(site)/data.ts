@@ -31,7 +31,7 @@ export type Product = {
 
 export const copy = {
   es: {
-    nav: ["Inicio", "Barbería", "Tattoo", "Tienda", "Anticipo", "Lealtad", "Ubicación"],
+    nav: ["Inicio", "Barbería", "Tattoo", "Anticipo", "Lealtad", "Ubicación"],
     heroKicker: "Barbería tradicional mexicana · Tatuaje ritual · Piercing",
     heroText:
       "Desde 2021 en el corazón de Playa del Carmen, a unas calles del ferry a Cozumel. Certificados ante COFEPRIS.",
@@ -131,7 +131,7 @@ export const copy = {
     floatingTattoo: "Tattoo & Piercing",
   },
   en: {
-    nav: ["Home", "Barbershop", "Tattoo", "Store", "Deposit", "Loyalty", "Location"],
+    nav: ["Home", "Barbershop", "Tattoo", "Deposit", "Loyalty", "Location"],
     heroKicker: "Traditional Mexican barbershop · Ritual tattoo · Piercing",
     heroText:
       "Since 2021 in the heart of Playa del Carmen, a few blocks from the Cozumel ferry. COFEPRIS certified.",
