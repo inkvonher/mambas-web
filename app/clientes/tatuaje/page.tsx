@@ -61,7 +61,6 @@ export default function TatuajePage() {
   // Referencias para el canvas de firma
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [isSignatureEmpty, setIsSignatureEmpty] = useState(true);
   const isSignatureEmptyRef = useRef(true);
 
   // Calcular la edad cuando cambia la fecha de nacimiento
@@ -126,7 +125,6 @@ export default function TatuajePage() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     clearCanvasUI(canvas, ctx);
-    setIsSignatureEmpty(true);
     isSignatureEmptyRef.current = true;
   };
 
@@ -144,7 +142,6 @@ export default function TatuajePage() {
     ctx.lineCap = "round";
     ctx.strokeStyle = "#0D2A22";
     setIsDrawing(true);
-    setIsSignatureEmpty(false);
     isSignatureEmptyRef.current = false;
   };
 
@@ -175,7 +172,6 @@ export default function TatuajePage() {
     ctx.lineCap = "round";
     ctx.strokeStyle = "#0D2A22";
     setIsDrawing(true);
-    setIsSignatureEmpty(false);
     isSignatureEmptyRef.current = false;
   };
 
