@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
+const siteUrl = (process.env.SITE_URL || "https://mambaspdc.com").replace(
   /\/$/,
   "",
 );
@@ -155,52 +155,6 @@ const structuredData = {
                   description: "Perforación con aguja estéril y joyería biocompatible en titanio grado implante ASTM F-136.",
                 },
                 price: "550",
-                priceCurrency: "MXN",
-              },
-            ],
-          },
-          {
-            "@type": "OfferCatalog",
-            name: "Tienda Oficial y Aftercare Mambas",
-            itemListElement: [
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Product",
-                  name: "Bálsamo Cicatrizante Tattoo Mambas (50g)",
-                  description: "Fórmula 100% orgánica y vegana con caléndula, karité y vitamina E.",
-                },
-                price: "220",
-                priceCurrency: "MXN",
-              },
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Product",
-                  name: "Espuma Limpiadora Antiséptica Foam Soap (150ml)",
-                  description: "Jabón antibacteriano en espuma para higiene de tatuajes y piercings.",
-                },
-                price: "180",
-                priceCurrency: "MXN",
-              },
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Product",
-                  name: "Playera Mambas 'Black & Gold' (Edición 2026)",
-                  description: "Algodón peinado premium de 240g con serigrafía dorada de alta densidad.",
-                },
-                price: "450",
-                priceCurrency: "MXN",
-              },
-              {
-                "@type": "Offer",
-                itemOffered: {
-                  "@type": "Product",
-                  name: "Argolla Clicker Titanio ASTM F-136",
-                  description: "Joyería estéril de titanio grado implante biocompatible.",
-                },
-                price: "350",
                 priceCurrency: "MXN",
               },
             ],

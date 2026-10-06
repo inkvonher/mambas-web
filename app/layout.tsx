@@ -16,7 +16,7 @@ const outfit = Outfit({
   display: "swap",
 });
 
-const siteUrl = (process.env.SITE_URL || "https://mambas-web.vercel.app").replace(
+const siteUrl = (process.env.SITE_URL || "https://mambaspdc.com").replace(
   /\/$/,
   "",
 );
