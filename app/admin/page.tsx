@@ -66,6 +66,63 @@ interface SaleRecord {
   neto_estudio: number;
 }
 
+interface CollaboratorProposalRecord {
+  id?: string | number;
+  fecha_registro: string;
+  rol: "TATUADOR" | "BARBERO";
+  nombre: string;
+  telefono: string;
+  instagram: string;
+  fecha_conformidad: string;
+  esquema: string;
+  firma_base64: string;
+}
+
+function parseCollaboratorProposals(data: unknown): CollaboratorProposalRecord[] {
+  if (!Array.isArray(data)) return [];
+  const filtered = data.filter((item: Record<string, unknown>) => {
+    const tipo = String(item.registro_tipo || "").toUpperCase();
+    const ident = String(item.identificacion || "").toUpperCase();
+    const rol = String(item.rol_colaborador || "").toUpperCase();
+    const detalles = String(item.detalles_medicos || "").toUpperCase();
+    return (
+      tipo === "PROPUESTA_COLABORADOR" ||
+      rol === "TATUADOR" ||
+      rol === "BARBERO" ||
+      ident === "TATUADOR" ||
+      ident === "BARBERO" ||
+      detalles.startsWith("PROPUESTA ")
+    );
+  });
+
+  return filtered
+    .map((item: Record<string, unknown>) => {
+      const rawRole = String(
+        item.rol_colaborador || item.identificacion || "TATUADOR",
+      ).toUpperCase();
+      const rol: "TATUADOR" | "BARBERO" = rawRole.includes("BARBER")
+        ? "BARBERO"
+        : "TATUADOR";
+      return {
+        id: item.id as string | number | undefined,
+        fecha_registro: String(item.fecha_registro || ""),
+        rol,
+        nombre: String(item.nombre || ""),
+        telefono: String(item.telefono || ""),
+        instagram: String(item.correo || item.instagram || ""),
+        fecha_conformidad: String(item.fecha_nacimiento || item.fecha_conformidad || ""),
+        esquema: String(
+          item.detalles_medicos ||
+            (rol === "BARBERO"
+              ? "Propuesta Barbero (50% / 50%)"
+              : "Propuesta Tatuador (60/40 · 50/50 · 40/60)"),
+        ),
+        firma_base64: String(item.firma_base64 || ""),
+      };
+    })
+    .reverse();
+}
+
 function parseSalesData(data: unknown): SaleRecord[] {
   if (!Array.isArray(data)) return [];
   const formatted: SaleRecord[] = data.map((item: Record<string, unknown>) => ({
@@ -136,13 +193,31 @@ export default function AdminPage() {
       : "dark";
   });
 
-  const [activeTab, setActiveTab] = useState<"agenda" | "clientes" | "analitica">("agenda");
+  const [activeTab, setActiveTab] = useState<"agenda" | "clientes" | "analitica" | "colaboradores">("agenda");
+  const [pendingOwnerTab, setPendingOwnerTab] = useState<"analitica" | "colaboradores">("analitica");
   const [isOwnerUnlocked, setIsOwnerUnlocked] = useState(false);
   const [passwordPromptOpen, setPasswordPromptOpen] = useState(false);
   const [ownerPasswordInput, setOwnerPasswordInput] = useState("");
   const [ownerPasswordError, setOwnerPasswordError] = useState("");
 
   const OWNER_PASSWORD = process.env.NEXT_PUBLIC_OWNER_PASSWORD || "owner2026";
+
+  // Colaboradores (Propuestas Firmadas) States
+  const [collaborators, setCollaborators] = useState<CollaboratorProposalRecord[]>([]);
+  const [collaboratorsLoading, setCollaboratorsLoading] = useState(true);
+  const [collaboratorSubmitting, setCollaboratorSubmitting] = useState(false);
+  const [collabFilterRole, setCollabFilterRole] = useState<"ALL" | "TATUADOR" | "BARBERO">("ALL");
+  const [collabSearch, setCollabSearch] = useState("");
+  const [selectedProposal, setSelectedProposal] = useState<CollaboratorProposalRecord | null>(null);
+  const [copiedLinkType, setCopiedLinkType] = useState<"tattoo" | "barber" | null>(null);
+
+  // Manual Collaborator Archive Form State
+  const [collabRol, setCollabRol] = useState<"TATUADOR" | "BARBERO">("TATUADOR");
+  const [collabNombre, setCollabNombre] = useState("");
+  const [collabTelefono, setCollabTelefono] = useState("");
+  const [collabInstagram, setCollabInstagram] = useState("");
+  const [collabFecha, setCollabFecha] = useState(() => new Date().toISOString().split("T")[0]);
+  const [collabEsquema, setCollabEsquema] = useState("60% Estudio / 40% Artista · 50% / 50% · 40% Estudio / 60% Artista");
 
   // Ventas States
   const [sales, setSales] = useState<SaleRecord[]>([]);
@@ -178,30 +253,94 @@ export default function AdminPage() {
     }
   };
 
+  const fetchCollaborators = async () => {
+    const PROXY_URL = "/api/sheets-proxy";
+    try {
+      setCollaboratorsLoading(true);
+      const response = await fetch(`${PROXY_URL}?sheet=cuestionarios`);
+      const data = await response.json();
+      setCollaborators(parseCollaboratorProposals(data));
+    } catch (err) {
+      console.error("Error fetching collaborators:", err);
+    } finally {
+      setCollaboratorsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (!isOwnerUnlocked || activeTab !== "analitica") return;
+    if (!isOwnerUnlocked || (activeTab !== "analitica" && activeTab !== "colaboradores")) return;
     let isMounted = true;
-    const loadInitialSales = async () => {
+    const loadOwnerData = async () => {
       try {
-        const response = await fetch("/api/sheets-proxy?sheet=ventas");
-        const data = await response.json();
+        const [salesRes, collabRes] = await Promise.all([
+          fetch("/api/sheets-proxy?sheet=ventas"),
+          fetch("/api/sheets-proxy?sheet=cuestionarios"),
+        ]);
+        const [salesData, collabData] = await Promise.all([
+          salesRes.json(),
+          collabRes.json(),
+        ]);
         if (isMounted) {
-          setSales(parseSalesData(data));
+          setSales(parseSalesData(salesData));
           setSalesLoading(false);
+          setCollaborators(parseCollaboratorProposals(collabData));
+          setCollaboratorsLoading(false);
         }
       } catch (err) {
-        console.error("Error fetching initial sales:", err);
+        console.error("Error fetching owner data:", err);
         if (isMounted) {
           setSalesLoading(false);
+          setCollaboratorsLoading(false);
         }
       }
     };
 
-    void loadInitialSales();
+    void loadOwnerData();
     return () => {
       isMounted = false;
     };
   }, [isOwnerUnlocked, activeTab]);
+
+  const handleCollaboratorSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (collaboratorSubmitting || !collabNombre.trim()) return;
+
+    const payload = {
+      form_type: "cuestionario",
+      registro_tipo: "PROPUESTA_COLABORADOR",
+      rol_colaborador: collabRol,
+      nombre: collabNombre.trim(),
+      telefono: collabTelefono.trim() || "No especificado",
+      correo: collabInstagram.trim() || "No especificado",
+      identificacion: collabRol,
+      fecha_nacimiento: collabFecha,
+      detalles_medicos: collabEsquema.trim(),
+      firma_base64: "",
+    };
+
+    try {
+      setCollaboratorSubmitting(true);
+      const response = await fetch("/api/sheets-proxy", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: JSON.stringify(payload),
+      });
+      const resData = await response.json();
+      if (resData.status === "success") {
+        setCollabNombre("");
+        setCollabTelefono("");
+        setCollabInstagram("");
+        await fetchCollaborators();
+      } else {
+        alert("Error al archivar colaborador: " + (resData.message || ""));
+      }
+    } catch (err) {
+      console.error("Error saving collaborator:", err);
+      alert("Error al guardar colaborador.");
+    } finally {
+      setCollaboratorSubmitting(false);
+    }
+  };
 
   const handleSaleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -263,11 +402,12 @@ export default function AdminPage() {
     }
   };
 
-  function handleTabClick(tab: "agenda" | "clientes" | "analitica") {
-    if (tab === "analitica") {
+  function handleTabClick(tab: "agenda" | "clientes" | "analitica" | "colaboradores") {
+    if (tab === "analitica" || tab === "colaboradores") {
       if (isOwnerUnlocked) {
-        setActiveTab("analitica");
+        setActiveTab(tab);
       } else {
+        setPendingOwnerTab(tab);
         setOwnerPasswordInput("");
         setOwnerPasswordError("");
         setPasswordPromptOpen(true);
@@ -738,6 +878,22 @@ export default function AdminPage() {
   const uniqueArtists = Array.from(new Set(sales.map((item) => item.artista))).filter(Boolean);
   const uniqueTypes = Array.from(new Set(sales.map((item) => item.trabajo))).filter(Boolean);
 
+  const filteredCollaborators = useMemo(() => {
+    const query = collabSearch.trim().toLowerCase();
+    return collaborators.filter((item) => {
+      if (collabFilterRole !== "ALL" && item.rol !== collabFilterRole) {
+        return false;
+      }
+      if (!query) return true;
+      return [item.nombre, item.telefono, item.instagram, item.esquema, item.rol]
+        .filter(Boolean)
+        .some((val) => val.toLowerCase().includes(query));
+    });
+  }, [collaborators, collabFilterRole, collabSearch]);
+
+  const totalTatuadores = collaborators.filter((c) => c.rol === "TATUADOR").length;
+  const totalBarberos = collaborators.filter((c) => c.rol === "BARBERO").length;
+
   const monthsMap = [
     { label: "Enero", val: "1" },
     { label: "Febrero", val: "2" },
@@ -825,10 +981,10 @@ export default function AdminPage() {
         ) : null}
 
         {/* Navigation Tabs */}
-        <div className="mb-6 grid grid-cols-3 border-b border-[#d6ad4a]/20">
+        <div className="mb-6 grid grid-cols-2 sm:grid-cols-4 border-b border-[#d6ad4a]/20">
           <button
             onClick={() => handleTabClick("agenda")}
-            className={`text-center pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
+            className={`text-center py-2.5 sm:pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
               activeTab === "agenda"
                 ? "border-[#d6ad4a] text-[#d6ad4a]"
                 : "border-transparent text-zinc-400 hover:text-white"
@@ -838,7 +994,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => handleTabClick("clientes")}
-            className={`text-center pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
+            className={`text-center py-2.5 sm:pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 ${
               activeTab === "clientes"
                 ? "border-[#d6ad4a] text-[#d6ad4a]"
                 : "border-transparent text-zinc-400 hover:text-white"
@@ -848,13 +1004,23 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => handleTabClick("analitica")}
-            className={`text-center pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 flex items-center justify-center gap-1.5 ${
+            className={`text-center py-2.5 sm:pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 flex items-center justify-center gap-1.5 ${
               activeTab === "analitica"
                 ? "border-[#d6ad4a] text-[#d6ad4a]"
                 : "border-transparent text-zinc-400 hover:text-white"
             }`}
           >
             Analítica {!isOwnerUnlocked && "🔒"}
+          </button>
+          <button
+            onClick={() => handleTabClick("colaboradores")}
+            className={`text-center py-2.5 sm:pb-3 text-xs font-black uppercase tracking-[0.2em] transition-all duration-200 border-b-2 flex items-center justify-center gap-1.5 ${
+              activeTab === "colaboradores"
+                ? "border-[#d6ad4a] text-[#d6ad4a]"
+                : "border-transparent text-zinc-400 hover:text-white"
+            }`}
+          >
+            Colaboradores {!isOwnerUnlocked && "🔒"}
           </button>
         </div>
 
@@ -1242,18 +1408,26 @@ export default function AdminPage() {
                   Sesión de dueño activa
                 </p>
                 <p className="text-xs text-zinc-500 mt-1">
-                  Las estadísticas financieras e ingresos reales son visibles.
+                  Las estadísticas financieras y el archivo privado de colaboradores están desbloqueados.
                 </p>
               </div>
-              <button
-                onClick={() => {
-                  setIsOwnerUnlocked(false);
-                  setActiveTab("agenda");
-                }}
-                className="rounded-lg border border-red-500/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-400 hover:bg-red-500 hover:text-white transition duration-200"
-              >
-                Bloquear analíticas 🔒
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setActiveTab("colaboradores")}
+                  className="rounded-lg border border-[#d6ad4a]/50 bg-[#d6ad4a]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black transition duration-200"
+                >
+                  ✍️ Archivo de Colaboradores ({collaborators.length})
+                </button>
+                <button
+                  onClick={() => {
+                    setIsOwnerUnlocked(false);
+                    setActiveTab("agenda");
+                  }}
+                  className="rounded-lg border border-red-500/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-400 hover:bg-red-500 hover:text-white transition duration-200"
+                >
+                  Bloquear área privada 🔒
+                </button>
+              </div>
             </div>
 
             <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -1505,6 +1679,7 @@ export default function AdminPage() {
                         onChange={(e) => setSalePorcentaje(e.target.value)}
                         className="p-2 border border-zinc-800 bg-black/50 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
                       >
+                        <option value="0.60">60% / 40% (0.60)</option>
                         <option value="0.50">50% / 50% (0.50)</option>
                         <option value="0.45">45% / 55% (0.45)</option>
                         <option value="0.40">40% / 60% (0.40)</option>
@@ -1686,7 +1861,532 @@ export default function AdminPage() {
             </section>
           </>
         )}
+
+        {activeTab === "colaboradores" && isOwnerUnlocked && (
+          <>
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-zinc-800 bg-[#080808]/40 p-4">
+              <div>
+                <p className="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  Archivo Privado de Colaboradores (Área de Propietario)
+                </p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  Las propuestas de Tatuador y Barbero firmadas y enviadas a WhatsApp se archivan automáticamente aquí.
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setActiveTab("analitica")}
+                  className="rounded-lg border border-[#d6ad4a]/50 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black transition duration-200"
+                >
+                  📊 Ver Analítica Financiera
+                </button>
+                <button
+                  onClick={() => {
+                    setIsOwnerUnlocked(false);
+                    setActiveTab("agenda");
+                  }}
+                  className="rounded-lg border border-red-500/30 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-red-400 hover:bg-red-500 hover:text-white transition duration-200"
+                >
+                  Bloquear área privada 🔒
+                </button>
+              </div>
+            </div>
+
+            {/* Stats & Quick Share Links */}
+            <section className="mb-6 grid gap-4 sm:grid-cols-3">
+              <StatCard
+                label="Propuestas Archivadas"
+                value={collaborators.length.toString()}
+              />
+              <StatCard
+                label="Artistas Tatuadores"
+                value={totalTatuadores.toString()}
+              />
+              <StatCard
+                label="Barberos"
+                value={totalBarberos.toString()}
+              />
+            </section>
+
+            {/* Quick Links to Proposals */}
+            <section className="mb-6 grid gap-4 md:grid-cols-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-[#d6ad4a]/25 bg-[#080808]/80 p-4">
+                <div>
+                  <span className="inline-block rounded bg-[#d6ad4a]/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-[#d6ad4a]">
+                    Tatuadores
+                  </span>
+                  <h3 className="mt-1.5 text-sm font-black uppercase tracking-wider text-white">
+                    Propuesta de Colaboración — Tatuador
+                  </h3>
+                  <p className="mt-1 text-xs text-zinc-400">
+                    Esquema 60/40 · 50/50 · 40/60 + Firma Digital
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = `${window.location.origin}/propuesta-tatuador.html`;
+                      navigator.clipboard.writeText(url);
+                      setCopiedLinkType("tattoo");
+                      setTimeout(() => setCopiedLinkType(null), 2000);
+                    }}
+                    className="rounded-lg border border-[#d6ad4a]/40 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black transition"
+                  >
+                    {copiedLinkType === "tattoo" ? "✓ Link Copiado" : "Copiar Link"}
+                  </button>
+                  <a
+                    href="/propuesta-tatuador.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg bg-[#d6ad4a] px-3 py-2 text-[10px] font-black uppercase tracking-wider text-black hover:bg-white transition"
+                  >
+                    Abrir Propuesta ↗
+                  </a>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-xl border border-emerald-500/25 bg-[#080808]/80 p-4">
+                <div>
+                  <span className="inline-block rounded bg-emerald-500/15 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-emerald-400">
+                    Barbería
+                  </span>
+                  <h3 className="mt-1.5 text-sm font-black uppercase tracking-wider text-white">
+                    Propuesta de Colaboración — Barbero
+                  </h3>
+                  <p className="mt-1 text-xs text-zinc-400">
+                    Esquema 50/50 + Normas y Firma Digital
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = `${window.location.origin}/propuesta-barbero.html`;
+                      navigator.clipboard.writeText(url);
+                      setCopiedLinkType("barber");
+                      setTimeout(() => setCopiedLinkType(null), 2000);
+                    }}
+                    className="rounded-lg border border-emerald-400/40 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-emerald-400 hover:bg-emerald-400 hover:text-black transition"
+                  >
+                    {copiedLinkType === "barber" ? "✓ Link Copiado" : "Copiar Link"}
+                  </button>
+                  <a
+                    href="/propuesta-barbero.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-lg bg-emerald-400 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-black hover:bg-white transition"
+                  >
+                    Abrir Propuesta ↗
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            {/* Manual Register + Archive Table */}
+            <section className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr] mb-6">
+              <Panel>
+                <div className="mb-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
+                    Registro Manual
+                  </p>
+                  <h3 className="mt-1 text-base font-black uppercase tracking-[0.14em] text-white">
+                    Archivar Colaborador
+                  </h3>
+                  <p className="text-xs text-zinc-400 mt-1">
+                    Cuando un candidato firma desde la propuesta web se guarda solo; usa este formulario si deseas dar de alta a alguien manualmente.
+                  </p>
+                </div>
+
+                <form onSubmit={handleCollaboratorSubmit} className="space-y-3.5">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">
+                        Área / Rol
+                      </label>
+                      <select
+                        value={collabRol}
+                        onChange={(e) => {
+                          const newRole = e.target.value as "TATUADOR" | "BARBERO";
+                          setCollabRol(newRole);
+                          setCollabEsquema(
+                            newRole === "BARBERO"
+                              ? "Propuesta Barbero (50% Barbero / 50% Estudio)"
+                              : "Propuesta Tatuador (60/40 · 50/50 · 40/60)",
+                          );
+                        }}
+                        className="p-2.5 border border-zinc-800 bg-black/60 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      >
+                        <option value="TATUADOR">TATUADOR</option>
+                        <option value="BARBERO">BARBERO</option>
+                      </select>
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">
+                        Fecha de Conformidad
+                      </label>
+                      <input
+                        type="date"
+                        value={collabFecha}
+                        onChange={(e) => setCollabFecha(e.target.value)}
+                        className="p-2.5 border border-zinc-800 bg-black/60 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">
+                      Nombre Completo *
+                    </label>
+                    <input
+                      type="text"
+                      value={collabNombre}
+                      onChange={(e) => setCollabNombre(e.target.value)}
+                      placeholder="Ej. Roberto Gómez"
+                      className="p-2.5 border border-zinc-800 bg-black/60 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">
+                        Teléfono / WhatsApp
+                      </label>
+                      <input
+                        type="text"
+                        value={collabTelefono}
+                        onChange={(e) => setCollabTelefono(e.target.value)}
+                        placeholder="+52 984 000 0000"
+                        className="p-2.5 border border-zinc-800 bg-black/60 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      />
+                    </div>
+
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">
+                        Instagram
+                      </label>
+                      <input
+                        type="text"
+                        value={collabInstagram}
+                        onChange={(e) => setCollabInstagram(e.target.value)}
+                        placeholder="@usuario"
+                        className="p-2.5 border border-zinc-800 bg-black/60 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-[9px] font-bold uppercase text-[#d6ad4a] mb-1">
+                      Esquema / Notas del Acuerdo
+                    </label>
+                    <input
+                      type="text"
+                      value={collabEsquema}
+                      onChange={(e) => setCollabEsquema(e.target.value)}
+                      className="p-2.5 border border-zinc-800 bg-black/60 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={collaboratorSubmitting}
+                    className="w-full py-2.5 bg-[#d6ad4a] hover:bg-[#ebd28a] active:scale-95 text-black font-extrabold text-xs uppercase tracking-wider rounded transition-all disabled:opacity-50"
+                  >
+                    {collaboratorSubmitting ? "Archivando..." : "Guardar en Archivo ➔"}
+                  </button>
+                </form>
+              </Panel>
+
+              <Panel>
+                <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#d6ad4a]">
+                      Expediente Digital
+                    </p>
+                    <h3 className="mt-1 text-base font-black uppercase tracking-[0.14em] text-white">
+                      Propuestas Firmadas y Enviadas a WhatsApp
+                    </h3>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <select
+                      value={collabFilterRole}
+                      onChange={(e) =>
+                        setCollabFilterRole(
+                          e.target.value as "ALL" | "TATUADOR" | "BARBERO",
+                        )
+                      }
+                      className="p-2 bg-[#050505] border border-zinc-800 rounded text-xs focus:outline-none focus:border-[#d6ad4a] text-white"
+                    >
+                      <option value="ALL">Todos los roles</option>
+                      <option value="TATUADOR">Tatuadores</option>
+                      <option value="BARBERO">Barberos</option>
+                    </select>
+
+                    <button
+                      type="button"
+                      onClick={() => fetchCollaborators()}
+                      className="p-2 border border-zinc-800 hover:border-[#d6ad4a] rounded text-xs text-[#d6ad4a] font-bold uppercase tracking-wider transition"
+                    >
+                      ↻ Actualizar
+                    </button>
+                  </div>
+                </div>
+
+                <input
+                  type="text"
+                  value={collabSearch}
+                  onChange={(e) => setCollabSearch(e.target.value)}
+                  placeholder="Buscar colaborador por nombre, WhatsApp o Instagram..."
+                  className="mb-4 w-full rounded-lg border border-zinc-800 bg-black/60 px-3.5 py-2.5 text-xs text-white outline-none focus:border-[#d6ad4a]"
+                />
+
+                {collaboratorsLoading ? (
+                  <div className="text-center py-12 text-zinc-500">
+                    <div className="w-5 h-5 border border-zinc-800 border-t-[#d6ad4a] rounded-full animate-spin mx-auto mb-2" />
+                    <span className="text-[10px] uppercase tracking-wider">
+                      Cargando archivo de colaboradores...
+                    </span>
+                  </div>
+                ) : filteredCollaborators.length === 0 ? (
+                  <div className="rounded-xl border border-zinc-800/80 bg-black/40 p-8 text-center">
+                    <p className="text-sm font-bold text-white">
+                      Sin propuestas archivadas todavía
+                    </p>
+                    <p className="mt-1 text-xs text-zinc-400">
+                      En cuanto un tatuador o barbero firme su propuesta digital y la envíe por WhatsApp, aparecerá registrado aquí con su firma.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-[540px] overflow-y-auto pr-1">
+                    {filteredCollaborators.map((collab, idx) => {
+                      const cleanPhone = collab.telefono.replace(/\D/g, "");
+                      const cleanIg = collab.instagram.replace(/^@/, "").trim();
+                      return (
+                        <div
+                          key={collab.id || idx}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-zinc-800 bg-black/50 p-4 hover:border-[#d6ad4a]/40 transition"
+                        >
+                          <div className="space-y-1.5 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <span
+                                className={`rounded px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${
+                                  collab.rol === "BARBERO"
+                                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                                    : "bg-[#d6ad4a]/15 text-[#d6ad4a] border border-[#d6ad4a]/30"
+                                }`}
+                              >
+                                {collab.rol}
+                              </span>
+                              <h4 className="text-sm font-black text-white truncate">
+                                {collab.nombre}
+                              </h4>
+                              <span className="text-[11px] font-mono text-zinc-400">
+                                • {collab.fecha_conformidad || collab.fecha_registro}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-3 text-xs text-zinc-300">
+                              {cleanPhone ? (
+                                <a
+                                  href={`https://wa.me/${cleanPhone}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[#d6ad4a] hover:underline"
+                                >
+                                  📱 {collab.telefono}
+                                </a>
+                              ) : (
+                                <span className="text-zinc-500">📱 {collab.telefono}</span>
+                              )}
+
+                              {cleanIg && cleanIg !== "No especificado" ? (
+                                <a
+                                  href={`https://instagram.com/${cleanIg}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-zinc-300 hover:text-white hover:underline"
+                                >
+                                  📸 @{cleanIg}
+                                </a>
+                              ) : null}
+                            </div>
+
+                            <p className="text-[11px] text-zinc-400">
+                              {collab.esquema}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center gap-3 shrink-0">
+                            {collab.firma_base64 ? (
+                              <div className="h-12 w-28 overflow-hidden rounded border border-zinc-700 bg-white p-1 flex items-center justify-center">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                  src={collab.firma_base64}
+                                  alt={`Firma de ${collab.nombre}`}
+                                  className="max-h-full max-w-full object-contain"
+                                />
+                              </div>
+                            ) : (
+                              <span className="rounded border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-[10px] text-zinc-400">
+                                Registro manual
+                              </span>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => setSelectedProposal(collab)}
+                              className="rounded-lg border border-[#d6ad4a]/40 px-3 py-2 text-[10px] font-black uppercase tracking-wider text-[#d6ad4a] hover:bg-[#d6ad4a] hover:text-black transition"
+                            >
+                              Ver Acuerdo
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </Panel>
+            </section>
+          </>
+        )}
       </div>
+
+      {selectedProposal ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-lg rounded-2xl border border-[#d6ad4a]/35 bg-[#090909] p-6 shadow-2xl">
+            <div className="flex items-start justify-between gap-4 border-b border-zinc-800 pb-4">
+              <div>
+                <span
+                  className={`inline-block rounded px-2 py-0.5 text-[10px] font-black uppercase tracking-wider ${
+                    selectedProposal.rol === "BARBERO"
+                      ? "bg-emerald-500/15 text-emerald-400"
+                      : "bg-[#d6ad4a]/15 text-[#d6ad4a]"
+                  }`}
+                >
+                  {selectedProposal.rol}
+                </span>
+                <h3 className="mt-1.5 text-xl font-black text-white">
+                  {selectedProposal.nombre}
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Constancia de Conformidad Digital — Mambas Tattoo & Cuts
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedProposal(null)}
+                className="rounded-lg border border-zinc-800 px-2.5 py-1 text-xs text-zinc-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-3 text-xs text-zinc-300">
+              <div className="grid grid-cols-2 gap-3 rounded-xl border border-zinc-800/90 bg-black/50 p-3.5">
+                <div>
+                  <span className="block text-[10px] uppercase text-zinc-400">
+                    Fecha de Conformidad
+                  </span>
+                  <strong className="text-white">
+                    {selectedProposal.fecha_conformidad || selectedProposal.fecha_registro}
+                  </strong>
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase text-zinc-400">
+                    Fecha de Registro
+                  </span>
+                  <strong className="text-white">
+                    {selectedProposal.fecha_registro || "--"}
+                  </strong>
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase text-zinc-400">
+                    WhatsApp
+                  </span>
+                  <strong className="text-[#d6ad4a]">
+                    {selectedProposal.telefono}
+                  </strong>
+                </div>
+                <div>
+                  <span className="block text-[10px] uppercase text-zinc-400">
+                    Instagram
+                  </span>
+                  <strong className="text-white">
+                    {selectedProposal.instagram}
+                  </strong>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-zinc-800/90 bg-black/50 p-3.5">
+                <span className="block text-[10px] uppercase text-zinc-400 mb-1">
+                  Esquema y Condiciones Aceptadas
+                </span>
+                <p className="text-white font-semibold">
+                  {selectedProposal.esquema}
+                </p>
+                {selectedProposal.rol === "TATUADOR" ? (
+                  <ul className="mt-2 space-y-1 text-[11px] text-zinc-400 list-disc pl-4">
+                    <li>60% Estudio / 40% Artista: Estudio aporta mayoría de material y cliente.</li>
+                    <li>50% Estudio / 50% Artista: Artista aporta mayoría de su material y cliente es del estudio.</li>
+                    <li>40% Estudio / 60% Artista: Artista aporta mayoría de su material y a sus clientes.</li>
+                  </ul>
+                ) : (
+                  <p className="mt-1 text-[11px] text-zinc-400">
+                    Aceptación de protocolo de higiene, puntualidad, insumos y reglamento interno de barbería Mambas.
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <span className="block text-[10px] uppercase text-zinc-400 mb-1.5">
+                  Firma Digital Registrada
+                </span>
+                {selectedProposal.firma_base64 ? (
+                  <div className="rounded-xl border border-zinc-700 bg-white p-3 flex items-center justify-center">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={selectedProposal.firma_base64}
+                      alt={`Firma de ${selectedProposal.nombre}`}
+                      className="max-h-28 object-contain"
+                    />
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-zinc-800 bg-black/40 p-4 text-center text-zinc-500">
+                    Archivado manualmente sin trazo digital adjunto.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap justify-end gap-2">
+              <a
+                href={
+                  selectedProposal.rol === "BARBERO"
+                    ? "/propuesta-barbero.html"
+                    : "/propuesta-tatuador.html"
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-lg border border-[#d6ad4a]/40 px-4 py-2.5 text-xs font-black uppercase tracking-wider text-[#d6ad4a] hover:bg-[#d6ad4a]/10 transition"
+              >
+                Abrir Plantilla de Propuesta ↗
+              </a>
+              <button
+                type="button"
+                onClick={() => setSelectedProposal(null)}
+                className="rounded-lg bg-[#d6ad4a] px-5 py-2.5 text-xs font-black uppercase tracking-wider text-black hover:bg-white transition"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {modalOpen ? (
         <CreateAppointmentModal
@@ -1782,7 +2482,7 @@ export default function AdminPage() {
               if (ownerPasswordInput === OWNER_PASSWORD) {
                 setIsOwnerUnlocked(true);
                 setPasswordPromptOpen(false);
-                setActiveTab("analitica");
+                setActiveTab(pendingOwnerTab);
                 setOwnerPasswordError("");
               } else {
                 setOwnerPasswordError("Contraseña incorrecta. Inténtalo de nuevo.");

@@ -804,11 +804,66 @@
       const rect = canvas.getBoundingClientRect();
       ctx.clearRect(0, 0, rect.width, rect.height);
       hasSignature = false;
+      lastArchivedSignatureKey = '';
       placeholder.style.display = 'block';
       statusText.textContent = 'Pendiente de firma';
       statusText.style.color = 'var(--text-muted)';
       document.getElementById('signedAlert').style.display = 'none';
     });
+
+    let lastArchivedSignatureKey = '';
+
+    function getCompressedSignatureDataUrl() {
+      if (!hasSignature) return '';
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = 320;
+      tempCanvas.height = 120;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = '#ffffff';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, tempCanvas.width, tempCanvas.height);
+      return tempCanvas.toDataURL('image/jpeg', 0.72);
+    }
+
+    async function archiveSignedProposal() {
+      const name = document.getElementById('artistName').value.trim();
+      const phone = document.getElementById('artistPhone').value.trim();
+      const ig = document.getElementById('artistIg').value.trim();
+      const date = document.getElementById('signDate').value;
+      const signatureDataUrl = getCompressedSignatureDataUrl();
+
+      const dedupeKey = ['TATUADOR', name, phone, ig, date, signatureDataUrl.slice(-40)].join('|');
+      if (lastArchivedSignatureKey === dedupeKey) return;
+      lastArchivedSignatureKey = dedupeKey;
+
+      const payload = {
+        form_type: 'cuestionario',
+        registro_tipo: 'PROPUESTA_COLABORADOR',
+        rol_colaborador: 'TATUADOR',
+        nombre: name,
+        telefono: phone || 'No especificado',
+        correo: ig || 'No especificado',
+        identificacion: 'TATUADOR',
+        fecha_nacimiento: date,
+        detalles_medicos: 'Propuesta Tatuador (Comisión: 60/40 · 50/50 · 40/60)',
+        firma_base64: signatureDataUrl
+      };
+
+      const endpoint = window.location.protocol.startsWith('http')
+        ? '/api/sheets-proxy'
+        : 'https://mambaspdc.com/api/sheets-proxy';
+
+      try {
+        await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+      } catch (err) {
+        console.error('Error archivando propuesta:', err);
+      }
+    }
 
     // PDF Export
     document.getElementById('pdfBtn').addEventListener('click', () => {
@@ -823,8 +878,9 @@
         return;
       }
       
+      archiveSignedProposal();
       document.getElementById('signedAlert').style.display = 'block';
-      document.getElementById('signedAlert').textContent = '✓ Documento firmado digitalmente. Generando PDF...';
+      document.getElementById('signedAlert').textContent = '✓ Documento firmado y archivado digitalmente. Generando PDF...';
       window.print();
     });
 
@@ -846,8 +902,9 @@
         return;
       }
 
+      archiveSignedProposal();
       document.getElementById('signedAlert').style.display = 'block';
-      document.getElementById('signedAlert').textContent = '✓ Firma digital registrada. Redirigiendo al WhatsApp de Mambas...';
+      document.getElementById('signedAlert').textContent = '✓ Firma digital archivada en sistema. Redirigiendo al WhatsApp de Mambas...';
 
       const textLines = [
         '👋 *Hola equipo de Mambas Tattoo & Cuts,*',

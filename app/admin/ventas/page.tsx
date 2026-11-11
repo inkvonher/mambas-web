@@ -181,6 +181,7 @@ export default function RegisterSalePage() {
                 onChange={(e) => setPorcentaje(e.target.value)}
                 className="p-3 border border-[#d6ad4a]/20 bg-[#050505] rounded-lg text-white text-xs sm:text-sm focus:outline-none focus:border-[#d6ad4a] transition-all"
               >
+                <option value="0.60">60% / 40% (0.60)</option>
                 <option value="0.50">50% / 50% (0.50)</option>
                 <option value="0.45">45% / 55% (0.45)</option>
                 <option value="0.40">40% / 60% (0.40)</option>
