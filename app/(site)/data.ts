@@ -122,11 +122,11 @@ export const copy = {
     depositText:
       "Para reservar una cita de tatuaje se requiere un anticipo mínimo de 500 MXN. Tu pago asegura espacio, horario y preparación del diseño. El monto puede descontarse del total final del tatuaje.",
     depositButton: "Solicitar anticipo por WhatsApp",
-    depositPaymentButton: "Pagar anticipo",
+    depositPaymentButton: "Enviar comprobante por WhatsApp",
     paymentMethods:
-      "Aceptamos transferencias bancarias SPEI, Mercado Pago y pago directo en efectivo en nuestro estudio.",
+      "Aceptamos transferencias bancarias SPEI y pago directo en efectivo en nuestro estudio.",
     storePaymentNote:
-      "Formas de pago: Transferencia SPEI • Mercado Pago • Efectivo en tienda",
+      "Formas de pago: Transferencia SPEI • Efectivo en tienda",
     floatingBarber: "Barbería",
     floatingTattoo: "Tattoo & Piercing",
   },
@@ -222,11 +222,11 @@ export const copy = {
     depositText:
       "A minimum deposit of 500 MXN is required to reserve a tattoo appointment. Your payment secures your slot, time, and design preparation. The deposit can be deducted from your final tattoo total.",
     depositButton: "Request deposit by WhatsApp",
-    depositPaymentButton: "Pay deposit",
+    depositPaymentButton: "Send receipt via WhatsApp",
     paymentMethods:
-      "We accept SPEI bank transfers, Mercado Pago, and in-person cash payments at our studio.",
+      "We accept SPEI bank transfers and in-person cash payments at our studio.",
     storePaymentNote:
-      "Payment methods: SPEI Transfer • Mercado Pago • In-studio Cash",
+      "Payment methods: SPEI Transfer • In-studio Cash",
     floatingBarber: "Barbershop",
     floatingTattoo: "Tattoo & Piercing",
   },
@@ -327,7 +327,11 @@ export const contacts = {
 
 export const googleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
-export const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
+export const depositBankDetails = {
+  bank: "CLIP",
+  clabe: "730969100012739887",
+  holder: "Karen Muñoz",
+};
 export const barberBookingUrl = "https://calendar.app.google/N2Vq9L7HwybvPXZW8";
 
 export const barberGallery: GalleryItem[] = [

@@ -110,10 +110,10 @@ export default function StoreSection({ language }: { language: Language }) {
       language === "es"
         ? `Hola Mambas Tattoo & Cuts, quiero hacer el siguiente pedido de la tienda oficial:\n\n${itemsSummary}\n\n*Total Estimado: $${totalMXN.toLocaleString(
             "es-MX"
-          )} MXN*\n\n💳 *Formas de pago:* Transferencia SPEI • Mercado Pago • Efectivo en tienda\n\n¿Me confirman disponibilidad y entrega en el estudio / envío?`
+          )} MXN*\n\n💳 *Formas de pago:* Transferencia SPEI • Efectivo en tienda\n\n¿Me confirman disponibilidad y entrega en el estudio / envío?`
         : `Hi Mambas Tattoo & Cuts, I'd like to place an order from the official store:\n\n${itemsSummary}\n\n*Estimated Total: $${totalUSD.toLocaleString(
             "en-US"
-          )} USD*\n\n💳 *Payment options:* SPEI Transfer • Mercado Pago • In-studio Cash\n\nCan you confirm availability and pickup / shipping?`;
+          )} USD*\n\n💳 *Payment options:* SPEI Transfer • In-studio Cash\n\nCan you confirm availability and pickup / shipping?`;
 
     return `https://wa.me/${contacts.barber.phone}?text=${encodeURIComponent(
       message
@@ -126,10 +126,10 @@ export default function StoreSection({ language }: { language: Language }) {
       language === "es"
         ? `Hola Mambas, quiero comprar "${product.name.es}"${
             size ? ` en talla ${size}` : ""
-          } por $${product.priceMXN} MXN. ¿Tienen disponible? (Pago por SPEI, Mercado Pago o Efectivo).`
+          } por $${product.priceMXN} MXN. ¿Tienen disponible? (Pago por SPEI o Efectivo).`
         : `Hi Mambas, I want to purchase "${product.name.en}"${
             size ? ` size ${size}` : ""
-          } for $${product.priceUSD} USD. Is it available? (Payment via SPEI, Mercado Pago or Cash).`;
+          } for $${product.priceUSD} USD. Is it available? (Payment via SPEI or Cash).`;
 
     return `https://wa.me/${contacts.barber.phone}?text=${encodeURIComponent(
       message
@@ -497,7 +497,7 @@ export default function StoreSection({ language }: { language: Language }) {
                     </div>
 
                     <div className="mb-4 rounded-lg border border-[#d6ad4a]/15 bg-black/60 p-2 text-center text-[10px] text-zinc-400">
-                      <span>💳 Transferencia SPEI • Mercado Pago • Efectivo en tienda</span>
+                      <span>💳 Transferencia SPEI • Efectivo en tienda</span>
                     </div>
 
                     <a

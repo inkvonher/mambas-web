@@ -17,7 +17,7 @@ import {
   reviews,
   contacts,
   googleMapsUrl,
-  depositPaymentUrl,
+  depositBankDetails,
   barberBookingUrl,
   barberGallery,
   tattooGallery,
@@ -31,6 +31,7 @@ export default function Home() {
   const [detail, setDetail] = useState(1);
   const [zone, setZone] = useState(1);
   const [copied, setCopied] = useState(false);
+  const [copiedClabe, setCopiedClabe] = useState(false);
   const [floatingOpen, setFloatingOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -548,9 +549,67 @@ export default function Home() {
                     {t.depositText}
                   </p>
                   <div className="mt-8 space-y-6">
+                    <div className="w-full max-w-full overflow-hidden rounded-2xl border border-[#d6ad4a]/28 bg-[linear-gradient(145deg,rgba(214,173,74,0.12),rgba(255,255,255,0.035)),#070707] p-4 shadow-[0_18px_60px_rgba(0,0,0,0.62),0_0_44px_rgba(214,173,74,0.1)] sm:max-w-lg sm:p-5">
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-center justify-between gap-2">
+                          <div>
+                            <p className="text-xs uppercase tracking-wider text-zinc-400">
+                              {language === "es"
+                                ? "Transferencia Bancaria SPEI"
+                                : "SPEI Bank Transfer"}
+                            </p>
+                            <p className="mt-0.5 text-base font-semibold text-[#d6ad4a]">
+                              {language === "es" ? "Banco:" : "Bank:"}{" "}
+                              {depositBankDetails.bank}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-zinc-400">
+                              {language === "es" ? "Titular" : "Account Holder"}
+                            </p>
+                            <p className="text-sm font-medium text-zinc-200">
+                              {depositBankDetails.holder}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-1">
+                          <p className="text-xs text-zinc-400">CLABE</p>
+                          <div className="mt-1.5 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+                            <code className="block w-full min-w-0 flex-1 overflow-hidden break-all rounded border border-[#d6ad4a]/20 bg-[#0b0b0b] px-3 py-2 font-mono text-sm tracking-wider text-zinc-100">
+                              {depositBankDetails.clabe}
+                            </code>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  depositBankDetails.clabe,
+                                );
+                                setCopiedClabe(true);
+                                setTimeout(() => setCopiedClabe(false), 2000);
+                              }}
+                              className="btn-gold w-full justify-center px-3 py-2 text-sm sm:w-auto"
+                            >
+                              {copiedClabe
+                                ? language === "es"
+                                  ? "Copiada"
+                                  : "Copied"
+                                : language === "es"
+                                  ? "Copiar CLABE"
+                                  : "Copy CLABE"}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="flex flex-col gap-3 sm:flex-row">
                       <a
-                        href={depositPaymentUrl}
+                        href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
+                          language === "es"
+                            ? "Hola Mambas, quiero reservar una cita de tatuaje y enviar mi comprobante de anticipo ($500 MXN)."
+                            : "Hi Mambas, I want to book a tattoo appointment and send my deposit receipt (500 MXN).",
+                        )}`}
                         target="_blank"
                         rel="noreferrer noopener"
                         className="btn-gold"
@@ -560,8 +619,8 @@ export default function Home() {
                       <a
                         href={`https://wa.me/${contacts.tattoo.phone}?text=${encodeURIComponent(
                           language === "es"
-                            ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden enviar las opciones de pago?"
-                            : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you send me the payment options?",
+                            ? "Hola Mambas, quiero reservar una cita de tatuaje. Entiendo que el anticipo mínimo es de 500 MXN. ¿Me pueden confirmar disponibilidad?"
+                            : "Hi Mambas, I want to book a tattoo appointment. I understand the minimum deposit is 500 MXN. Can you confirm availability?",
                         )}`}
                         target="_blank"
                         rel="noreferrer noopener"

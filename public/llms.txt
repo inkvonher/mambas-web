@@ -38,8 +38,7 @@
 - *Anticipo mínimo para reserva de cita de tatuaje:* 500 MXN (~30 USD).
 
 ## Métodos de Pago Aceptados
-- Transferencia bancaria SPEI.
-- Mercado Pago (tarjetas de crédito, débito y enlace de pago).
+- Transferencia bancaria SPEI (Banco CLIP · CLABE `730969100012739887` · Titular: Karen Muñoz).
 - Pago directo en efectivo en nuestro estudio (Pesos Mexicanos MXN y Dólares Estadounidenses USD).
 
 ## Protocolo Sanitario y Cuidados en Clima Tropical (Playa del Carmen / Riviera Maya)

@@ -95,7 +95,11 @@ export const statusLabels: Record<AppointmentStatus, string> = {
 export const scheduleHours = Array.from({ length: 13 }, (_, index) => index + 9);
 export const adminGoogleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Mambas%20Tattoo%20%26%20Cuts%20Calle%201%20Sur%20Av.%2025%20Sur%20Playa%20del%20Carmen";
-export const depositPaymentUrl = "https://mpago.la/2Nc6MvU";
+export const depositBankDetails = {
+  bank: "CLIP",
+  clabe: "730969100012739887",
+  holder: "Karen Muñoz",
+};
 
 export function getRevenueValue(appointment: Appointment): number {
   return Number(
@@ -354,7 +358,7 @@ export function buildWhatsAppMessage(
   }
 
   if (type === "deposit") {
-    return `${baseGreeting}\n\nPara apartar tu cita de ${service} el ${date} a las ${time}, se requiere un anticipo mínimo de 500 MXN.\nAnticipo registrado: ${deposit} MXN\nLink de pago: ${depositPaymentUrl}\n\nEl anticipo asegura tu espacio y se descuenta del total final cuando aplique.`;
+    return `${baseGreeting}\n\nPara apartar tu cita de ${service} el ${date} a las ${time}, se requiere un anticipo mínimo de 500 MXN.\nAnticipo registrado: ${deposit} MXN\n\nDatos para transferencia SPEI:\n• Banco: ${depositBankDetails.bank}\n• CLABE: ${depositBankDetails.clabe}\n• Titular: ${depositBankDetails.holder}\n\nEl anticipo asegura tu espacio y se descuenta del total final cuando aplique.`;
   }
 
   return `${baseGreeting}\n\nEsta es nuestra ubicación para tu cita de ${service}:\nMambas Tattoo & Cuts\nCalle 1 Sur esquina Av. 25 Sur, Centro, Playa del Carmen\n\nGoogle Maps: ${adminGoogleMapsUrl}\n\nTe esperamos.`;

@@ -32,7 +32,7 @@ const structuredData = {
       description: siteDescription,
       priceRange: "$$",
       currenciesAccepted: "MXN, USD",
-      paymentAccepted: "Transferencia SPEI, Mercado Pago, Efectivo en tienda",
+      paymentAccepted: "Transferencia SPEI, Efectivo en tienda",
       telephone: ["+52 984 367 5261", "+52 984 182 0414"],
       address: {
         "@type": "PostalAddress",
@@ -288,7 +288,7 @@ const structuredData = {
           name: "¿Qué métodos de pago aceptan?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Aceptamos transferencias bancarias SPEI, Mercado Pago y pago directo en efectivo en nuestro estudio en Playa del Carmen.",
+            text: "Aceptamos transferencias bancarias SPEI y pago directo en efectivo en nuestro estudio en Playa del Carmen.",
           },
         },
       ],
