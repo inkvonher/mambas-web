@@ -39,7 +39,7 @@ Buscamos un(a) **Artista Tatuador(a)** que comparta nuestra visión estética, d
 | Concepto | Detalle de la Propuesta |
 | :--- | :--- |
 | **Modalidad** | Artista Residente / Guest Spot (porcentaje por servicio o renta de cabina a acordar). |
-| **Comisión / Split** | **[50% Artista / 50% Estudio]** *(o porcentaje acordado según insumos aportados)*. |
+| **Comisión / Split** | • **60% Estudio / 40% Artista:** En caso de que el estudio proporcione la mayoría del material y el cliente.<br>• **50% Estudio / 50% Artista:** Si el artista trae la mayoría de su material y el cliente es del estudio.<br>• **40% Estudio / 60% Artista:** Si el artista trae la mayoría de su material y a sus clientes. |
 | **Precios Referencia del Estudio** | • **Precio Mínimo de Entrada:** $ 1,600 MXN (~$100 USD)<br>• **Sesión Media Jornada (4-5 hrs):** $6,500 MXN (~$400 USD)<br>• **Piezas Personalizadas:** Cotización según tamaño, detalle y zona. |
 | **Gestión de Anticipos** | Anticipo mínimo obligatorio de **$500 MXN** por cita para apartar fecha y preparar diseño. Medios: SPEI, Mercado Pago o efectivo en recepción. |
 | **Liquidación de Pagos** | Cortes de caja [semanales / quincenales / al término del día]. |
@@ -61,7 +61,7 @@ Buscamos un(a) **Artista Tatuador(a)** que comparta nuestra visión estética, d
    - Exposición en la plataforma web oficial de Mambas, redes sociales y campañas publicitarias.
    - Base de clientes recurrentes mediante el programa **Mambas Club / Lealtad**.
 4. **Insumos de Cortesía del Estudio:**
-   - Jabón antibacterial, papel para camilla/sanitario, bolsas para máquina/clipcord, film protector, desinfectantes de superficie grado hospitalario. (entre otros pregunta por la disponibilidad)
+   - Jabón antibacterial, papel para camilla/sanitario, film protector, desinfectantes de superficie grado hospitalario. (entre otros pregunta por la disponibilidad)
    *Nota: El artista aporta sus máquinas, fuentes, agujas/cartuchos estériles, tintas certificadas y equipo personal.*
 
 ---
