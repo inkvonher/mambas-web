@@ -41,7 +41,7 @@ Buscamos un(a) **Artista Tatuador(a)** que comparta nuestra visión estética, d
 | **Modalidad** | Artista Residente / Guest Spot (porcentaje por servicio o renta de cabina a acordar). |
 | **Comisión / Split** | • **60% Estudio / 40% Artista:** En caso de que el estudio proporcione la mayoría del material y el cliente.<br>• **50% Estudio / 50% Artista:** Si el artista trae la mayoría de su material y el cliente es del estudio.<br>• **40% Estudio / 60% Artista:** Si el artista trae la mayoría de su material y a sus clientes. |
 | **Precios Referencia del Estudio** | • **Precio Mínimo de Entrada:** $ 1,600 MXN (~$100 USD)<br>• **Sesión Media Jornada (4-5 hrs):** $6,500 MXN (~$400 USD)<br>• **Piezas Personalizadas:** Cotización según tamaño, detalle y zona. |
-| **Gestión de Anticipos** | Anticipo mínimo obligatorio de **$500 MXN** por cita para apartar fecha y preparar diseño. Medios: SPEI, Mercado Pago o efectivo en recepción. |
+| **Gestión de Anticipos** | Anticipo mínimo obligatorio de **$500 MXN** por cita para apartar fecha y preparar diseño. Medios: Transferencia SPEI o efectivo en recepción.<br>• **Banco:** CLIP<br>• **CLABE:** `730969100012739887`<br>• **Titular:** Karen Muñoz |
 | **Liquidación de Pagos** | Cortes de caja [semanales / quincenales / al término del día]. |
 | **Comisión Merch & Aftercare** | Comisión adicional por venta de productos de cuidado médico para tatuaje y merch oficial de la tienda Mambas. |
 
